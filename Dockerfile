@@ -1,56 +1,22 @@
 # Use an official Ubuntu base image
-FROM ubuntu:20.04
+FROM mrdnalex/steamcmd:latest
 
-# Set environment variables to non-interactive (this prevents some prompts)
-ENV DEBIAN_FRONTEND=noninteractive
+# Rebuild to install Palworld Server upon launching?
 
-# Install packages and dependencies for steamcmd
-RUN apt-get update && apt-get install -y \
-    sudo \
-    expect \
-    lib32gcc-s1 \
-    lib32stdc++6 \
-    lib32z1 \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+# Create the Palworld Server Directory
+RUN mkdir /home/steam/PalworldServer
 
-# Download and install steamcmd
-# RUN mkdir -p /SteamCMD && \
-#     cd /SteamCMD && \
-#     curl -s http://media.steampowered.com/installer/steamcmd_linux.tar.gz | tar -vxz && \
-#     ./steamcmd.sh +quit && \
-#     chmod +x /SteamCMD/steamcmd.sh
+# Install Palworld Server App
+RUN steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit
 
-RUN sudo add-apt-repository multiverse; sudo dpkg --add-architecture i386; sudo apt update
+# Give Ownership to the Steam User for the Palworld Server Directory
+RUN chown -R steam:steam /home/steam/PalworldServer 
+RUN chmod -R 755 /home/steam/PalworldServer
 
-RUN echo steamcmd steam/question select "I AGREE" | sudo debconf-set-selections && \
-    echo steamcmd steam/license note '' | sudo debconf-set-selections && \
-    sudo apt-get install -y steamcmd
+# Assign Environment Variables for steamservice.so
+ENV LD_LIBRARY_PATH=/home/steam/.steam/sdk64:$LD_LIBRARY_PATH:
 
-ENV PATH=$PATH:/usr/games
-
-
-# RUN apt-get update && \
-#     apt-get install -y software-properties-common && \
-#     add-apt-repository multiverse && \
-#     dpkg --add-architecture i386 && \
-#     apt-get update
-
-# RUN expect -c "\
-#     spawn apt-get install -y steamcmd; \
-#     expect \"[More]\" { send \"\n\\r\" }; \
-#     expect \"Do you agree to all terms of the Steam License Agreement?\" { send \"2\\r\" }; \
-#     interact"
-
-
-
-# Setup the working Awork directory
-WORKDIR /home
-
-# Optional: Expose ports if necessary
-# EXPOSE <port>
-
-# Optional: Set the default command
-# CMD ["./steamcmd.sh"]
+# Start the Container and have it use host device IP Network
+# docker run -it --network="host" mrdnalex/palworldserverbot
 
 
