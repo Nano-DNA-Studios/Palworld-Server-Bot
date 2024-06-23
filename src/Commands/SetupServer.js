@@ -31,33 +31,39 @@ const ini = __importStar(require("ini"));
 const path = __importStar(require("path"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
-class Setup extends dna_discord_framework_1.Command {
+class SetupServer extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
-        this.CommandName = 'setup';
+        this.CommandName = 'setupserver';
         this.CommandDescription = 'Sets up the Server for the First Time';
-        this.Section = '/Script/Pal'; //.PalGameWorldSettings
-        this.OptionSettings = '';
-        this.ServerSettings = [];
+        this.Section = '/Script/Pal';
+        this.PalGameWorldSettings = 'PalGameWorldSettings';
+        this.OptionSettings = 'OptionSettings';
+        this.Settings = '';
+        this.ServerSettingsArray = [];
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            //Have t
-            const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const serverName = interaction.options.getString('servername');
             const serverDesc = interaction.options.getString('serverdescription');
             const serverPassword = interaction.options.getString('serverpassword');
             const adminPassword = interaction.options.getString('adminpassword');
-            this.LoadSettings();
-            // Print the current settings (for debugging)
-            console.log(JSON.stringify(this.ConfigFile, null, 4));
-            if (serverName)
-                this.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
-            if (serverDesc)
-                this.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
-            if (serverPassword)
-                this.SetSettingValue(ServerSettingsEnum_1.default.ServerPassword, serverPassword);
-            if (adminPassword)
-                this.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
-            this.SaveSettings();
+            this.InitializeUserResponse(interaction, `Changing Default Settings`);
+            try {
+                this.LoadSettings();
+                if (serverName)
+                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
+                if (serverDesc)
+                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                if (serverPassword)
+                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerPassword, serverPassword);
+                if (adminPassword)
+                    this.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                this.SaveSettings();
+                this.AddToResponseMessage("Settings Updated!");
+            }
+            catch (error) {
+                this.AddToResponseMessage("Error Changing Settings");
+                return;
+            }
         };
         this.IsEphemeralResponse = true;
         this.Options = [
@@ -92,20 +98,20 @@ class Setup extends dna_discord_framework_1.Command {
         const filePath = path.resolve(__dirname, DataManager.START_SETTINGS_FILE_PATH);
         const fileContent = fs.readFileSync(filePath, 'utf-8');
         this.ConfigFile = ini.parse(fileContent);
-        this.OptionSettings = this.ConfigFile[this.Section]['PalGameWorldSettings']['OptionSettings'];
-        this.ServerSettings = this.OptionSettings.slice(1, -1).split(',');
+        this.Settings = this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings];
+        this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
     }
     SaveSettings() {
-        this.OptionSettings = '(' + this.ServerSettings.join(',') + ')';
-        this.ConfigFile[this.Section]['PalGameWorldSettings']['OptionSettings'] = this.OptionSettings;
+        this.Settings = '(' + this.ServerSettingsArray.join(',') + ')';
+        this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
         const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
         const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
         fs.writeFileSync(DataManager.DEFAULT_FILE_SETTINGS_PATH, newFileContent);
     }
     SetSettingValue(settingName, settingValue) {
-        let serverNameIndex = this.ServerSettings.findIndex((setting) => setting.trim().startsWith(`${settingName}=`));
+        let serverNameIndex = this.ServerSettingsArray.findIndex((setting) => setting.trim().startsWith(`${settingName}=`));
         if (serverNameIndex !== -1)
-            this.ServerSettings[serverNameIndex] = `${settingName}="${settingValue}"`;
+            this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
     }
 }
-module.exports = Setup;
+module.exports = SetupServer;

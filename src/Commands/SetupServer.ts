@@ -8,8 +8,9 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 
-class Setup extends Command {
-    CommandName: string = 'setup';
+class SetupServer extends Command {
+    
+    CommandName: string = 'setupserver';
 
     CommandDescription: string = 'Sets up the Server for the First Time';
 
@@ -60,29 +61,6 @@ class Setup extends Command {
         }
     };
 
-    public LoadSettings(): void {
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-        const filePath = path.resolve(__dirname, DataManager.START_SETTINGS_FILE_PATH);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        this.ConfigFile = ini.parse(fileContent);
-        this.Settings = this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings];
-        this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
-    }
-
-    public SaveSettings(): void {
-        this.Settings = '(' + this.ServerSettingsArray.join(',') + ')';
-        this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-        const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
-        fs.writeFileSync(DataManager.DEFAULT_FILE_SETTINGS_PATH, newFileContent);
-    }
-
-    public SetSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
-        let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
-        if (serverNameIndex !== -1)
-            this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
-    }
-
     public IsEphemeralResponse: boolean = true;
 
     public Options?: ICommandOption[] = [
@@ -110,9 +88,31 @@ class Setup extends Command {
             required: false,
             type: OptionTypesEnum.String
         }
-
     ];
+
+    public LoadSettings(): void {
+        const DataManager = BotData.Instance(PalworldServerBotDataManager)
+        const filePath = path.resolve(__dirname, DataManager.START_SETTINGS_FILE_PATH);
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        this.ConfigFile = ini.parse(fileContent);
+        this.Settings = this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings];
+        this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
+    }
+
+    public SaveSettings(): void {
+        this.Settings = '(' + this.ServerSettingsArray.join(',') + ')';
+        this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
+        const DataManager = BotData.Instance(PalworldServerBotDataManager)
+        const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
+        fs.writeFileSync(DataManager.DEFAULT_FILE_SETTINGS_PATH, newFileContent);
+    }
+
+    public SetSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
+        let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
+        if (serverNameIndex !== -1)
+            this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
+    }
 
 }
 
-export = Setup;
+export = SetupServer;

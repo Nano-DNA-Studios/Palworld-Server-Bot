@@ -11,7 +11,8 @@
     "scripts": {
         "build": "tsc",
         "start": "npm run build && node index.js",
-        "docker": "npm run build && docker build -t mrdnalex/palworldserverbot ."
+        "docker": "npm run build && docker build -t mrdnalex/palworldserverbot .",
+        "dockerpublish": "npm run docker && docker login -u mrdnalex && docker push mrdnalex/palworldserverbot"
     },
     "keywords": [],
     "author": "",
