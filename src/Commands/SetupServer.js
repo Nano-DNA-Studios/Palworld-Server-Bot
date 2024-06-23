@@ -106,7 +106,9 @@ class SetupServer extends dna_discord_framework_1.Command {
         this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
         const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
         const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
-        fs.writeFileSync(DataManager.DEFAULT_FILE_SETTINGS_PATH, newFileContent);
+        if (!fs.existsSync(DataManager.SERVER_SETTINGS_DIR))
+            fs.mkdirSync(DataManager.SERVER_SETTINGS_DIR, { recursive: true });
+        fs.writeFileSync(DataManager.SERVER_SETTINGS_FILE_PATH, newFileContent);
     }
     SetSettingValue(settingName, settingValue) {
         let serverNameIndex = this.ServerSettingsArray.findIndex((setting) => setting.trim().startsWith(`${settingName}=`));

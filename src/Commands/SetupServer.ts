@@ -104,7 +104,11 @@ class SetupServer extends Command {
         this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
         const DataManager = BotData.Instance(PalworldServerBotDataManager)
         const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
-        fs.writeFileSync(DataManager.DEFAULT_FILE_SETTINGS_PATH, newFileContent);
+
+        if (!fs.existsSync(DataManager.SERVER_SETTINGS_DIR))
+            fs.mkdirSync(DataManager.SERVER_SETTINGS_DIR, { recursive: true });
+
+        fs.writeFileSync(DataManager.SERVER_SETTINGS_FILE_PATH, newFileContent);
     }
 
     public SetSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
