@@ -31,10 +31,10 @@ const ini = __importStar(require("ini"));
 const path = __importStar(require("path"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
-class SetupServer extends dna_discord_framework_1.Command {
+class Setup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
-        this.CommandName = 'setupserver';
+        this.CommandName = 'setup';
         this.CommandDescription = 'Sets up the Server for the First Time';
         this.Section = '/Script/Pal';
         this.PalGameWorldSettings = 'PalGameWorldSettings';
@@ -44,8 +44,6 @@ class SetupServer extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const serverName = interaction.options.getString('servername');
             const serverDesc = interaction.options.getString('serverdescription');
-            const serverPassword = interaction.options.getString('serverpassword');
-            const adminPassword = interaction.options.getString('adminpassword');
             this.InitializeUserResponse(interaction, `Changing Default Settings`);
             try {
                 this.LoadSettings();
@@ -53,10 +51,6 @@ class SetupServer extends dna_discord_framework_1.Command {
                     this.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
                 if (serverDesc)
                     this.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
-                if (serverPassword)
-                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerPassword, serverPassword);
-                if (adminPassword)
-                    this.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 this.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
             }
@@ -76,19 +70,7 @@ class SetupServer extends dna_discord_framework_1.Command {
             {
                 name: 'serverdescription',
                 description: 'The Description for the Server',
-                required: false,
-                type: dna_discord_framework_1.OptionTypesEnum.String
-            },
-            {
-                name: 'serverpassword',
-                description: 'The Password for the Server',
-                required: false,
-                type: dna_discord_framework_1.OptionTypesEnum.String
-            },
-            {
-                name: 'adminpassword',
-                description: 'The Password for the Server Admins',
-                required: false,
+                required: true,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             }
         ];
@@ -116,4 +98,4 @@ class SetupServer extends dna_discord_framework_1.Command {
             this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
     }
 }
-module.exports = SetupServer;
+module.exports = Setup;

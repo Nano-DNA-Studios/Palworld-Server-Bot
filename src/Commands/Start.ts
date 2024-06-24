@@ -1,9 +1,9 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BashScriptRunner, BotDataManager, Command } from "dna-discord-framework";
 
-class StartServer extends Command
+class Start extends Command
 {
-    public CommandName: string = 'startserver';
+    public CommandName: string = 'start';
     public CommandDescription: string = 'Starts the Palworld Server';
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
@@ -27,4 +27,4 @@ class StartServer extends Command
 
 }
 
-export = StartServer;
+export = Start;

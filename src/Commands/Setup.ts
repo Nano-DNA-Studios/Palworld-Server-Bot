@@ -8,9 +8,9 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 
-class SetupServer extends Command {
+class Setup extends Command {
     
-    CommandName: string = 'setupserver';
+    CommandName: string = 'setup';
 
     CommandDescription: string = 'Sets up the Server for the First Time';
 
@@ -30,8 +30,6 @@ class SetupServer extends Command {
 
         const serverName = interaction.options.getString('servername');
         const serverDesc = interaction.options.getString('serverdescription');
-        const serverPassword = interaction.options.getString('serverpassword');
-        const adminPassword = interaction.options.getString('adminpassword');
 
         this.InitializeUserResponse(interaction, `Changing Default Settings`)
 
@@ -44,12 +42,6 @@ class SetupServer extends Command {
     
             if (serverDesc)
                 this.SetSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
-    
-            if (serverPassword)
-                this.SetSettingValue(ServerSettingsEnum.ServerPassword, serverPassword);
-    
-            if (adminPassword)
-                this.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
     
             this.SaveSettings();
 
@@ -73,19 +65,7 @@ class SetupServer extends Command {
         {
             name: 'serverdescription',
             description: 'The Description for the Server',
-            required: false,
-            type: OptionTypesEnum.String
-        },
-        {
-            name: 'serverpassword',
-            description: 'The Password for the Server',
-            required: false,
-            type: OptionTypesEnum.String
-        },
-        {
-            name: 'adminpassword',
-            description: 'The Password for the Server Admins',
-            required: false,
+            required: true,
             type: OptionTypesEnum.String
         }
     ];
@@ -119,4 +99,4 @@ class SetupServer extends Command {
 
 }
 
-export = SetupServer;
+export = Setup;

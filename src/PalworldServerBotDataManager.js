@@ -9,6 +9,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.DEFAULT_FILE_SETTINGS_PATH = '/home/steam/PalworldServer/DefaultPalWorldSettings.ini';
         this.SERVER_SETTINGS_FILE_PATH = '/home/steam/PalworldServer/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini';
         this.SERVER_SETTINGS_DIR = '/home/steam/PalworldServer/Pal/Saved/Config/LinuxServer';
+        this.SERVER_START_SCRIPT = "PalServer.sh";
+        this.SERVER_PROCESS_NAME = "PalServer-Linux-Test";
     }
 }
 exports.default = PalworldServerBotDataManager;

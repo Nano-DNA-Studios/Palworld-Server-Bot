@@ -13,7 +13,9 @@ class PalworldServerBotDataManager extends BotDataManager
 
     SERVER_SETTINGS_DIR = '/home/steam/PalworldServer/Pal/Saved/Config/LinuxServer'
 
+    SERVER_START_SCRIPT = "PalServer.sh";
 
+    SERVER_PROCESS_NAME = "PalServer-Linux-Test";
 
 }
     
