@@ -9,7 +9,7 @@ import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 
 class Setup extends Command {
-    
+
     CommandName: string = 'setup';
 
     CommandDescription: string = 'Sets up the Server for the First Time';
@@ -28,25 +28,48 @@ class Setup extends Command {
 
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
+
+        const DataManager = BotData.Instance(PalworldServerBotDataManager)
         const serverName = interaction.options.getString('servername');
         const serverDesc = interaction.options.getString('serverdescription');
+        const adminPassword = interaction.options.getString('adminpassword');
 
         this.InitializeUserResponse(interaction, `Changing Default Settings`)
 
-        try 
-        {
+        try {
             this.LoadSettings();
-    
-            if (serverName)
+
+            if (serverName) {
+                DataManager.SERVER_NAME = serverName;
                 this.SetSettingValue(ServerSettingsEnum.ServerName, serverName);
-    
-            if (serverDesc)
+            }
+
+            if (serverDesc) {
+                DataManager.SERVER_DESCRIPTION = serverDesc;
                 this.SetSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
-    
+            }
+
+            if (adminPassword) {
+                DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
+                this.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
+            }
+
+
+
+            this.SetSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
+            this.SetSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
+            this.SetSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+
+
+
+
+
+
+
             this.SaveSettings();
 
             this.AddToResponseMessage("Settings Updated!")
-    
+
         } catch (error) {
             this.AddToResponseMessage("Error Changing Settings")
             return;
@@ -65,6 +88,12 @@ class Setup extends Command {
         {
             name: 'serverdescription',
             description: 'The Description for the Server',
+            required: true,
+            type: OptionTypesEnum.String
+        },
+        {
+            name: 'adminpassword',
+            description: 'The Admin Password for the Server',
             required: true,
             type: OptionTypesEnum.String
         }

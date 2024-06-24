@@ -17,6 +17,20 @@ class PalworldServerBotDataManager extends BotDataManager
 
     SERVER_PROCESS_NAME = "PalServer-Linux-Test";
 
+    SERVER_PORT = 8211;
+
+    RESTFUL_PORT = 8212;
+
+    RESTFUL_HOSTNAME = 'localhost';
+
+    RESTFUL_METHOD = 'GET';
+
+    SERVER_ADMIN_PASSWORD: string = '';
+
+    SERVER_NAME: string = '';
+
+    SERVER_DESCRIPTION: string = '';
+
 }
     
 export default PalworldServerBotDataManager;

@@ -42,15 +42,28 @@ class Setup extends dna_discord_framework_1.Command {
         this.Settings = '';
         this.ServerSettingsArray = [];
         this.RunCommand = async (client, interaction, BotDataManager) => {
+            const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const serverName = interaction.options.getString('servername');
             const serverDesc = interaction.options.getString('serverdescription');
+            const adminPassword = interaction.options.getString('adminpassword');
             this.InitializeUserResponse(interaction, `Changing Default Settings`);
             try {
                 this.LoadSettings();
-                if (serverName)
+                if (serverName) {
+                    DataManager.SERVER_NAME = serverName;
                     this.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
-                if (serverDesc)
+                }
+                if (serverDesc) {
+                    DataManager.SERVER_DESCRIPTION = serverDesc;
                     this.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                }
+                if (adminPassword) {
+                    DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
+                    this.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                }
+                this.SetSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
+                this.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
+                this.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
                 this.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
             }
@@ -70,6 +83,12 @@ class Setup extends dna_discord_framework_1.Command {
             {
                 name: 'serverdescription',
                 description: 'The Description for the Server',
+                required: true,
+                type: dna_discord_framework_1.OptionTypesEnum.String
+            },
+            {
+                name: 'adminpassword',
+                description: 'The Admin Password for the Server',
                 required: true,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             }

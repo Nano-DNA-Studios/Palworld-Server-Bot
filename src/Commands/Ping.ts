@@ -1,8 +1,9 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BashScriptRunner, BotData, BotDataManager, Command } from "dna-discord-framework";
+import RESTFULRequest from "../RESTFUL/RESTFULRequest";
+import RESTFULRequestEnum from "../RESTFUL/RESTFULRequestEnum";
+import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import { https } from "follow-redirects";
-
 
 
 class Ping extends Command {
@@ -14,51 +15,28 @@ class Ping extends Command {
 
         this.PingServer();
 
-
-        this.AddToResponseMessage("Server is Still Running");
-
     };
 
-    public IsEphemeralResponse: boolean = true;
+    private PingServer(): void {
 
-    public PingServer() {
+        let ping = PalworldRestfulCommands.PingServer()
 
-        interface RequestOptions {
-            method: string;
-            hostname: string;
-            port: number;
-            path: string;
-            headers: {
-                Accept: string;
-            };
-            maxRedirects: number;
-        }
+        console.log(ping);
 
-        const options = {
-            hostname: 'localhost',
-            port: 8212,
-            path: '/v1/api/info',
-            method: 'GET',
-            headers: {
-              'Authorization': 'Basic ' + Buffer.from('admin:pass').toString('base64')
-            }
-          };
-          
-          const req = https.request(options, res => {
-            console.log(`Status Code: ${res.statusCode}`);
-          
-            res.on('data', d => {
-              process.stdout.write(d);
-            });
-          });
-          
-          req.on('error', e => {
-            console.error(e);
-          });
-          
-          req.end();
-       
+        console.log(ping.status);
+
+        console.log(ping.message);
+
+        console.log(ping.error);
+
+        if (ping.status == 200)
+            this.AddToResponseMessage("Server is Running");
+        else
+            this.AddToResponseMessage("Server is Not Running");
+
     }
+
+    public IsEphemeralResponse: boolean = true;
 
 }
 
