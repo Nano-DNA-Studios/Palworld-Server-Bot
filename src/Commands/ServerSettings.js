@@ -4,16 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldRestfulCommands_1 = __importDefault(require("../RESTFUL/PalworldRestfulCommands"));
-class Shutdown extends dna_discord_framework_1.Command {
+class ServerSettings extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
-        this.CommandName = 'shutdown';
-        this.CommandDescription = 'Shuts down the Palworld Server';
+        this.CommandName = 'serversettings';
+        this.CommandDescription = 'Returns the Server Settings for the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown`);
-            PalworldRestfulCommands_1.default.ShutdownServer(this);
+            this.InitializeUserResponse(interaction, `Saving the Game World`);
+            PalworldRestfulCommands_1.default.ServerSettings(this);
         };
         this.IsEphemeralResponse = false;
     }
 }
-module.exports = Shutdown;
+module.exports = ServerSettings;

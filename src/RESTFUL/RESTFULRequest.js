@@ -26,14 +26,19 @@ class RESTFULRequest {
         this.hostname = DataManager.RESTFUL_HOSTNAME;
         this.port = DataManager.RESTFUL_PORT;
         this.path = `/v1/api/${RESTFULCommand}`;
-        this.method = DataManager.RESTFUL_METHOD;
+        this.method = DataManager.RESTFUL_GET_METHOD;
         this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
         this.maxRedirects = 20;
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.SHUTDOWN)
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.SAVE)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.SHUTDOWN) {
+            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json' };
+            this.method = DataManager.RESTFUL_POST_METHOD;
             this.body = JSON.stringify({
                 "waittime": 30,
                 "message": "Server will shutdown in 10 seconds."
             });
+        }
     }
     SendRequest() {
         return new Promise((resolve, reject) => {
@@ -53,6 +58,11 @@ class RESTFULRequest {
                 response.error += e.message;
                 reject(e); // Reject the promise on error
             });
+            if (this.method === 'POST' && this.body) {
+                if (this.path.includes('shutdown'))
+                    console.log(this.body);
+                req.write(this.body); // Write the JSON string body for POST requests
+            }
             req.end();
         });
     }

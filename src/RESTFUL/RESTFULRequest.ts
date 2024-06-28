@@ -12,9 +12,9 @@ class RESTFULRequest implements RequestOptions {
     public port: number;
     public path: string;
     public method: string;
-    public headers: { Accept: string; Authorization: string; };
+    public headers: { Accept: string; Authorization: string; 'Content-Type'?: string };
     public maxRedirects: number;
-    public body?: string;
+    public body?: any;
 
     constructor(RESTFULCommand: RESTFULRequestEnum) {
 
@@ -22,15 +22,24 @@ class RESTFULRequest implements RequestOptions {
         this.hostname = DataManager.RESTFUL_HOSTNAME;
         this.port = DataManager.RESTFUL_PORT;
         this.path = `/v1/api/${RESTFULCommand}`;
-        this.method = DataManager.RESTFUL_METHOD;
+        this.method = DataManager.RESTFUL_GET_METHOD;
         this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
         this.maxRedirects = 20;
 
-        if (RESTFULCommand == RESTFULRequestEnum.SHUTDOWN)
+        if (RESTFULCommand == RESTFULRequestEnum.SAVE)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+
+
+        if (RESTFULCommand == RESTFULRequestEnum.SHUTDOWN) {
+            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json' };
+            this.method = DataManager.RESTFUL_POST_METHOD;
+
             this.body = JSON.stringify({
                 "waittime": 30,
                 "message": "Server will shutdown in 10 seconds."
-              });
+            });
+        }
+
     }
 
     public SendRequest(): Promise<RESTFULResponse> {
@@ -59,6 +68,12 @@ class RESTFULRequest implements RequestOptions {
                 reject(e);  // Reject the promise on error
             });
 
+            if (this.method === 'POST' && this.body) {
+                if (this.path.includes('shutdown'))
+                    console.log(this.body);
+                req.write(this.body);  // Write the JSON string body for POST requests
+            }
+
             req.end();
         });
     }
@@ -75,7 +90,7 @@ class RESTFULRequest implements RequestOptions {
             received = true;
             console.log("Response Received");
             console.log(response);
-            
+
         }).catch((error) => {
             response.error = error.message;
             received = true;
@@ -87,7 +102,7 @@ class RESTFULRequest implements RequestOptions {
 
             const sleep = (milliseconds: number) => {
                 const start = new Date().getTime();
-                while (new Date().getTime() - start < milliseconds) {}
+                while (new Date().getTime() - start < milliseconds) { }
             };
             sleep(50); // Sleep for 50 milliseconds
         }
@@ -95,9 +110,8 @@ class RESTFULRequest implements RequestOptions {
         if (!received) {
             console.log("Timeout");
             response.error = 'Timeout';
-        } else
-        {
-            
+        } else {
+
         }
 
         console.log("Returning Response");

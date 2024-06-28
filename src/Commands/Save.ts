@@ -2,18 +2,18 @@ import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
 
-class Shutdown extends Command {
-    public CommandName: string = 'shutdown';
-    public CommandDescription: string = 'Shuts down the Palworld Server';
+class Save extends Command {
+    public CommandName: string = 'save';
+    public CommandDescription: string = 'Save the Palworld Server';
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown`);
+        this.InitializeUserResponse(interaction, `Saving the Game World`);
 
-        PalworldRestfulCommands.ShutdownServer(this);
+        PalworldRestfulCommands.SaveWorld(this);
 
     };
     public IsEphemeralResponse: boolean = false;
 
 }
 
-export = Shutdown;
+export = Save;

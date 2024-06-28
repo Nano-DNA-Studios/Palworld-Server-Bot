@@ -14,7 +14,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_PORT = 8211;
         this.RESTFUL_PORT = 8212;
         this.RESTFUL_HOSTNAME = 'localhost';
-        this.RESTFUL_METHOD = 'GET';
+        this.RESTFUL_GET_METHOD = 'GET';
+        this.RESTFUL_POST_METHOD = 'POST';
         this.SERVER_ADMIN_PASSWORD = '';
         this.SERVER_NAME = '';
         this.SERVER_DESCRIPTION = '';

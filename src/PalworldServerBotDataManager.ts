@@ -23,7 +23,9 @@ class PalworldServerBotDataManager extends BotDataManager
 
     RESTFUL_HOSTNAME = 'localhost';
 
-    RESTFUL_METHOD = 'GET';
+    RESTFUL_GET_METHOD = 'GET';
+
+    RESTFUL_POST_METHOD = 'POST';
 
     SERVER_ADMIN_PASSWORD: string = '';
 
