@@ -14,6 +14,7 @@ class RESTFULRequest implements RequestOptions {
     public method: string;
     public headers: { Accept: string; Authorization: string; };
     public maxRedirects: number;
+    public body?: string;
 
     constructor(RESTFULCommand: RESTFULRequestEnum) {
 
@@ -24,9 +25,15 @@ class RESTFULRequest implements RequestOptions {
         this.method = DataManager.RESTFUL_METHOD;
         this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
         this.maxRedirects = 20;
+
+        if (RESTFULCommand == RESTFULRequestEnum.SHUTDOWN)
+            this.body = JSON.stringify({
+                "waittime": 30,
+                "message": "Server will shutdown in 10 seconds."
+              });
     }
 
-    private SendRequest(): Promise<RESTFULResponse> {
+    public SendRequest(): Promise<RESTFULResponse> {
 
         return new Promise<RESTFULResponse>((resolve, reject) => {
 
@@ -38,7 +45,7 @@ class RESTFULRequest implements RequestOptions {
                 response.status = this.GetRESTFULResponseStatus(res.statusCode);
 
                 res.on('data', d => {
-                    process.stdout.write(d);
+                    //process.stdout.write(d);
                     response.message += d.toString();
                 });
 
@@ -54,7 +61,6 @@ class RESTFULRequest implements RequestOptions {
 
             req.end();
         });
-
     }
 
     public SendRequestSync(): RESTFULResponse {
@@ -62,23 +68,40 @@ class RESTFULRequest implements RequestOptions {
         let response: RESTFULResponse = RESTFULRequest.DefaultError();
         let loops = 0;
         let received = false;
-        const waitTill = new Date(new Date().getTime() + 10);
+        const waitTill = new Date(new Date().getTime() + 30000); // 30 seconds
 
-        this.SendRequest().then((res) => {
+        let idk = this.SendRequest().then((res) => {
             response = res;
             received = true;
+            console.log("Response Received");
             console.log(response);
+            
         }).catch((error) => {
             response.error = error.message;
             received = true;
         });
 
-
         // Work on a method to wait for the response
 
-        while (!received) {
-            while(waitTill > new Date()){ response.error = "Timeout";}
+        while (!received && new Date() < waitTill) {
+
+            const sleep = (milliseconds: number) => {
+                const start = new Date().getTime();
+                while (new Date().getTime() - start < milliseconds) {}
+            };
+            sleep(50); // Sleep for 50 milliseconds
         }
+
+        if (!received) {
+            console.log("Timeout");
+            response.error = 'Timeout';
+        } else
+        {
+            
+        }
+
+        console.log("Returning Response");
+        console.log(response);
 
         return response;
     }

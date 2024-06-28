@@ -17,11 +17,9 @@ class Start extends Command {
 
             scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
 
-            await this.Sleep(5000);
+            this.AddToResponseMessage("Waiting a few seconds to Ping Server");
 
-            //this.AddToResponseMessage("Server is Running");
-
-            setTimeout(() => { this.PingServer() }, 5000)
+            setTimeout(() => { PalworldRestfulCommands.PingServer(this) }, 10000)
 
         } catch (error) {
             this.AddToResponseMessage("Error Starting Server");
@@ -31,17 +29,6 @@ class Start extends Command {
     };
 
     public IsEphemeralResponse: boolean = true;
-
-    private PingServer(): void {
-
-        let ping = PalworldRestfulCommands.PingServer()
-
-        if (ping.status == 200)
-            this.AddToResponseMessage("Server is Running");
-        else
-            this.AddToResponseMessage("Server is Not Running");
-
-    }
 
     public async Sleep(milliseconds: number) {
         return await setTimeout(() => { }, milliseconds);

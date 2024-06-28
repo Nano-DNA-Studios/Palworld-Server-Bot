@@ -11,20 +11,9 @@ class Ping extends dna_discord_framework_1.Command {
         this.CommandDescription = 'Pings the Server to See if it Still Running';
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Pinging Server`);
-            this.PingServer();
+            PalworldRestfulCommands_1.default.PingServer(this);
         };
         this.IsEphemeralResponse = true;
-    }
-    PingServer() {
-        let ping = PalworldRestfulCommands_1.default.PingServer();
-        console.log(ping);
-        console.log(ping.status);
-        console.log(ping.message);
-        console.log(ping.error);
-        if (ping.status == 200)
-            this.AddToResponseMessage("Server is Running");
-        else
-            this.AddToResponseMessage("Server is Not Running");
     }
 }
 module.exports = Ping;

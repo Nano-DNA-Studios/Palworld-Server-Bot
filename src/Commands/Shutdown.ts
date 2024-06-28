@@ -1,6 +1,7 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BashScriptRunner, BotData, BotDataManager, Command } from "dna-discord-framework";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
 
 
 
@@ -12,23 +13,23 @@ class Shutdown extends Command {
 
         this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown`);
 
-        let bashRunner = new BashScriptRunner();
+        PalworldRestfulCommands.ShutdownServer().then((res) => {
 
-        bashRunner.RunLocally(`pkill "${BotData.Instance(PalworldServerBotDataManager).SERVER_START_SCRIPT}"`);
+            console.log(res);
 
-        bashRunner.RunLocally(`killall "${BotData.Instance(PalworldServerBotDataManager).SERVER_PROCESS_NAME}"`);
+            setTimeout(() => { PalworldRestfulCommands.PingServer(this) }, 3000)
 
-        bashRunner.RunLocally(`killall "steamcmd"`);
-
-        await this.Sleep(5000);
+        }).catch((error) => {
+            this.AddToResponseMessage("Error Shutting Down Server");
+        });
 
     };
     public IsEphemeralResponse: boolean = false;
 
     public async Sleep(milliseconds: number) {
-        return await setTimeout(() => {}, milliseconds);
+        return await setTimeout(() => { }, milliseconds);
     }
-   
+
 }
 
 export = Shutdown;

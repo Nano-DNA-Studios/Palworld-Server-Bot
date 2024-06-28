@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
-const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const PalworldRestfulCommands_1 = __importDefault(require("../RESTFUL/PalworldRestfulCommands"));
 class Shutdown extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -11,11 +11,12 @@ class Shutdown extends dna_discord_framework_1.Command {
         this.CommandDescription = 'Shuts down the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown`);
-            let bashRunner = new dna_discord_framework_1.BashScriptRunner();
-            bashRunner.RunLocally(`pkill "${dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).SERVER_START_SCRIPT}"`);
-            bashRunner.RunLocally(`killall "${dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).SERVER_PROCESS_NAME}"`);
-            bashRunner.RunLocally(`killall "steamcmd"`);
-            await this.Sleep(5000);
+            PalworldRestfulCommands_1.default.ShutdownServer().then((res) => {
+                console.log(res);
+                setTimeout(() => { PalworldRestfulCommands_1.default.PingServer(this); }, 3000);
+            }).catch((error) => {
+                this.AddToResponseMessage("Error Shutting Down Server");
+            });
         };
         this.IsEphemeralResponse = false;
     }

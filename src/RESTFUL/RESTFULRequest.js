@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const RESTFULRequestEnum_1 = __importDefault(require("./RESTFULRequestEnum"));
 const follow_redirects_1 = require("follow-redirects");
 const RESTFULResponseStatusEnum_1 = __importDefault(require("./RESTFULResponseStatusEnum"));
 class RESTFULRequest {
@@ -28,6 +29,11 @@ class RESTFULRequest {
         this.method = DataManager.RESTFUL_METHOD;
         this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
         this.maxRedirects = 20;
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.SHUTDOWN)
+            this.body = JSON.stringify({
+                "waittime": 30,
+                "message": "Server will shutdown in 10 seconds."
+            });
     }
     SendRequest() {
         return new Promise((resolve, reject) => {
@@ -36,7 +42,7 @@ class RESTFULRequest {
             const req = follow_redirects_1.http.request(this, res => {
                 response.status = this.GetRESTFULResponseStatus(res.statusCode);
                 res.on('data', d => {
-                    process.stdout.write(d);
+                    //process.stdout.write(d);
                     response.message += d.toString();
                 });
                 res.on('end', () => {
@@ -54,20 +60,32 @@ class RESTFULRequest {
         let response = RESTFULRequest.DefaultError();
         let loops = 0;
         let received = false;
-        this.SendRequest().then((res) => {
+        const waitTill = new Date(new Date().getTime() + 30000); // 30 seconds
+        let idk = this.SendRequest().then((res) => {
             response = res;
             received = true;
+            console.log("Response Received");
             console.log(response);
         }).catch((error) => {
             response.error = error.message;
             received = true;
         });
-        while (!received) {
-            const waitTill = new Date(new Date().getTime() + 10);
-            while (waitTill > new Date()) {
-                response.error = "Timeout";
-            }
+        // Work on a method to wait for the response
+        while (!received && new Date() < waitTill) {
+            const sleep = (milliseconds) => {
+                const start = new Date().getTime();
+                while (new Date().getTime() - start < milliseconds) { }
+            };
+            sleep(50); // Sleep for 50 milliseconds
         }
+        if (!received) {
+            console.log("Timeout");
+            response.error = 'Timeout';
+        }
+        else {
+        }
+        console.log("Returning Response");
+        console.log(response);
         return response;
     }
 }

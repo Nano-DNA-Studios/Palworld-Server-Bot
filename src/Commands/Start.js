@@ -14,9 +14,8 @@ class Start extends dna_discord_framework_1.Command {
             try {
                 let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
                 scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
-                await this.Sleep(5000);
-                //this.AddToResponseMessage("Server is Running");
-                setTimeout(() => { this.PingServer(); }, 5000);
+                this.AddToResponseMessage("Waiting a few seconds to Ping Server");
+                setTimeout(() => { PalworldRestfulCommands_1.default.PingServer(this); }, 10000);
             }
             catch (error) {
                 this.AddToResponseMessage("Error Starting Server");
@@ -24,13 +23,6 @@ class Start extends dna_discord_framework_1.Command {
             }
         };
         this.IsEphemeralResponse = true;
-    }
-    PingServer() {
-        let ping = PalworldRestfulCommands_1.default.PingServer();
-        if (ping.status == 200)
-            this.AddToResponseMessage("Server is Running");
-        else
-            this.AddToResponseMessage("Server is Not Running");
     }
     async Sleep(milliseconds) {
         return await setTimeout(() => { }, milliseconds);
