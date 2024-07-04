@@ -11,6 +11,8 @@ class ServerSettings extends Command {
 
         PalworldRestfulCommands.ServerSettings(this);
 
+        PalworldRestfulCommands.UpdateServerMetrics(this, client);
+
     };
     public IsEphemeralResponse: boolean = false;
 

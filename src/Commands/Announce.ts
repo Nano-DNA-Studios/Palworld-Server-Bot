@@ -18,6 +18,8 @@ class Announce extends Command {
 
         if (message) 
             PalworldRestfulCommands.Announce(this, message);
+
+        PalworldRestfulCommands.UpdateServerMetrics(this, client);
         
     };
 

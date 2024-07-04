@@ -12,6 +12,7 @@ class Ping extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Pinging Server`);
             PalworldRestfulCommands_1.default.PingServer(this);
+            PalworldRestfulCommands_1.default.UpdateServerMetrics(this, client);
         };
         this.IsEphemeralResponse = true;
     }

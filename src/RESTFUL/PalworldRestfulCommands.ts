@@ -1,8 +1,10 @@
-import { Command } from "dna-discord-framework";
+import { BotData, Command } from "dna-discord-framework";
 import RESTFULRequest from "./RESTFULRequest";
 import RESTFULRequestEnum from "./RESTFULRequestEnum";
-import RESTFULResponse from "./RESTFULResponse";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
+import ServerMetrics from "../ServerObjects/ServerMetrics";
+import { Client, ActivityType } from "discord.js";
+import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class PalworldRestfulCommands {
 
@@ -99,7 +101,7 @@ class PalworldRestfulCommands {
 
     }
 
-    public static Announce (command: Command, message: string): void {
+    public static Announce(command: Command, message: string): void {
         let request = new RESTFULRequest(RESTFULRequestEnum.ANNOUNCE);
 
         request.WriteBody({ 'message': message });
@@ -115,6 +117,20 @@ class PalworldRestfulCommands {
             command.AddToResponseMessage("Error Sending Announcement");
         });
 
+    }
+
+    public static UpdateServerMetrics (command: Command, client: Client): void {
+
+        let request = new RESTFULRequest(RESTFULRequestEnum.METRICS);
+
+        request.SendRequest().then((res) => {
+            if (res.status == 200) {
+                let metrics = new ServerMetrics(res.message);
+
+                BotData.Instance(PalworldServerBotDataManager).UpdateMetricsStatus(metrics, client);
+            }
+        }).catch((error) => {
+        });
     }
 }
 

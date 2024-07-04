@@ -3,9 +3,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dna_discord_framework_1 = require("dna-discord-framework");
 const RESTFULRequest_1 = __importDefault(require("./RESTFULRequest"));
 const RESTFULRequestEnum_1 = __importDefault(require("./RESTFULRequestEnum"));
 const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
+const ServerMetrics_1 = __importDefault(require("../ServerObjects/ServerMetrics"));
+const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 class PalworldRestfulCommands {
     static PingServer(command) {
         let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.INFO);
@@ -78,13 +81,22 @@ class PalworldRestfulCommands {
         let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.ANNOUNCE);
         request.WriteBody({ 'message': message });
         request.SendRequest().then((res) => {
-            console.log(res);
             if (res.status == 200)
                 command.AddToResponseMessage("Announcement Sent");
             else
                 command.AddToResponseMessage("Error Sending Announcement");
         }).catch((error) => {
             command.AddToResponseMessage("Error Sending Announcement");
+        });
+    }
+    static UpdateServerMetrics(command, client) {
+        let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.METRICS);
+        request.SendRequest().then((res) => {
+            if (res.status == 200) {
+                let metrics = new ServerMetrics_1.default(res.message);
+                dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(metrics, client);
+            }
+        }).catch((error) => {
         });
     }
 }

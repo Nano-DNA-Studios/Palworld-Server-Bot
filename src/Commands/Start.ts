@@ -30,6 +30,8 @@ class Start extends Command {
 
     public IsEphemeralResponse: boolean = true;
 
+    
+
     public async Sleep(milliseconds: number) {
         return await setTimeout(() => { }, milliseconds);
     }

@@ -1,8 +1,9 @@
 import { BotDataManager } from "dna-discord-framework";
+import ServerMetrics from "./ServerObjects/ServerMetrics";
+import { Client, ActivityType } from "discord.js";
 
-class PalworldServerBotDataManager extends BotDataManager
-{
-    
+class PalworldServerBotDataManager extends BotDataManager {
+
     SERVER_PATH: string = '/home/steam/PalworldServer';
 
     START_SETTINGS_FILE_PATH = '../Files/StartSettings.ini'
@@ -33,6 +34,13 @@ class PalworldServerBotDataManager extends BotDataManager
 
     SERVER_DESCRIPTION: string = '';
 
+    public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
+        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
+
+        if (client.user)
+            client.user.setActivity(message, { type: ActivityType.Playing });
+    }
+
 }
-    
+
 export default PalworldServerBotDataManager;
