@@ -29,9 +29,6 @@ class PalworldRestfulCommands {
             let request = new RESTFULRequest(RESTFULRequestEnum.SHUTDOWN);
 
             request.SendRequest().then((res) => {
-
-                console.log(res);
-
                 setTimeout(() => { PalworldRestfulCommands.PingServer(command) }, 3000)
 
             }).catch((error) => {
@@ -77,6 +74,45 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             console.log(error);
             command.AddToResponseMessage("Error Retrieving Server Settings");
+        });
+
+    }
+
+    public static ForceStop(command: Command): void {
+        this.SaveWorld(command);
+
+        setTimeout(() => {
+            let request = new RESTFULRequest(RESTFULRequestEnum.FORCESTOP);
+
+            request.SendRequest().then((res) => {
+
+                if (res.status == 200)
+                    command.AddToResponseMessage("Server has been Forced Stopped");
+                else
+                    command.AddToResponseMessage("Error Force Stopping Server");
+
+            }).catch((error) => {
+                console.log(error);
+                command.AddToResponseMessage("Error Force Stopping Server");
+            });
+        }, 3000);
+
+    }
+
+    public static Announce (command: Command, message: string): void {
+        let request = new RESTFULRequest(RESTFULRequestEnum.ANNOUNCE);
+
+        request.WriteBody({ 'message': message });
+
+        request.SendRequest().then((res) => {
+
+            if (res.status == 200)
+                command.AddToResponseMessage("Announcement Sent");
+            else
+                command.AddToResponseMessage("Error Sending Announcement");
+
+        }).catch((error) => {
+            command.AddToResponseMessage("Error Sending Announcement");
         });
 
     }

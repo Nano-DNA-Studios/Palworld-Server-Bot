@@ -54,17 +54,9 @@ class Setup extends Command {
                 this.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-
-
             this.SetSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
             this.SetSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
             this.SetSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
-
-
-
-
-
-
 
             this.SaveSettings();
 
