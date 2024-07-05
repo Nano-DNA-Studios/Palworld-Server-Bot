@@ -34,6 +34,8 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     SERVER_DESCRIPTION: string = '';
 
+    PALWORLD_GAME_FILES = "/home/steam/PalworldServer/Pal/Saved"
+
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
 

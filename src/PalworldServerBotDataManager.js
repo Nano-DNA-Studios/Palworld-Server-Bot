@@ -20,6 +20,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_ADMIN_PASSWORD = '';
         this.SERVER_NAME = '';
         this.SERVER_DESCRIPTION = '';
+        this.PALWORLD_GAME_FILES = "/home/steam/PalworldServer/Pal/Saved";
     }
     UpdateMetricsStatus(metrics, client) {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;

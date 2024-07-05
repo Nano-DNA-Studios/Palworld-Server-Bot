@@ -17,6 +17,7 @@ RUN cd /tmp \
 # Create the Palworld Server Directory
 RUN mkdir /home/steam/PalworldBot
 RUN mkdir /home/steam/PalworldServer
+RUN mkdir /home/steam/Backups
 
 # Give Ownership to the Steam User for the Palworld Server Directory
 RUN chown -R steam:steam /home/steam/PalworldServer 
@@ -25,6 +26,10 @@ RUN chmod -R 755 /home/steam/PalworldServer
 # Give Ownership to the Steam User for the Palworld Bot Directory
 RUN chown -R steam:steam /home/steam/PalworldBot
 RUN chmod -R 755 /home/steam/PalworldBot
+
+# Give Ownership to the Steam User for the Backup Directory
+RUN chown -R steam:steam /home/steam/Backups
+RUN chmod -R 755 /home/steam/Backups
 
 USER steam
 
