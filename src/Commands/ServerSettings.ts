@@ -9,7 +9,7 @@ class ServerSettings extends Command {
 
         this.InitializeUserResponse(interaction, `Saving the Game World`);
 
-        PalworldRestfulCommands.ServerSettings(this);
+        PalworldRestfulCommands.ServerSettings(this, client);
 
     };
     public IsEphemeralResponse: boolean = false;

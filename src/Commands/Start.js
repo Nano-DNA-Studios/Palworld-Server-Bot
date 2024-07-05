@@ -15,7 +15,7 @@ class Start extends dna_discord_framework_1.Command {
                 let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
                 scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
                 this.AddToResponseMessage("Waiting a few seconds to Ping Server");
-                setTimeout(() => { PalworldRestfulCommands_1.default.PingServer(this); }, 10000);
+                setTimeout(() => { PalworldRestfulCommands_1.default.PingServer(this, client); }, 10000);
             }
             catch (error) {
                 this.AddToResponseMessage("Error Starting Server");

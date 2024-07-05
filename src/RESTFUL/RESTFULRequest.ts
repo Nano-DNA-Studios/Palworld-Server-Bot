@@ -12,8 +12,9 @@ class RESTFULRequest implements RequestOptions {
     public port: number;
     public path: string;
     public method: string;
-    public headers: { Accept: string; Authorization: string; 'Content-Type'?: string };
+    public headers: { Accept: string; Authorization: string; 'Content-Type'?: string , 'Content-Length'?: number};
     public maxRedirects: number;
+    public maxBodyLength?: number;
     public body?: any;
 
     constructor(RESTFULCommand: RESTFULRequestEnum) {
@@ -31,14 +32,29 @@ class RESTFULRequest implements RequestOptions {
 
 
         if (RESTFULCommand == RESTFULRequestEnum.SHUTDOWN) {
-            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json' };
-            this.method = DataManager.RESTFUL_POST_METHOD;
 
-            this.body = JSON.stringify({
+            let shutdownBody = JSON.stringify({
                 "waittime": 30,
                 "message": "Server will shutdown in 10 seconds."
             });
+
+            this.body = shutdownBody;
+
+            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(shutdownBody) };
+            this.method = DataManager.RESTFUL_POST_METHOD;
         }
+
+        if (RESTFULCommand == RESTFULRequestEnum.FORCESTOP)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+
+
+        if (RESTFULCommand == RESTFULRequestEnum.ANNOUNCE)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+
+        if (RESTFULCommand == RESTFULRequestEnum.PLAYERS)
+            this.maxBodyLength = Infinity;
+
+        // console.log(JSON.stringify(this));
 
     }
 
@@ -54,7 +70,6 @@ class RESTFULRequest implements RequestOptions {
                 response.status = this.GetRESTFULResponseStatus(res.statusCode);
 
                 res.on('data', d => {
-                    //process.stdout.write(d);
                     response.message += d.toString();
                 });
 
@@ -136,6 +151,17 @@ class RESTFULRequest implements RequestOptions {
 
     public static DefaultError = (): RESTFULResponse => {
         return { status: RESTFULResponseStatusEnum.ERROR, message: '', error: 'An Error Occurred' };
+    }
+
+    public WriteBody = (content: object): void => {
+
+        const DataManager = BotData.Instance(PalworldServerBotDataManager)
+
+        let stringifiedContent = JSON.stringify(content);
+
+        this.body = stringifiedContent
+
+        this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(stringifiedContent) };
     }
 
 }

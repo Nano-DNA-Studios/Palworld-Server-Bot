@@ -10,10 +10,35 @@ class Shutdown extends dna_discord_framework_1.Command {
         this.CommandName = 'shutdown';
         this.CommandDescription = 'Shuts down the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown`);
-            PalworldRestfulCommands_1.default.ShutdownServer(this);
+            let waittime = interaction.options.getNumber('waittime');
+            if (waittime) {
+                this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
+                PalworldRestfulCommands_1.default.ShutdownServer(this, client, waittime);
+            }
         };
         this.IsEphemeralResponse = false;
+        this.Options = [
+            {
+                name: 'waittime',
+                description: 'Force the',
+                type: dna_discord_framework_1.OptionTypesEnum.Number,
+                required: true,
+                choices: [
+                    {
+                        name: '10 seconds',
+                        value: 10
+                    },
+                    {
+                        name: '20 seconds',
+                        value: 20
+                    },
+                    {
+                        name: '30 seconds',
+                        value: 30
+                    }
+                ]
+            }
+        ];
     }
 }
 module.exports = Shutdown;

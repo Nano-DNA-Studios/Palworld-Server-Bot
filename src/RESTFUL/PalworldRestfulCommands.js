@@ -3,11 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const dna_discord_framework_1 = require("dna-discord-framework");
 const RESTFULRequest_1 = __importDefault(require("./RESTFULRequest"));
 const RESTFULRequestEnum_1 = __importDefault(require("./RESTFULRequestEnum"));
 const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
+const ServerMetrics_1 = __importDefault(require("../ServerObjects/ServerMetrics"));
+const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const Player_1 = __importDefault(require("../ServerObjects/Player"));
 class PalworldRestfulCommands {
-    static PingServer(command) {
+    static PingServer(command, client) {
         let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.INFO);
         request.SendRequest().then((res) => {
             if (res.status == 200)
@@ -15,23 +19,23 @@ class PalworldRestfulCommands {
             else
                 command.AddToResponseMessage("Server is Not Running");
         }).catch((error) => {
-            command.AddToResponseMessage("Server is Not Running, an Error Occurred.");
+            command.AddToResponseMessage("Server is Not Running");
         });
+        this.UpdateServerMetrics(client);
     }
-    static ShutdownServer(command) {
-        this.SaveWorld(command);
+    static ShutdownServer(command, client, waittime) {
+        this.SaveWorld(command, client);
         setTimeout(() => {
             let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.SHUTDOWN);
+            request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
             request.SendRequest().then((res) => {
-                console.log(res);
-                setTimeout(() => { PalworldRestfulCommands.PingServer(command); }, 3000);
+                setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
             }).catch((error) => {
-                console.log(error);
                 command.AddToResponseMessage("Error Shutting Down Server");
             });
         }, 3000);
     }
-    static SaveWorld(command) {
+    static SaveWorld(command, client) {
         let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.SAVE);
         request.SendRequest().then((res) => {
             if (res.status == 200)
@@ -41,8 +45,9 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
+        this.UpdateServerMetrics(client);
     }
-    static ServerSettings(command) {
+    static ServerSettings(command, client) {
         let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.SETTINGS);
         request.SendRequest().then((res) => {
             console.log(res);
@@ -59,6 +64,68 @@ class PalworldRestfulCommands {
             console.log(error);
             command.AddToResponseMessage("Error Retrieving Server Settings");
         });
+        this.UpdateServerMetrics(client);
+    }
+    static ForceStop(command, client) {
+        this.SaveWorld(command, client);
+        setTimeout(() => {
+            let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.FORCESTOP);
+            request.SendRequest().then((res) => {
+                if (res.status == 200)
+                    command.AddToResponseMessage("Server has been Forced Stopped");
+                else
+                    command.AddToResponseMessage("Error Force Stopping Server");
+            }).catch((error) => {
+                console.log(error);
+                command.AddToResponseMessage("Error Force Stopping Server");
+            });
+            this.UpdateServerMetrics(client);
+        }, 3000);
+    }
+    static Announce(command, client, message) {
+        let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.ANNOUNCE);
+        request.WriteBody({ 'message': message });
+        request.SendRequest().then((res) => {
+            if (res.status == 200)
+                command.AddToResponseMessage("Announcement Sent");
+            else
+                command.AddToResponseMessage("Error Sending Announcement");
+        }).catch((error) => {
+            command.AddToResponseMessage("Error Sending Announcement");
+        });
+        this.UpdateServerMetrics(client);
+    }
+    static UpdateServerMetrics(client) {
+        let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.METRICS);
+        request.SendRequest().then((res) => {
+            if (res.status == 200) {
+                let metrics = new ServerMetrics_1.default(res.message);
+                dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(metrics, client);
+            }
+        }).catch((error) => {
+            dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(ServerMetrics_1.default.DefaultMetrics(), client);
+        });
+    }
+    static GetPlayers(command, client) {
+        let request = new RESTFULRequest_1.default(RESTFULRequestEnum_1.default.PLAYERS);
+        request.SendRequest().then((res) => {
+            if (res.status == 200) {
+                let players = [];
+                let content = JSON.parse(res.message)['players'];
+                content.forEach((player) => {
+                    console.log(player);
+                    players.push(new Player_1.default(player));
+                });
+                players.forEach((player) => {
+                    command.AddToResponseMessage(`Player: ${player.Name} - Level : ${player.Level} - Location: (${player.LocationX}, ${player.LocationY})`);
+                });
+            }
+            else
+                command.AddToResponseMessage("Could not Retreive Players");
+        }).catch((error) => {
+            command.AddToResponseMessage("Error Retrieving Players");
+        });
+        this.UpdateServerMetrics(client);
     }
 }
 exports.default = PalworldRestfulCommands;

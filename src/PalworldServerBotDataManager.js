@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
+const discord_js_1 = require("discord.js");
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super(...arguments);
@@ -19,6 +20,15 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_ADMIN_PASSWORD = '';
         this.SERVER_NAME = '';
         this.SERVER_DESCRIPTION = '';
+    }
+    UpdateMetricsStatus(metrics, client) {
+        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
+        if (client.user) {
+            if (metrics.Uptime == 0 || metrics.Uptime == undefined)
+                client.user.setActivity("Server Offline", { type: discord_js_1.ActivityType.Playing });
+            else
+                client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
+        }
     }
 }
 exports.default = PalworldServerBotDataManager;

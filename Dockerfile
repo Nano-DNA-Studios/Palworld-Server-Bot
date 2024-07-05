@@ -40,8 +40,6 @@ COPY ./ /home/steam/PalworldBot
 
 # Start the Container and have it use host device IP Network
 # docker run -it --network="host" mrdnalex/palworldserverbot
-# 
-
 
 WORKDIR /home/steam/PalworldBot
 

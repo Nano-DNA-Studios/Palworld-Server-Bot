@@ -11,7 +11,7 @@ class ServerSettings extends dna_discord_framework_1.Command {
         this.CommandDescription = 'Returns the Server Settings for the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Saving the Game World`);
-            PalworldRestfulCommands_1.default.ServerSettings(this);
+            PalworldRestfulCommands_1.default.ServerSettings(this, client);
         };
         this.IsEphemeralResponse = false;
     }

@@ -22,6 +22,12 @@ class RESTFULRequest {
                     return RESTFULResponseStatusEnum_1.default.ERROR;
             }
         };
+        this.WriteBody = (content) => {
+            const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+            let stringifiedContent = JSON.stringify(content);
+            this.body = stringifiedContent;
+            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(stringifiedContent) };
+        };
         const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
         this.hostname = DataManager.RESTFUL_HOSTNAME;
         this.port = DataManager.RESTFUL_PORT;
@@ -32,13 +38,21 @@ class RESTFULRequest {
         if (RESTFULCommand == RESTFULRequestEnum_1.default.SAVE)
             this.method = DataManager.RESTFUL_POST_METHOD;
         if (RESTFULCommand == RESTFULRequestEnum_1.default.SHUTDOWN) {
-            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json' };
-            this.method = DataManager.RESTFUL_POST_METHOD;
-            this.body = JSON.stringify({
+            let shutdownBody = JSON.stringify({
                 "waittime": 30,
                 "message": "Server will shutdown in 10 seconds."
             });
+            this.body = shutdownBody;
+            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(shutdownBody) };
+            this.method = DataManager.RESTFUL_POST_METHOD;
         }
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.FORCESTOP)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.ANNOUNCE)
+            this.method = DataManager.RESTFUL_POST_METHOD;
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.PLAYERS)
+            this.maxBodyLength = Infinity;
+        // console.log(JSON.stringify(this));
     }
     SendRequest() {
         return new Promise((resolve, reject) => {
@@ -47,7 +61,6 @@ class RESTFULRequest {
             const req = follow_redirects_1.http.request(this, res => {
                 response.status = this.GetRESTFULResponseStatus(res.statusCode);
                 res.on('data', d => {
-                    //process.stdout.write(d);
                     response.message += d.toString();
                 });
                 res.on('end', () => {
