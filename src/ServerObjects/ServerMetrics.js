@@ -39,4 +39,8 @@ class ServerMetrics {
         this.MaxPlayerNum = content[ServerMetricsEnum_1.default.MaxPlayerNum];
     }
 }
+ServerMetrics.DefaultMetrics = () => {
+    let metrics = new ServerMetrics('{"CurrentPlayerNum":0,"Uptime":0,"ServerFrameTime":0,"ServerFPS":0,"MaxPlayerNum":0}');
+    return metrics;
+};
 exports.default = ServerMetrics;

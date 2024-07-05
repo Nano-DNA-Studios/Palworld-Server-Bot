@@ -37,8 +37,12 @@ class PalworldServerBotDataManager extends BotDataManager {
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
 
-        if (client.user)
-            client.user.setActivity(message, { type: ActivityType.Playing });
+        if (client.user) {
+            if (metrics.Uptime == 0 || metrics.Uptime == undefined)
+                client.user.setActivity("Server Offline", { type: ActivityType.Playing });
+            else
+                client.user.setActivity(message, { type: ActivityType.Playing });
+        }
     }
 
 }

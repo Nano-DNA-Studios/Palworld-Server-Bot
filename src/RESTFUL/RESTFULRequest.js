@@ -50,6 +50,8 @@ class RESTFULRequest {
             this.method = DataManager.RESTFUL_POST_METHOD;
         if (RESTFULCommand == RESTFULRequestEnum_1.default.ANNOUNCE)
             this.method = DataManager.RESTFUL_POST_METHOD;
+        if (RESTFULCommand == RESTFULRequestEnum_1.default.PLAYERS)
+            this.maxBodyLength = Infinity;
         // console.log(JSON.stringify(this));
     }
     SendRequest() {

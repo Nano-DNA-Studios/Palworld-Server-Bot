@@ -9,7 +9,7 @@ class ForceStop extends Command {
 
         this.InitializeUserResponse(interaction, `Force Stopping the Palworld Server`);
 
-        PalworldRestfulCommands.ForceStop(this)
+        PalworldRestfulCommands.ForceStop(this, client)
 
     };
     public IsEphemeralResponse: boolean = false;

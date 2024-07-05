@@ -17,9 +17,9 @@ class Announce extends Command {
         this.InitializeUserResponse(interaction, `Announcing Message: ${message}`);
 
         if (message) 
-            PalworldRestfulCommands.Announce(this, message);
+            PalworldRestfulCommands.Announce(this,client, message);
 
-        PalworldRestfulCommands.UpdateServerMetrics(this, client);
+        
         
     };
 

@@ -14,6 +14,7 @@ class RESTFULRequest implements RequestOptions {
     public method: string;
     public headers: { Accept: string; Authorization: string; 'Content-Type'?: string , 'Content-Length'?: number};
     public maxRedirects: number;
+    public maxBodyLength?: number;
     public body?: any;
 
     constructor(RESTFULCommand: RESTFULRequestEnum) {
@@ -50,6 +51,8 @@ class RESTFULRequest implements RequestOptions {
         if (RESTFULCommand == RESTFULRequestEnum.ANNOUNCE)
             this.method = DataManager.RESTFUL_POST_METHOD;
 
+        if (RESTFULCommand == RESTFULRequestEnum.PLAYERS)
+            this.maxBodyLength = Infinity;
 
         // console.log(JSON.stringify(this));
 

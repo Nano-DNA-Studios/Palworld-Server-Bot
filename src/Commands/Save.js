@@ -11,7 +11,7 @@ class Save extends dna_discord_framework_1.Command {
         this.CommandDescription = 'Save the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Saving the Game World`);
-            PalworldRestfulCommands_1.default.SaveWorld(this);
+            PalworldRestfulCommands_1.default.SaveWorld(this, client);
         };
         this.IsEphemeralResponse = false;
     }

@@ -10,9 +10,7 @@ class Ping extends Command {
 
         this.InitializeUserResponse(interaction, `Pinging Server`);
 
-        PalworldRestfulCommands.PingServer(this)
-
-        PalworldRestfulCommands.UpdateServerMetrics(this, client);
+        PalworldRestfulCommands.PingServer(this, client);
     };
 
     public IsEphemeralResponse: boolean = true;

@@ -19,7 +19,7 @@ class Start extends Command {
 
             this.AddToResponseMessage("Waiting a few seconds to Ping Server");
 
-            setTimeout(() => { PalworldRestfulCommands.PingServer(this) }, 10000)
+            setTimeout(() => { PalworldRestfulCommands.PingServer(this, client) }, 10000)
 
         } catch (error) {
             this.AddToResponseMessage("Error Starting Server");

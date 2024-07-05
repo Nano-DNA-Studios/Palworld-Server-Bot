@@ -23,8 +23,12 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
     }
     UpdateMetricsStatus(metrics, client) {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
-        if (client.user)
-            client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
+        if (client.user) {
+            if (metrics.Uptime == 0 || metrics.Uptime == undefined)
+                client.user.setActivity("Server Offline", { type: discord_js_1.ActivityType.Playing });
+            else
+                client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
+        }
     }
 }
 exports.default = PalworldServerBotDataManager;

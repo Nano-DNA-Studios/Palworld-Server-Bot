@@ -13,8 +13,7 @@ class Announce extends dna_discord_framework_1.Command {
             const message = interaction.options.getString('message');
             this.InitializeUserResponse(interaction, `Announcing Message: ${message}`);
             if (message)
-                PalworldRestfulCommands_1.default.Announce(this, message);
-            PalworldRestfulCommands_1.default.UpdateServerMetrics(this, client);
+                PalworldRestfulCommands_1.default.Announce(this, client, message);
         };
         this.IsEphemeralResponse = true;
         this.Options = [
