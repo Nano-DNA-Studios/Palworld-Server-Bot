@@ -1,5 +1,5 @@
 import { BotDataManager, Command } from "dna-discord-framework";
-import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
+import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 
 

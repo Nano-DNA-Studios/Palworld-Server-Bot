@@ -1,61 +1,28 @@
-import { BotData } from "dna-discord-framework";
-import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import RESTFULRequestEnum from "./RESTFULRequestEnum";
 import { http } from "follow-redirects";
 import RESTFULResponseStatusEnum from "./RESTFULResponseStatusEnum";
-import RequestOptions from "./RequestOptions";
 import RESTFULResponse from "./RESTFULResponse";
+import IRESTFULRequest from "./IRESTFULRequest";
 
-class RESTFULRequest implements RequestOptions {
+class RESTFULRequest implements IRESTFULRequest {
 
-    public hostname: string;
-    public port: number;
-    public path: string;
-    public method: string;
-    public headers: { Accept: string; Authorization: string; 'Content-Type'?: string , 'Content-Length'?: number};
-    public maxRedirects: number;
-    public maxBodyLength?: number;
-    public body?: any;
+    public hostname: string | undefined;
+    public port: number| undefined;
+    public path: string| undefined;
+    public method: string| undefined;
+    public headers: { Accept: string| undefined; Authorization: string| undefined; 'Content-Type'?: string| undefined , 'Content-Length'?: number| undefined};
+    public maxRedirects: number| undefined;
+    public maxBodyLength?: number| undefined;
+    public body?: any| undefined;
 
-    constructor(RESTFULCommand: RESTFULRequestEnum) {
-
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-        this.hostname = DataManager.RESTFUL_HOSTNAME;
-        this.port = DataManager.RESTFUL_PORT;
-        this.path = `/v1/api/${RESTFULCommand}`;
-        this.method = DataManager.RESTFUL_GET_METHOD;
-        this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
-        this.maxRedirects = 20;
-
-        if (RESTFULCommand == RESTFULRequestEnum.SAVE)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-
-
-        if (RESTFULCommand == RESTFULRequestEnum.SHUTDOWN) {
-
-            let shutdownBody = JSON.stringify({
-                "waittime": 30,
-                "message": "Server will shutdown in 10 seconds."
-            });
-
-            this.body = shutdownBody;
-
-            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(shutdownBody) };
-            this.method = DataManager.RESTFUL_POST_METHOD;
-        }
-
-        if (RESTFULCommand == RESTFULRequestEnum.FORCESTOP)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-
-
-        if (RESTFULCommand == RESTFULRequestEnum.ANNOUNCE)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-
-        if (RESTFULCommand == RESTFULRequestEnum.PLAYERS)
-            this.maxBodyLength = Infinity;
-
-        // console.log(JSON.stringify(this));
-
+    constructor(init?: Partial<IRESTFULRequest>) {
+        this.hostname = init?.hostname || '';
+        this.port = init?.port || 0;
+        this.path = init?.path || '';
+        this.method = init?.method || '';
+        this.headers = init?.headers || { Accept: '', Authorization: '' };
+        this.maxRedirects = init?.maxRedirects || 0;
+        this.maxBodyLength = init?.maxBodyLength;
+        this.body = init?.body;
     }
 
     public SendRequest(): Promise<RESTFULResponse> {
@@ -83,56 +50,11 @@ class RESTFULRequest implements RequestOptions {
                 reject(e);  // Reject the promise on error
             });
 
-            if (this.method === 'POST' && this.body) {
-                if (this.path.includes('shutdown'))
-                    console.log(this.body);
-                req.write(this.body);  // Write the JSON string body for POST requests
-            }
-
+            if (this.method === 'POST' && this.body) 
+                req.write(this.body);
+                
             req.end();
         });
-    }
-
-    public SendRequestSync(): RESTFULResponse {
-
-        let response: RESTFULResponse = RESTFULRequest.DefaultError();
-        let loops = 0;
-        let received = false;
-        const waitTill = new Date(new Date().getTime() + 30000); // 30 seconds
-
-        let idk = this.SendRequest().then((res) => {
-            response = res;
-            received = true;
-            console.log("Response Received");
-            console.log(response);
-
-        }).catch((error) => {
-            response.error = error.message;
-            received = true;
-        });
-
-        // Work on a method to wait for the response
-
-        while (!received && new Date() < waitTill) {
-
-            const sleep = (milliseconds: number) => {
-                const start = new Date().getTime();
-                while (new Date().getTime() - start < milliseconds) { }
-            };
-            sleep(50); // Sleep for 50 milliseconds
-        }
-
-        if (!received) {
-            console.log("Timeout");
-            response.error = 'Timeout';
-        } else {
-
-        }
-
-        console.log("Returning Response");
-        console.log(response);
-
-        return response;
     }
 
     private GetRESTFULResponseStatus = (statusCode: number | undefined): RESTFULResponseStatusEnum => {
@@ -155,13 +77,13 @@ class RESTFULRequest implements RequestOptions {
 
     public WriteBody = (content: object): void => {
 
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-
         let stringifiedContent = JSON.stringify(content);
 
         this.body = stringifiedContent
 
-        this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(stringifiedContent) };
+        this.headers["Content-Type"] = 'application/json'
+        
+        this.headers["Content-Length"] = Buffer.byteLength(stringifiedContent)
     }
 
 }

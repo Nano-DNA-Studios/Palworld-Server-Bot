@@ -5,11 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
-const RESTFULRequestEnum_1 = __importDefault(require("./RESTFULRequestEnum"));
 const follow_redirects_1 = require("follow-redirects");
 const RESTFULResponseStatusEnum_1 = __importDefault(require("./RESTFULResponseStatusEnum"));
 class RESTFULRequest {
-    constructor(RESTFULCommand) {
+    constructor(init) {
         this.GetRESTFULResponseStatus = (statusCode) => {
             switch (statusCode) {
                 case 200:
@@ -28,31 +27,14 @@ class RESTFULRequest {
             this.body = stringifiedContent;
             this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(stringifiedContent) };
         };
-        const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-        this.hostname = DataManager.RESTFUL_HOSTNAME;
-        this.port = DataManager.RESTFUL_PORT;
-        this.path = `/v1/api/${RESTFULCommand}`;
-        this.method = DataManager.RESTFUL_GET_METHOD;
-        this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64') };
-        this.maxRedirects = 20;
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.SAVE)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.SHUTDOWN) {
-            let shutdownBody = JSON.stringify({
-                "waittime": 30,
-                "message": "Server will shutdown in 10 seconds."
-            });
-            this.body = shutdownBody;
-            this.headers = { Accept: 'application/json', Authorization: 'Basic ' + Buffer.from(`admin:${DataManager.SERVER_ADMIN_PASSWORD}`).toString('base64'), 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(shutdownBody) };
-            this.method = DataManager.RESTFUL_POST_METHOD;
-        }
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.FORCESTOP)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.ANNOUNCE)
-            this.method = DataManager.RESTFUL_POST_METHOD;
-        if (RESTFULCommand == RESTFULRequestEnum_1.default.PLAYERS)
-            this.maxBodyLength = Infinity;
-        // console.log(JSON.stringify(this));
+        this.hostname = init?.hostname || '';
+        this.port = init?.port || 0;
+        this.path = init?.path || '';
+        this.method = init?.method || '';
+        this.headers = init?.headers || { Accept: '', Authorization: '' };
+        this.maxRedirects = init?.maxRedirects || 0;
+        this.maxBodyLength = init?.maxBodyLength;
+        this.body = init?.body;
     }
     SendRequest() {
         return new Promise((resolve, reject) => {
@@ -71,11 +53,8 @@ class RESTFULRequest {
                 response.error += e.message;
                 reject(e); // Reject the promise on error
             });
-            if (this.method === 'POST' && this.body) {
-                if (this.path.includes('shutdown'))
-                    console.log(this.body);
-                req.write(this.body); // Write the JSON string body for POST requests
-            }
+            if (this.method === 'POST' && this.body)
+                req.write(this.body);
             req.end();
         });
     }
