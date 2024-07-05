@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
-const RESTFULRequest_1 = __importDefault(require("../RESTFUL/RESTFULRequest"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
 class PalworldRESTFULCommandFactory {
@@ -35,7 +34,7 @@ class PalworldRESTFULCommandFactory {
     }
     static DefaultGetRequest(RESTFULCommand) {
         const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-        return new RESTFULRequest_1.default({
+        return new dna_discord_framework_1.RESTFULRequest({
             hostname: DataManager.RESTFUL_HOSTNAME,
             port: DataManager.RESTFUL_PORT,
             path: `/v1/api/${RESTFULCommand}`,
@@ -47,7 +46,7 @@ class PalworldRESTFULCommandFactory {
     }
     static DefaultPostRequest(RESTFULCommand) {
         const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-        return new RESTFULRequest_1.default({
+        return new dna_discord_framework_1.RESTFULRequest({
             hostname: DataManager.RESTFUL_HOSTNAME,
             port: DataManager.RESTFUL_PORT,
             path: `/v1/api/${RESTFULCommand}`,
