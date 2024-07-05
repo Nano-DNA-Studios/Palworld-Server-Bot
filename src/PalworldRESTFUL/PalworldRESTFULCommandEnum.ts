@@ -1,6 +1,6 @@
 
 
-enum RESTFULRequestEnum 
+enum PalworldRESTFULCommandEnum 
 {
     INFO = 'info',
     PLAYERS = 'players',
@@ -15,4 +15,4 @@ enum RESTFULRequestEnum
     FORCESTOP = 'stop',
 }
 
-export default RESTFULRequestEnum;
+export default PalworldRESTFULCommandEnum ;

@@ -1,6 +1,6 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
-import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
+import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
 class Shutdown extends Command {
     public CommandName: string = 'shutdown';
@@ -39,7 +39,6 @@ class Shutdown extends Command {
             ]
         }
     ];
-
 }
 
 export = Shutdown;

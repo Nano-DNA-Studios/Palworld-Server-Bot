@@ -1,6 +1,5 @@
 import PlayerPropertiesEnum from "../Options/PlayerPropertiesEnum";
 
-
 class Player
 {
     public Name : string;
@@ -33,7 +32,6 @@ class Player
         this.LocationY = json[PlayerPropertiesEnum.LocationY];
         this.Level = json[PlayerPropertiesEnum.Level];
     }
-
 }
 
 export default Player;

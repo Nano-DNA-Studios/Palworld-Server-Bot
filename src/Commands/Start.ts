@@ -1,6 +1,6 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BashScriptRunner, BotDataManager, Command } from "dna-discord-framework";
-import PalworldRestfulCommands from "../RESTFUL/PalworldRestfulCommands";
+import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
 class Start extends Command {
 
@@ -30,12 +30,9 @@ class Start extends Command {
 
     public IsEphemeralResponse: boolean = true;
 
-    
-
     public async Sleep(milliseconds: number) {
         return await setTimeout(() => { }, milliseconds);
     }
-
 }
 
 export = Start;

@@ -1,16 +1,16 @@
 import { BotData, Command } from "dna-discord-framework";
-import RESTFULRequest from "./RESTFULRequest";
-import RESTFULRequestEnum from "./RESTFULRequestEnum";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 import ServerMetrics from "../ServerObjects/ServerMetrics";
 import { Client } from "discord.js";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import Player from "../ServerObjects/Player";
+import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
+import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
 
 class PalworldRestfulCommands {
 
     public static PingServer(command: Command, client: Client): void {
-        let request = new RESTFULRequest(RESTFULRequestEnum.INFO);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.INFO);
 
         request.SendRequest().then((res) => {
             if (res.status == 200)
@@ -30,7 +30,7 @@ class PalworldRestfulCommands {
         this.SaveWorld(command, client);
 
         setTimeout(() => {
-            let request = new RESTFULRequest(RESTFULRequestEnum.SHUTDOWN);
+            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
 
             request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
@@ -44,7 +44,7 @@ class PalworldRestfulCommands {
     }
 
     public static SaveWorld(command: Command, client: Client): void {
-        let request = new RESTFULRequest(RESTFULRequestEnum.SAVE);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
 
         request.SendRequest().then((res) => {
 
@@ -62,7 +62,7 @@ class PalworldRestfulCommands {
 
     public static ServerSettings(command: Command, client: Client): void {
 
-        let request = new RESTFULRequest(RESTFULRequestEnum.SETTINGS);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
 
         request.SendRequest().then((res) => {
             console.log(res);
@@ -90,7 +90,7 @@ class PalworldRestfulCommands {
         this.SaveWorld(command, client);
 
         setTimeout(() => {
-            let request = new RESTFULRequest(RESTFULRequestEnum.FORCESTOP);
+            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.FORCESTOP)
 
             request.SendRequest().then((res) => {
 
@@ -109,7 +109,7 @@ class PalworldRestfulCommands {
     }
 
     public static Announce(command: Command, client: Client, message: string): void {
-        let request = new RESTFULRequest(RESTFULRequestEnum.ANNOUNCE);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.ANNOUNCE);
 
         request.WriteBody({ 'message': message });
 
@@ -129,7 +129,7 @@ class PalworldRestfulCommands {
 
     public static UpdateServerMetrics(client: Client): void {
 
-        let request = new RESTFULRequest(RESTFULRequestEnum.METRICS);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.METRICS);
 
         request.SendRequest().then((res) => {
             if (res.status == 200) {
@@ -144,7 +144,7 @@ class PalworldRestfulCommands {
 
     public static GetPlayers(command: Command, client: Client): void {
 
-        let request = new RESTFULRequest(RESTFULRequestEnum.PLAYERS);
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.PLAYERS);
 
         request.SendRequest().then((res) => {
 
