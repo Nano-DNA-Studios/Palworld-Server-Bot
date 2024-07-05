@@ -1,5 +1,4 @@
 
-
 enum PlayerPropertiesEnum {
     Name = "name",
     AccountName = "accountName",

@@ -2,8 +2,6 @@ import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
-
-
 class Announce extends Command {
 
     public CommandName: string = 'announce';
@@ -18,9 +16,6 @@ class Announce extends Command {
 
         if (message) 
             PalworldRestfulCommands.Announce(this,client, message);
-
-        
-        
     };
 
     public IsEphemeralResponse: boolean = true;
@@ -33,7 +28,6 @@ class Announce extends Command {
             type: OptionTypesEnum.String
         }
     ]
-
 }
 
 export = Announce;

@@ -1,6 +1,5 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
-
 import * as fs from 'fs';
 import * as ini from 'ini';
 import * as path from 'path';

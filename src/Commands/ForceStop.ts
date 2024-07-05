@@ -3,8 +3,11 @@ import { BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
 class ForceStop extends Command {
+
     public CommandName: string = "forcestop";
+
     public CommandDescription: string = "Force Stops the Palworld Server";
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         this.InitializeUserResponse(interaction, `Force Stopping the Palworld Server`);
@@ -12,8 +15,8 @@ class ForceStop extends Command {
         PalworldRestfulCommands.ForceStop(this, client)
 
     };
-    public IsEphemeralResponse: boolean = false;
 
+    public IsEphemeralResponse: boolean = false;
 }
 
 export = ForceStop;

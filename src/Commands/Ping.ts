@@ -2,10 +2,12 @@ import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
-
 class Ping extends Command {
+
     public CommandName: string = 'ping';
+
     public CommandDescription: string = 'Pings the Server to See if it Still Running';
+    
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         this.InitializeUserResponse(interaction, `Pinging Server`);

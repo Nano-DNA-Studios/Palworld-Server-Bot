@@ -1,5 +1,4 @@
 
-
 enum PalworldRESTFULCommandEnum 
 {
     INFO = 'info',

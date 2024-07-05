@@ -1,5 +1,4 @@
 
-
 enum ServerSettingsEnum
 {
     Difficulty = "Difficulty",
