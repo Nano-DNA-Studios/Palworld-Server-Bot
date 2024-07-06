@@ -6,6 +6,7 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import Player from "../ServerObjects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
+import GameWorldManager from "../GameWorldManagement/GameWorldManager";
 
 class PalworldRestfulCommands {
 
@@ -56,6 +57,8 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
+
+        GameWorldManager.CreateBackup();
 
         this.UpdateServerMetrics(client);
     }
