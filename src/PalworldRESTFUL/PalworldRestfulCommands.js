@@ -10,6 +10,7 @@ const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServe
 const Player_1 = __importDefault(require("../ServerObjects/Player"));
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
+const GameWorldManager_1 = __importDefault(require("../GameWorldManagement/GameWorldManager"));
 class PalworldRestfulCommands {
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
@@ -45,6 +46,7 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
+        GameWorldManager_1.default.CreateBackup();
         this.UpdateServerMetrics(client);
     }
     static ServerSettings(command, client) {

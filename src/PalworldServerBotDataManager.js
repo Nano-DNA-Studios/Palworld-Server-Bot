@@ -25,6 +25,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_NAME = '';
         this.SERVER_DESCRIPTION = '';
         this.PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`;
+        this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
         this.SCP_INFO = new SCPInfo_1.default(0, '', '', '', '');
     }
     UpdateMetricsStatus(metrics, client) {
