@@ -1,8 +1,9 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { BashScriptRunner, BotData, BotDataManager, Command } from "dna-discord-framework";
-import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
+import { BotData, BotDataManager, Command } from "dna-discord-framework";
+import GameWorldManager from "../GameWorldManagement/GameWorldManager";
+import fsp from "fs/promises";
+import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import { run } from "tslint/lib/runner";
 
 class Backup extends Command {
 
@@ -12,23 +13,48 @@ class Backup extends Command {
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        let dataManager = BotData.Instance(PalworldServerBotDataManager)
-
         this.InitializeUserResponse(interaction, `Creating Backup of World`);
 
-        let runner = new BashScriptRunner();
-
-        const worldSavePath = dataManager.PALWORLD_GAME_FILES;
+        const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
         const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
 
-        runner.RunLocally(`cd ${worldSavePath} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
+        GameWorldManager.CreateBackup();
 
-        this.AddFileToResponseMessage(backupFilePath)
+        const fileStats = await fsp.stat(backupFilePath);
+        const sizeAndFormat = this.GetFileSize(fileStats);
 
+        if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB")
+        {
+            this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal")
+            let  command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
+            command = "```" + command + "```"
+            this.AddToResponseMessage(command)
+        } else
+            this.AddFileToResponseMessage(backupFilePath);
     };
 
     public IsEphemeralResponse: boolean = true;
+
+    private MAX_FILE_SIZE_MB : Number = 1;
+
+    GetFileSize(fileStats: fs.Stats): [Number, string] {
+        let realsize;
+        let sizeFormat;
+
+        if (fileStats.size / (1024 * 1024) >= 1) {
+            realsize = Math.floor(100 * fileStats.size / (1024 * 1024)) / 100;
+            sizeFormat = "MB";
+        } else if (fileStats.size / (1024) >= 1) {
+            realsize = Math.floor(100 * fileStats.size / (1024)) / 100;
+            sizeFormat = "KB";
+        } else {
+            realsize = fileStats.size;
+            sizeFormat = "B";
+        }
+
+        return [realsize, sizeFormat];
+    }
 }
 
 export = Backup;
