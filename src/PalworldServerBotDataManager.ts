@@ -1,6 +1,7 @@
 import { BotDataManager } from "dna-discord-framework";
 import ServerMetrics from "./ServerObjects/ServerMetrics";
 import { Client, ActivityType } from "discord.js";
+import SCPInfo from "./ServerObjects/SCPInfo";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -8,11 +9,11 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     START_SETTINGS_FILE_PATH = '../Files/StartSettings.ini'
 
-    DEFAULT_FILE_SETTINGS_PATH = '/home/steam/PalworldServer/DefaultPalWorldSettings.ini'
+    DEFAULT_FILE_SETTINGS_PATH = `${this.SERVER_PATH}/DefaultPalWorldSettings.ini`
 
-    SERVER_SETTINGS_FILE_PATH = '/home/steam/PalworldServer/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini'
+    SERVER_SETTINGS_FILE_PATH = `${this.SERVER_PATH}/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini`
 
-    SERVER_SETTINGS_DIR = '/home/steam/PalworldServer/Pal/Saved/Config/LinuxServer'
+    SERVER_SETTINGS_DIR = `${this.SERVER_PATH}/Pal/Saved/Config/LinuxServer`
 
     SERVER_START_SCRIPT = "PalServer.sh";
 
@@ -33,6 +34,10 @@ class PalworldServerBotDataManager extends BotDataManager {
     SERVER_NAME: string = '';
 
     SERVER_DESCRIPTION: string = '';
+
+    PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`
+
+    SCP_INFO: SCPInfo = new SCPInfo(0, '', '', '', '');
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;

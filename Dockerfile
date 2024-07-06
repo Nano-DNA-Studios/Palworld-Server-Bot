@@ -15,16 +15,21 @@ RUN cd /tmp \
     && rm node-v$NODE_VERSION-linux-x64.tar.xz
 
 # Create the Palworld Server Directory
-RUN mkdir /home/steam/PalworldBot
+RUN mkdir /PalworldBot
 RUN mkdir /home/steam/PalworldServer
+RUN mkdir /home/steam/Backups
 
 # Give Ownership to the Steam User for the Palworld Server Directory
 RUN chown -R steam:steam /home/steam/PalworldServer 
 RUN chmod -R 755 /home/steam/PalworldServer
 
 # Give Ownership to the Steam User for the Palworld Bot Directory
-RUN chown -R steam:steam /home/steam/PalworldBot
-RUN chmod -R 755 /home/steam/PalworldBot
+RUN chown -R steam:steam /PalworldBot
+RUN chmod -R 755 /PalworldBot
+
+# Give Ownership to the Steam User for the Backup Directory
+RUN chown -R steam:steam /home/steam/Backups
+RUN chmod -R 755 /home/steam/Backups
 
 USER steam
 
@@ -36,12 +41,12 @@ ENV LD_LIBRARY_PATH=/home/steam/.steam/sdk64:$LD_LIBRARY_PATH:
 
 WORKDIR /home/steam
 
-COPY ./ /home/steam/PalworldBot
+COPY ./ /PalworldBot
 
 # Start the Container and have it use host device IP Network
-# docker run -it --network="host" mrdnalex/palworldserverbot
+# docker run -it --network="host" -v "/home/mrdna/Projects/PalworldServer/Backups":"/home/steam/Backups" -v "/home/mrdna/Projects/PalwordServer/Settings":"/home/steam/PalworldBot/Resources"  mrdnalex/palworldserverbot
 
-WORKDIR /home/steam/PalworldBot
+WORKDIR /PalworldBot
 
-CMD ["node", "/home/steam/PalworldBot/index.js"]
+CMD ["node", "/PalworldBot/index.js"]
 
