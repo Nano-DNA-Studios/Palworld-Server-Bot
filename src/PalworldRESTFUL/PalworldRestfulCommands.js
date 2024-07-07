@@ -10,6 +10,7 @@ const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServe
 const Player_1 = __importDefault(require("../ServerObjects/Player"));
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
+const GameWorldManager_1 = __importDefault(require("../GameWorldManagement/GameWorldManager"));
 class PalworldRestfulCommands {
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
@@ -29,6 +30,7 @@ class PalworldRestfulCommands {
             let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
             request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
             request.SendRequest().then((res) => {
+                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
                 setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
             }).catch((error) => {
                 command.AddToResponseMessage("Error Shutting Down Server");
@@ -45,6 +47,7 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
+        GameWorldManager_1.default.CreateBackup();
         this.UpdateServerMetrics(client);
     }
     static ServerSettings(command, client) {

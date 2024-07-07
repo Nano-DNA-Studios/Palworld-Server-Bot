@@ -37,6 +37,8 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`
 
+    PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`
+
     SCP_INFO: SCPInfo = new SCPInfo(0, '', '', '', '');
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {

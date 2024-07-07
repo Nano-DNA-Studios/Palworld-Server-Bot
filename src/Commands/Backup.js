@@ -20,7 +20,7 @@ class Backup extends dna_discord_framework_1.Command {
             const sizeAndFormat = this.GetFileSize(fileStats);
             if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
                 this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal");
-                let command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz ${dataManager.SCP_INFO.DownloadLocation}`;
+                let command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
                 command = "```" + command + "```";
                 this.AddToResponseMessage(command);
             }
@@ -28,7 +28,7 @@ class Backup extends dna_discord_framework_1.Command {
                 this.AddFileToResponseMessage(backupFilePath);
         };
         this.IsEphemeralResponse = true;
-        this.MAX_FILE_SIZE_MB = 1;
+        this.MAX_FILE_SIZE_MB = 80;
     }
     GetFileSize(fileStats) {
         let realsize;

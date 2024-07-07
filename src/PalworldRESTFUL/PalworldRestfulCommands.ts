@@ -6,6 +6,7 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import Player from "../ServerObjects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
+import GameWorldManager from "../GameWorldManagement/GameWorldManager";
 
 class PalworldRestfulCommands {
 
@@ -35,6 +36,9 @@ class PalworldRestfulCommands {
             request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
             request.SendRequest().then((res) => {
+
+                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+
                 setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000)
 
             }).catch((error) => {
@@ -56,6 +60,8 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
+
+        GameWorldManager.CreateBackup();
 
         this.UpdateServerMetrics(client);
     }
