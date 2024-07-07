@@ -70,5 +70,6 @@ var ServerSettingsEnum;
     ServerSettingsEnum["AllowConnectPlatform"] = "AllowConnectPlatform";
     ServerSettingsEnum["IsUseBackupSaveData"] = "IsUseBackupSaveData";
     ServerSettingsEnum["LogFormatType"] = "LogFormatType";
+    ServerSettingsEnum["None"] = "None";
 })(ServerSettingsEnum || (ServerSettingsEnum = {}));
 exports.default = ServerSettingsEnum;

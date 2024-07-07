@@ -9,23 +9,8 @@ class Start extends Command {
     public CommandDescription: string = 'Starts the Palworld Server';
 
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
-
         this.InitializeUserResponse(interaction, `Starting Server`);
-
-        try {
-            let scriptRunner = new BashScriptRunner();
-
-            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
-
-            this.AddToResponseMessage("Waiting a few seconds to Ping Server");
-
-            setTimeout(() => { PalworldRestfulCommands.PingServer(this, client) }, 10000)
-
-        } catch (error) {
-            this.AddToResponseMessage("Error Starting Server");
-            return;
-        }
-
+        PalworldRestfulCommands.StartServer(this, client);
     };
 
     public IsEphemeralResponse: boolean = true;

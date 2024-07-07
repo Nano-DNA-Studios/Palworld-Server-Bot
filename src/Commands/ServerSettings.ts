@@ -7,7 +7,7 @@ class ServerSettings extends Command {
     public CommandDescription: string = 'Returns the Server Settings for the Palworld Server';
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        this.InitializeUserResponse(interaction, `Saving the Game World`);
+        this.InitializeUserResponse(interaction, `Server Settings: `);
 
         PalworldRestfulCommands.ServerSettings(this, client);
 

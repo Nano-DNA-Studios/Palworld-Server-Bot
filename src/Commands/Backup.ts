@@ -1,9 +1,10 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command } from "dna-discord-framework";
-import GameWorldManager from "../GameWorldManagement/GameWorldManager";
+import GameWorldManager from "../ServerManagement/GameWorldManager";
 import fsp from "fs/promises";
 import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
 
 class Backup extends Command {
 
@@ -32,6 +33,8 @@ class Backup extends Command {
             this.AddToResponseMessage(command)
         } else
             this.AddFileToResponseMessage(backupFilePath);
+
+        PalworldRestfulCommands.UpdateServerMetrics(client);
     };
 
     public IsEphemeralResponse: boolean = true;

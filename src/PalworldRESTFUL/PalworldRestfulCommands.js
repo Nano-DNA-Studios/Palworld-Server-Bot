@@ -4,14 +4,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
-const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
 const ServerMetrics_1 = __importDefault(require("../ServerObjects/ServerMetrics"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const Player_1 = __importDefault(require("../ServerObjects/Player"));
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
-const GameWorldManager_1 = __importDefault(require("../GameWorldManagement/GameWorldManager"));
+const GameWorldManager_1 = __importDefault(require("../ServerManagement/GameWorldManager"));
+const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
 class PalworldRestfulCommands {
+    static StartServer(command, client) {
+        try {
+            let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
+            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+            command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+            setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, 10000);
+        }
+        catch (error) {
+            command.AddToResponseMessage("Error Starting Server");
+        }
+    }
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
         request.SendRequest().then((res) => {
@@ -37,9 +48,9 @@ class PalworldRestfulCommands {
             });
         }, 3000);
     }
-    static SaveWorld(command, client) {
+    static async SaveWorld(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
-        request.SendRequest().then((res) => {
+        await request.SendRequest().then((res) => {
             if (res.status == 200)
                 command.AddToResponseMessage("Server has been Saved");
             else
@@ -47,26 +58,28 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
-        GameWorldManager_1.default.CreateBackup();
         this.UpdateServerMetrics(client);
+        setTimeout(() => { GameWorldManager_1.default.CreateBackup(); }, (3) * 1000);
     }
     static ServerSettings(command, client) {
-        let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SETTINGS);
-        request.SendRequest().then((res) => {
-            console.log(res);
-            if (res.status == 200) {
-                let content = JSON.parse(res.message);
-                command.AddToResponseMessage("Server Settings: ");
-                command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum_1.default.Difficulty]}`);
-                command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum_1.default.DayTimeSpeedRate]}`);
-                command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum_1.default.PalSpawnNumRate]}`);
-            }
-            else
-                command.AddToResponseMessage("Error Retrieving Server Settings");
-        }).catch((error) => {
-            console.log(error);
-            command.AddToResponseMessage("Error Retrieving Server Settings");
-        });
+        // let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
+        // request.SendRequest().then((res) => {
+        //     console.log(res);
+        //     if (res.status == 200) {
+        //         let content = JSON.parse(res.message);
+        //         command.AddToResponseMessage("Server Settings: ");
+        //         command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum.Difficulty]}`);
+        //         command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum.DayTimeSpeedRate]}`);
+        //         command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum.PalSpawnNumRate]}`);
+        //     }
+        //     else
+        //         command.AddToResponseMessage("Error Retrieving Server Settings");
+        // }).catch((error) => {
+        //     console.log(error);
+        //     command.AddToResponseMessage("Error Retrieving Server Settings");
+        // });
+        let serverSettings = new ServerSettingsManager_1.default();
+        command.AddTextFileToResponseMessage(serverSettings.GetServerSettingsAsString(), "ServerSettings");
         this.UpdateServerMetrics(client);
     }
     static ForceStop(command, client) {

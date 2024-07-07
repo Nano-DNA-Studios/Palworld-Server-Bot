@@ -68,7 +68,8 @@ enum ServerSettingsEnum
     ShowPlayerList = "ShowPlayerList",
     AllowConnectPlatform = "AllowConnectPlatform",
     IsUseBackupSaveData = "IsUseBackupSaveData",
-    LogFormatType = "LogFormatType"
+    LogFormatType = "LogFormatType",
+    None = "None"
 }
 
 export default ServerSettingsEnum;

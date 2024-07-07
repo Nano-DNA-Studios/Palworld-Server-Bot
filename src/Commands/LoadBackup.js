@@ -6,6 +6,8 @@ const dna_discord_framework_1 = require("dna-discord-framework");
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
+const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
 class LoadBackup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -22,17 +24,18 @@ class LoadBackup extends dna_discord_framework_1.Command {
                 catch (error) {
                     this.AddToResponseMessage("Error Downloading Backup File");
                 }
-                this.LoadBackupData();
+                await this.LoadBackupData();
+                await this.ReplaceServerSettings();
             }
             else {
-                //Rename the Backup File if it it's not proper
                 if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar")) {
                     let runner = new dna_discord_framework_1.BashScriptRunner();
                     await runner.RunLocally(`mv /home/steam/Backups/WorldBackup.tar /home/steam/Backups/WorldBackup.tar.gz`);
                 }
                 if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
                     this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
-                    this.LoadBackupData();
+                    await this.LoadBackupData();
+                    await this.ReplaceServerSettings();
                 }
                 else
                     this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load.");
@@ -48,16 +51,31 @@ class LoadBackup extends dna_discord_framework_1.Command {
             }
         ];
     }
-    LoadBackupData() {
+    async LoadBackupData() {
         try {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             let runner = new dna_discord_framework_1.BashScriptRunner();
-            runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`);
-            runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`);
+            await runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`);
+            await runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`);
             this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
         }
         catch (error) {
             this.AddToResponseMessage("Error Loading Backup Data");
+        }
+    }
+    ReplaceServerSettings() {
+        let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+        let serverSettings = new ServerSettingsManager_1.default();
+        this.AddToResponseMessage("Replacing Server Settings");
+        try {
+            dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerName);
+            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerDescription);
+            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.AdminPassword);
+            this.AddToResponseMessage("Server Settings Replaced Successfully");
+            dataManager.SaveData();
+        }
+        catch (error) {
+            this.AddToResponseMessage("Error Replacing Server Settings");
         }
     }
     async DownloadFile(attachment, downloadPath) {

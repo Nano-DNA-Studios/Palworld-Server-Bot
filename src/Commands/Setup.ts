@@ -5,6 +5,8 @@ import * as ini from 'ini';
 import * as path from 'path';
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
+import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
+import { server } from "typescript";
 
 
 class Setup extends Command {
@@ -27,7 +29,6 @@ class Setup extends Command {
 
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-
         const DataManager = BotData.Instance(PalworldServerBotDataManager)
         const serverName = interaction.options.getString('servername');
         const serverDesc = interaction.options.getString('serverdescription');
@@ -35,29 +36,30 @@ class Setup extends Command {
 
         this.InitializeUserResponse(interaction, `Changing Default Settings`)
 
+        let serverSetting = new ServerSettingsManager();
+
         try {
-            this.LoadSettings();
 
             if (serverName) {
                 DataManager.SERVER_NAME = serverName;
-                this.SetSettingValue(ServerSettingsEnum.ServerName, serverName);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerName, serverName);
             }
 
             if (serverDesc) {
                 DataManager.SERVER_DESCRIPTION = serverDesc;
-                this.SetSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
             }
 
             if (adminPassword) {
                 DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                this.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-            this.SetSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
-            this.SetSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
-            this.SetSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
 
-            this.SaveSettings();
+            serverSetting.SaveSettings();
 
             this.AddToResponseMessage("Settings Updated!")
 
@@ -89,34 +91,6 @@ class Setup extends Command {
             type: OptionTypesEnum.String
         }
     ];
-
-    public LoadSettings(): void {
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-        const filePath = path.resolve(__dirname, DataManager.START_SETTINGS_FILE_PATH);
-        const fileContent = fs.readFileSync(filePath, 'utf-8');
-        this.ConfigFile = ini.parse(fileContent);
-        this.Settings = this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings];
-        this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
-    }
-
-    public SaveSettings(): void {
-        this.Settings = '(' + this.ServerSettingsArray.join(',') + ')';
-        this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings] = this.Settings;
-        const DataManager = BotData.Instance(PalworldServerBotDataManager)
-        const newFileContent = ini.stringify(this.ConfigFile, { section: '' });
-
-        if (!fs.existsSync(DataManager.SERVER_SETTINGS_DIR))
-            fs.mkdirSync(DataManager.SERVER_SETTINGS_DIR, { recursive: true });
-
-        fs.writeFileSync(DataManager.SERVER_SETTINGS_FILE_PATH, newFileContent);
-    }
-
-    public SetSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
-        let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
-        if (serverNameIndex !== -1)
-            this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
-    }
-
 }
 
 export = Setup;

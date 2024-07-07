@@ -1,4 +1,4 @@
-import { BotData, Command } from "dna-discord-framework";
+import { BashScriptRunner, BotData, Command } from "dna-discord-framework";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 import ServerMetrics from "../ServerObjects/ServerMetrics";
 import { Client } from "discord.js";
@@ -6,9 +6,25 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import Player from "../ServerObjects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
-import GameWorldManager from "../GameWorldManagement/GameWorldManager";
+import GameWorldManager from "../ServerManagement/GameWorldManager";
+import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
 
 class PalworldRestfulCommands {
+
+    public static StartServer(command: Command, client: Client): void {
+        try {
+            let scriptRunner = new BashScriptRunner();
+
+            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+
+            command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+
+            setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, 10000)
+
+        } catch (error) {
+            command.AddToResponseMessage("Error Starting Server");
+        }
+    }
 
     public static PingServer(command: Command, client: Client): void {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.INFO);
@@ -47,10 +63,10 @@ class PalworldRestfulCommands {
         }, 3000);
     }
 
-    public static SaveWorld(command: Command, client: Client): void {
+    public static async SaveWorld(command: Command, client: Client) {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
 
-        request.SendRequest().then((res) => {
+        await request.SendRequest().then((res) => {
 
             if (res.status == 200)
                 command.AddToResponseMessage("Server has been Saved");
@@ -60,34 +76,38 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
-
-        GameWorldManager.CreateBackup();
-
+        
         this.UpdateServerMetrics(client);
+
+        setTimeout(() => { GameWorldManager.CreateBackup(); }, (3) * 1000)
     }
 
     public static ServerSettings(command: Command, client: Client): void {
 
-        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
+        // let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
 
-        request.SendRequest().then((res) => {
-            console.log(res);
-            if (res.status == 200) {
-                let content = JSON.parse(res.message);
+        // request.SendRequest().then((res) => {
+        //     console.log(res);
+        //     if (res.status == 200) {
+        //         let content = JSON.parse(res.message);
 
-                command.AddToResponseMessage("Server Settings: ");
+        //         command.AddToResponseMessage("Server Settings: ");
 
-                command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum.Difficulty]}`);
-                command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum.DayTimeSpeedRate]}`);
-                command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum.PalSpawnNumRate]}`);
-            }
-            else
-                command.AddToResponseMessage("Error Retrieving Server Settings");
+        //         command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum.Difficulty]}`);
+        //         command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum.DayTimeSpeedRate]}`);
+        //         command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum.PalSpawnNumRate]}`);
+        //     }
+        //     else
+        //         command.AddToResponseMessage("Error Retrieving Server Settings");
 
-        }).catch((error) => {
-            console.log(error);
-            command.AddToResponseMessage("Error Retrieving Server Settings");
-        });
+        // }).catch((error) => {
+        //     console.log(error);
+        //     command.AddToResponseMessage("Error Retrieving Server Settings");
+        // });
+
+        let serverSettings = new ServerSettingsManager();
+
+        command.AddTextFileToResponseMessage(serverSettings.GetServerSettingsAsString(), "ServerSettings")
 
         this.UpdateServerMetrics(client);
     }

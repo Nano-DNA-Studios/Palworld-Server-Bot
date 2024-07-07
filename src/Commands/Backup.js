@@ -3,9 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
-const GameWorldManager_1 = __importDefault(require("../GameWorldManagement/GameWorldManager"));
+const GameWorldManager_1 = __importDefault(require("../ServerManagement/GameWorldManager"));
 const promises_1 = __importDefault(require("fs/promises"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldRESTFUL/PalworldRestfulCommands"));
 class Backup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -26,6 +27,7 @@ class Backup extends dna_discord_framework_1.Command {
             }
             else
                 this.AddFileToResponseMessage(backupFilePath);
+            PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
         };
         this.IsEphemeralResponse = true;
         this.MAX_FILE_SIZE_MB = 80;
