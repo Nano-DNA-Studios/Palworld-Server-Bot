@@ -31,6 +31,7 @@ const fs = __importStar(require("fs"));
 const ini = __importStar(require("ini"));
 const path = __importStar(require("path"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
 class ServerSettingsManager {
     constructor() {
         this.Section = '/Script/Pal';
@@ -78,6 +79,15 @@ class ServerSettingsManager {
             return setting.split('=')[1].replace(/"/g, '');
         else
             return '';
+    }
+    getEnum(value) {
+        const keys = Object.keys(ServerSettingsEnum_1.default);
+        for (const key of keys) {
+            if (ServerSettingsEnum_1.default[key] === value) {
+                return ServerSettingsEnum_1.default[key];
+            }
+        }
+        return ServerSettingsEnum_1.default.None;
     }
 }
 exports.default = ServerSettingsManager;

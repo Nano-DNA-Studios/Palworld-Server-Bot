@@ -1,5 +1,4 @@
-import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum, BashScriptRunner } from "dna-discord-framework";
+import { BotData} from "dna-discord-framework";
 import * as fs from 'fs';
 import * as ini from 'ini';
 import * as path from 'path';
@@ -8,19 +7,19 @@ import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 class ServerSettingsManager {
 
-    public Section: string = '/Script/Pal';
+    private Section: string = '/Script/Pal';
 
-    public PalGameWorldSettings: string = 'PalGameWorldSettings';
+    private PalGameWorldSettings: string = 'PalGameWorldSettings';
 
-    public OptionSettings: string = 'OptionSettings';
+    private OptionSettings: string = 'OptionSettings';
 
-    public ConfigFile: any;
+    private ConfigFile: any;
 
-    public Settings: string = '';
+    private Settings: string = '';
 
-    public ServerSettingsArray: string[] = [];
+    private ServerSettingsArray: string[] = [];
 
-    public SettingsFilePath = '';
+    private SettingsFilePath = '';
 
     constructor() {
 
@@ -37,7 +36,6 @@ class ServerSettingsManager {
             console.log('Server Settings File Does Not Exist');
 
         this.LoadSettings();
-
     }
 
     public SaveSettings(): void {
@@ -73,6 +71,16 @@ class ServerSettingsManager {
             return setting.split('=')[1].replace(/"/g, '');
         else
             return '';
+    }
+
+    public getEnum(value: string): ServerSettingsEnum {
+        const keys = Object.keys(ServerSettingsEnum) as Array<keyof typeof ServerSettingsEnum>;
+        for (const key of keys) {
+            if (ServerSettingsEnum[key] === value) {
+                return ServerSettingsEnum[key];
+            }
+        }
+        return ServerSettingsEnum.None;
     }
 
 }
