@@ -1,6 +1,6 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command } from "dna-discord-framework";
-import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class Save extends Command {
 
@@ -13,7 +13,6 @@ class Save extends Command {
         this.InitializeUserResponse(interaction, `Saving the Game World`);
 
         PalworldRestfulCommands.SaveWorld(this, client);
-
     };
 
     public IsEphemeralResponse: boolean = true;

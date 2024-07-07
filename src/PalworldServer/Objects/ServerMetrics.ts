@@ -1,4 +1,4 @@
-import ServerMetricsEnum from "../Options/ServerMetricsEnum";
+import ServerMetricsEnum from "../Enums/ServerMetricsEnum";
 
 class ServerMetrics {
 
@@ -48,7 +48,6 @@ class ServerMetrics {
         let metrics = new ServerMetrics('{"CurrentPlayerNum":0,"Uptime":0,"ServerFrameTime":0,"ServerFPS":0,"MaxPlayerNum":0}');
         return metrics;
     }
-
 }
 
 export default ServerMetrics;

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const ServerMetricsEnum_1 = __importDefault(require("../Options/ServerMetricsEnum"));
+const ServerMetricsEnum_1 = __importDefault(require("../Enums/ServerMetricsEnum"));
 class ServerMetrics {
     constructor(json) {
         this.PlayerNum = 0;

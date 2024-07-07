@@ -6,8 +6,8 @@ const dna_discord_framework_1 = require("dna-discord-framework");
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
-const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
-const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
+const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
+const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
 class LoadBackup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -68,9 +68,9 @@ class LoadBackup extends dna_discord_framework_1.Command {
         let serverSettings = new ServerSettingsManager_1.default();
         this.AddToResponseMessage("Replacing Server Settings");
         try {
-            dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerName);
-            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerDescription);
-            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.AdminPassword);
+            dataManager.SERVER_NAME = serverSettings.GetSettingValue(PalworldServerSettingsEnum_1.default.ServerName);
+            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(PalworldServerSettingsEnum_1.default.ServerDescription);
+            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(PalworldServerSettingsEnum_1.default.AdminPassword);
             this.AddToResponseMessage("Server Settings Replaced Successfully");
             dataManager.SaveData();
         }

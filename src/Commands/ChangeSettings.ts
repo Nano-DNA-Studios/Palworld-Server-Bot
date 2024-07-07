@@ -1,7 +1,7 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
-import ServerSettingsEnum from "../Options/ServerSettingsEnum";
-import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
+import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
+import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
 
 class ChangeSettings extends Command {
 
@@ -20,7 +20,7 @@ class ChangeSettings extends Command {
             let serverSettingsManager = new ServerSettingsManager();
             let serverSetting = serverSettingsManager.getEnum(settingName);
 
-            if (serverSetting != ServerSettingsEnum.None) {
+            if (serverSetting != PalworldServerSettingsEnum.None) {
                 if (serverSettingsManager.NewServer)
                     this.AddToResponseMessage(`You're changing the setting on a new server, please setup the server using /setup first.`);
                 else {
@@ -48,52 +48,52 @@ class ChangeSettings extends Command {
             type: OptionTypesEnum.String,
             choices: [
                 {
-                    name: ServerSettingsEnum.DayTimeSpeedRate,
-                    value: ServerSettingsEnum.DayTimeSpeedRate
+                    name: PalworldServerSettingsEnum.DayTimeSpeedRate,
+                    value: PalworldServerSettingsEnum.DayTimeSpeedRate
                 },
                 {
-                    name: ServerSettingsEnum.NightTimeSpeedRate,
-                    value: ServerSettingsEnum.NightTimeSpeedRate
+                    name: PalworldServerSettingsEnum.NightTimeSpeedRate,
+                    value: PalworldServerSettingsEnum.NightTimeSpeedRate
                 },
                 {
-                    name: ServerSettingsEnum.ExpRate,
-                    value: ServerSettingsEnum.ExpRate
+                    name: PalworldServerSettingsEnum.ExpRate,
+                    value: PalworldServerSettingsEnum.ExpRate
                 },
                 {
-                    name: ServerSettingsEnum.PalCaptureRate,
-                    value: ServerSettingsEnum.PalCaptureRate
+                    name: PalworldServerSettingsEnum.PalCaptureRate,
+                    value: PalworldServerSettingsEnum.PalCaptureRate
                 },
                 {
-                    name: ServerSettingsEnum.PalSpawnNumRate,
-                    value: ServerSettingsEnum.PalSpawnNumRate
+                    name: PalworldServerSettingsEnum.PalSpawnNumRate,
+                    value: PalworldServerSettingsEnum.PalSpawnNumRate
                 },
                 {
-                    name: ServerSettingsEnum.PalCaptureRate,
-                    value: ServerSettingsEnum.PalCaptureRate
+                    name: PalworldServerSettingsEnum.PalCaptureRate,
+                    value: PalworldServerSettingsEnum.PalCaptureRate
                 },
                 {
-                    name: ServerSettingsEnum.PlayerAutoHPRegeneRate,
-                    value: ServerSettingsEnum.PlayerAutoHPRegeneRate
+                    name: PalworldServerSettingsEnum.PlayerAutoHPRegeneRate,
+                    value: PalworldServerSettingsEnum.PlayerAutoHPRegeneRate
                 },
                 {
-                    name: ServerSettingsEnum.PalAutoHPRegeneRate,
-                    value: ServerSettingsEnum.PalAutoHPRegeneRate
+                    name: PalworldServerSettingsEnum.PalAutoHPRegeneRate,
+                    value: PalworldServerSettingsEnum.PalAutoHPRegeneRate
                 },
                 {
-                    name: ServerSettingsEnum.PlayerAutoHPRegeneRate,
-                    value: ServerSettingsEnum.PlayerAutoHPRegeneRate
+                    name: PalworldServerSettingsEnum.PlayerAutoHPRegeneRate,
+                    value: PalworldServerSettingsEnum.PlayerAutoHPRegeneRate
                 },
                 {
-                    name: ServerSettingsEnum.CollectionDropRate,
-                    value: ServerSettingsEnum.CollectionDropRate
+                    name: PalworldServerSettingsEnum.CollectionDropRate,
+                    value: PalworldServerSettingsEnum.CollectionDropRate
                 },
                 {
-                    name: ServerSettingsEnum.CollectionObjectRespawnSpeedRate,
-                    value: ServerSettingsEnum.CollectionObjectRespawnSpeedRate
+                    name: PalworldServerSettingsEnum.CollectionObjectRespawnSpeedRate,
+                    value: PalworldServerSettingsEnum.CollectionObjectRespawnSpeedRate
                 },
                 {
-                    name: ServerSettingsEnum.PalEggDefaultHatchingTime,
-                    value: ServerSettingsEnum.PalEggDefaultHatchingTime
+                    name: PalworldServerSettingsEnum.PalEggDefaultHatchingTime,
+                    value: PalworldServerSettingsEnum.PalEggDefaultHatchingTime
                 },
             ]
         },

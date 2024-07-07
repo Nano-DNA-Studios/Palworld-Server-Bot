@@ -3,8 +3,8 @@ import { BashScriptRunner, BotData, BotDataManager, Command, ICommandOption, Opt
 import fs from "fs";
 import axios from "axios";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
-import ServerSettingsEnum from "../Options/ServerSettingsEnum";
+import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
+import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
 
 class LoadBackup extends Command {
 
@@ -82,9 +82,9 @@ class LoadBackup extends Command {
         this.AddToResponseMessage("Replacing Server Settings");
 
         try {
-            dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum.ServerName);
-            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum.ServerDescription);
-            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum.AdminPassword);
+            dataManager.SERVER_NAME = serverSettings.GetSettingValue(PalworldServerSettingsEnum.ServerName);
+            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(PalworldServerSettingsEnum.ServerDescription);
+            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(PalworldServerSettingsEnum.AdminPassword);
 
             this.AddToResponseMessage("Server Settings Replaced Successfully");
 
@@ -94,7 +94,7 @@ class LoadBackup extends Command {
         }
     }
 
-    public async DownloadFile(attachment: Attachment, downloadPath: string) {
+    private async DownloadFile(attachment: Attachment, downloadPath: string) {
         try {
             const response = await axios({
                 method: 'GET',
@@ -115,7 +115,7 @@ class LoadBackup extends Command {
         }
     }
 
-    GetFileSize(fileStats: fs.Stats): [Number, string] {
+    private GetFileSize(fileStats: fs.Stats): [Number, string] {
         let realsize;
         let sizeFormat;
 

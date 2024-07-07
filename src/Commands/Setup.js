@@ -4,18 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
-const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
-const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
+const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
+const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
 class Setup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
         this.CommandName = 'setup';
         this.CommandDescription = 'Sets up the Server for the First Time';
-        this.Section = '/Script/Pal';
-        this.PalGameWorldSettings = 'PalGameWorldSettings';
-        this.OptionSettings = 'OptionSettings';
-        this.Settings = '';
-        this.ServerSettingsArray = [];
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const serverName = interaction.options.getString('servername');
@@ -26,19 +21,19 @@ class Setup extends dna_discord_framework_1.Command {
             try {
                 if (serverName) {
                     DataManager.SERVER_NAME = serverName;
-                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
+                    serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.ServerName, serverName);
                 }
                 if (serverDesc) {
                     DataManager.SERVER_DESCRIPTION = serverDesc;
-                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                    serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.ServerDescription, serverDesc);
                 }
                 if (adminPassword) {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                    serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 }
-                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
-                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
-                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIEnabled, "True");
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
                 serverSetting.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
             }

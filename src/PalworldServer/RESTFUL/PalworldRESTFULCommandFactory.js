@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
-const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const PalworldServerBotDataManager_1 = __importDefault(require("../../PalworldServerBotDataManager"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
 class PalworldRESTFULCommandFactory {
     static GetCommand(RESTFULCommand) {

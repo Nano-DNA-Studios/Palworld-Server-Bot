@@ -3,9 +3,8 @@ import * as fs from 'fs';
 import * as ini from 'ini';
 import * as path from 'path';
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import ServerSettingsEnum from "../Options/ServerSettingsEnum";
-import { Server } from "ssh2";
-import PalworldBlacklistSettingsEnum from "../Options/PalworldBlacklistSettingsEnum";
+import PalworldServerSettingsEnum from "./Enums/PalworldServerSettingsEnum";
+import PalworldBlacklistSettingsEnum from "./Enums/PalworldBlacklistSettingsEnum";
 
 class ServerSettingsManager {
 
@@ -24,8 +23,6 @@ class ServerSettingsManager {
     private SettingsFilePath = '';
 
     public NewServer: boolean = false;
-
-    private BlackListSettings: ServerSettingsEnum[] = [ServerSettingsEnum.PublicIP, ServerSettingsEnum.PublicPort, ServerSettingsEnum.ServerName, ServerSettingsEnum.ServerDescription, ServerSettingsEnum.AdminPassword, ServerSettingsEnum.RESTAPIPort, ServerSettingsEnum.RESTAPIEnabled, ServerSettingsEnum.Region, ServerSettingsEnum.UseAuth, ServerSettingsEnum.BanListURL, ServerSettingsEnum.ShowPlayerList, ServerSettingsEnum.LogFormatType, ServerSettingsEnum.AllowConnectPlatform, ServerSettingsEnum.IsUseBackupSaveData, ServerSettingsEnum.RCONEnabled, ServerSettingsEnum.RCONPort, ServerSettingsEnum.None, ServerSettingsEnum.ServerPassword, ServerSettingsEnum.ServerPlayerMaxNum, ServerSettingsEnum.CoopPlayerMaxNum, ServerSettingsEnum.ActiveUNKO, ServerSettingsEnum.DropItemMaxNum_UNKO]
 
     constructor() {
 
@@ -64,19 +61,19 @@ class ServerSettingsManager {
         this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
     }
 
-    public SetStringSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
+    public SetStringSettingValue(settingName: PalworldServerSettingsEnum, settingValue: string): void {
         let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
         if (serverNameIndex !== -1)
             this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
     }
 
-    public SetNumberSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
+    public SetNumberSettingValue(settingName: PalworldServerSettingsEnum, settingValue: string): void {
         let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
         if (serverNameIndex !== -1)
             this.ServerSettingsArray[serverNameIndex] = `${settingName}=${settingValue}`;
     }
 
-    public GetSettingValue(settingName: ServerSettingsEnum): string {
+    public GetSettingValue(settingName: PalworldServerSettingsEnum): string {
         let setting = this.ServerSettingsArray.find((setting: string) => setting.trim().startsWith(`${settingName}=`));
         if (setting)
             return setting.split('=')[1].replace(/"/g, '');
@@ -84,34 +81,32 @@ class ServerSettingsManager {
             return '';
     }
 
-    public getEnum(value: string): ServerSettingsEnum {
-        const keys = Object.keys(ServerSettingsEnum) as Array<keyof typeof ServerSettingsEnum>;
+    public getEnum(value: string): PalworldServerSettingsEnum {
+        const keys = Object.keys(PalworldServerSettingsEnum) as Array<keyof typeof PalworldServerSettingsEnum>;
         for (const key of keys) {
-            if (ServerSettingsEnum[key] === value) {
-                return ServerSettingsEnum[key];
+            if (PalworldServerSettingsEnum[key] === value) {
+                return PalworldServerSettingsEnum[key];
             }
         }
-        return ServerSettingsEnum.None;
+        return PalworldServerSettingsEnum.None;
     }
 
     public GetServerSettingsAsString(): string {
         let settings = 'Server Settings: \n';
 
-        const keys = Object.keys(ServerSettingsEnum) as Array<keyof typeof ServerSettingsEnum>;
-
+        const keys = Object.keys(PalworldServerSettingsEnum) as Array<keyof typeof PalworldServerSettingsEnum>;
         const blacklistKeys = Object.values(PalworldBlacklistSettingsEnum) as Array<keyof typeof PalworldBlacklistSettingsEnum>;
 
         for (const key of keys) {
 
-            if (blacklistKeys.includes(ServerSettingsEnum[key] as unknown as PalworldBlacklistSettingsEnum))
+            if (blacklistKeys.includes(PalworldServerSettingsEnum[key] as unknown as PalworldBlacklistSettingsEnum))
                 continue;
 
-            settings += `${ServerSettingsEnum[key]}: ${this.GetSettingValue(ServerSettingsEnum[key])} \n`;
+            settings += `${PalworldServerSettingsEnum[key]}: ${this.GetSettingValue(PalworldServerSettingsEnum[key])} \n`;
         }
 
         return settings;
     }
-
 }
 
 export default ServerSettingsManager;

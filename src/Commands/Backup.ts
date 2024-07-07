@@ -1,10 +1,9 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command } from "dna-discord-framework";
-import GameWorldManager from "../ServerManagement/GameWorldManager";
 import fsp from "fs/promises";
 import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import PalworldRestfulCommands from "../PalworldRESTFUL/PalworldRestfulCommands";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class Backup extends Command {
 
@@ -20,7 +19,7 @@ class Backup extends Command {
 
         const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
 
-        GameWorldManager.CreateBackup();
+        dataManager.CreateBackup();
 
         const fileStats = await fsp.stat(backupFilePath);
         const sizeAndFormat = this.GetFileSize(fileStats);

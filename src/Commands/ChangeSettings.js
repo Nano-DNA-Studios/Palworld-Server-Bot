@@ -3,8 +3,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
-const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
-const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
+const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
+const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
 class ChangeSettings extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -17,7 +17,7 @@ class ChangeSettings extends dna_discord_framework_1.Command {
             if (settingName && settingValue) {
                 let serverSettingsManager = new ServerSettingsManager_1.default();
                 let serverSetting = serverSettingsManager.getEnum(settingName);
-                if (serverSetting != ServerSettingsEnum_1.default.None) {
+                if (serverSetting != PalworldServerSettingsEnum_1.default.None) {
                     if (serverSettingsManager.NewServer)
                         this.AddToResponseMessage(`You're changing the setting on a new server, please setup the server using /setup first.`);
                     else {
@@ -42,52 +42,52 @@ class ChangeSettings extends dna_discord_framework_1.Command {
                 type: dna_discord_framework_1.OptionTypesEnum.String,
                 choices: [
                     {
-                        name: ServerSettingsEnum_1.default.DayTimeSpeedRate,
-                        value: ServerSettingsEnum_1.default.DayTimeSpeedRate
+                        name: PalworldServerSettingsEnum_1.default.DayTimeSpeedRate,
+                        value: PalworldServerSettingsEnum_1.default.DayTimeSpeedRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.NightTimeSpeedRate,
-                        value: ServerSettingsEnum_1.default.NightTimeSpeedRate
+                        name: PalworldServerSettingsEnum_1.default.NightTimeSpeedRate,
+                        value: PalworldServerSettingsEnum_1.default.NightTimeSpeedRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.ExpRate,
-                        value: ServerSettingsEnum_1.default.ExpRate
+                        name: PalworldServerSettingsEnum_1.default.ExpRate,
+                        value: PalworldServerSettingsEnum_1.default.ExpRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PalCaptureRate,
-                        value: ServerSettingsEnum_1.default.PalCaptureRate
+                        name: PalworldServerSettingsEnum_1.default.PalCaptureRate,
+                        value: PalworldServerSettingsEnum_1.default.PalCaptureRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PalSpawnNumRate,
-                        value: ServerSettingsEnum_1.default.PalSpawnNumRate
+                        name: PalworldServerSettingsEnum_1.default.PalSpawnNumRate,
+                        value: PalworldServerSettingsEnum_1.default.PalSpawnNumRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PalCaptureRate,
-                        value: ServerSettingsEnum_1.default.PalCaptureRate
+                        name: PalworldServerSettingsEnum_1.default.PalCaptureRate,
+                        value: PalworldServerSettingsEnum_1.default.PalCaptureRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PlayerAutoHPRegeneRate,
-                        value: ServerSettingsEnum_1.default.PlayerAutoHPRegeneRate
+                        name: PalworldServerSettingsEnum_1.default.PlayerAutoHPRegeneRate,
+                        value: PalworldServerSettingsEnum_1.default.PlayerAutoHPRegeneRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PalAutoHPRegeneRate,
-                        value: ServerSettingsEnum_1.default.PalAutoHPRegeneRate
+                        name: PalworldServerSettingsEnum_1.default.PalAutoHPRegeneRate,
+                        value: PalworldServerSettingsEnum_1.default.PalAutoHPRegeneRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PlayerAutoHPRegeneRate,
-                        value: ServerSettingsEnum_1.default.PlayerAutoHPRegeneRate
+                        name: PalworldServerSettingsEnum_1.default.PlayerAutoHPRegeneRate,
+                        value: PalworldServerSettingsEnum_1.default.PlayerAutoHPRegeneRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.CollectionDropRate,
-                        value: ServerSettingsEnum_1.default.CollectionDropRate
+                        name: PalworldServerSettingsEnum_1.default.CollectionDropRate,
+                        value: PalworldServerSettingsEnum_1.default.CollectionDropRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.CollectionObjectRespawnSpeedRate,
-                        value: ServerSettingsEnum_1.default.CollectionObjectRespawnSpeedRate
+                        name: PalworldServerSettingsEnum_1.default.CollectionObjectRespawnSpeedRate,
+                        value: PalworldServerSettingsEnum_1.default.CollectionObjectRespawnSpeedRate
                     },
                     {
-                        name: ServerSettingsEnum_1.default.PalEggDefaultHatchingTime,
-                        value: ServerSettingsEnum_1.default.PalEggDefaultHatchingTime
+                        name: PalworldServerSettingsEnum_1.default.PalEggDefaultHatchingTime,
+                        value: PalworldServerSettingsEnum_1.default.PalEggDefaultHatchingTime
                     },
                 ]
             },

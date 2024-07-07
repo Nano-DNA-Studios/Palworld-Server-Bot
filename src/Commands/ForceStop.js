@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
-const PalworldRestfulCommands_1 = __importDefault(require("../PalworldRESTFUL/PalworldRestfulCommands"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class ForceStop extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
