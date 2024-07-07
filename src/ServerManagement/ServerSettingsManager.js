@@ -48,6 +48,7 @@ class ServerSettingsManager {
             console.log('Server Settings File Exists');
         else
             console.log('Server Settings File Does Not Exist');
+        this.LoadSettings();
     }
     SaveSettings() {
         this.Settings = '(' + this.ServerSettingsArray.join(',') + ')';

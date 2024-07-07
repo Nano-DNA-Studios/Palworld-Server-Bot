@@ -36,6 +36,8 @@ class ServerSettingsManager {
         else
             console.log('Server Settings File Does Not Exist');
 
+        this.LoadSettings();
+
     }
 
     public SaveSettings(): void {

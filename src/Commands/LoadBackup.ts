@@ -3,6 +3,9 @@ import { BashScriptRunner, BotData, BotDataManager, Command, ICommandOption, Opt
 import fs from "fs";
 import axios from "axios";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
+import ServerMetricsEnum from "../Options/ServerMetricsEnum";
+import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 class LoadBackup extends Command {
 
@@ -21,31 +24,29 @@ class LoadBackup extends Command {
             try {
                 await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
 
-                this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");                
+                this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");
             } catch (error) {
                 this.AddToResponseMessage("Error Downloading Backup File");
             }
 
-            this.LoadBackupData();
+            await this.LoadBackupData();
+            await this.ReplaceServerSettings();
         } else {
 
-            //Rename the Backup File if it it's not proper
-            if (fs.existsSync("/home/steam/Backups/WorldBackup.tar"))
-            {
+            if (fs.existsSync("/home/steam/Backups/WorldBackup.tar")) {
                 let runner = new BashScriptRunner();
                 await runner.RunLocally(`mv /home/steam/Backups/WorldBackup.tar /home/steam/Backups/WorldBackup.tar.gz`)
             }
-               
+
             if (fs.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
 
                 this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
-
-                this.LoadBackupData();
+                await this.LoadBackupData();
+                await this.ReplaceServerSettings();
 
             } else
                 this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load.");
         }
-
     };
 
     public IsEphemeralResponse: boolean = true;
@@ -59,18 +60,43 @@ class LoadBackup extends Command {
         }
     ];
 
-    public LoadBackupData() {
+    public async LoadBackupData() {
         try {
             const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
             let runner = new BashScriptRunner();
 
-            runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
-            runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
+            await runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
+            await runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
 
             this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
         } catch (error) {
             this.AddToResponseMessage("Error Loading Backup Data");
+        }
+    }
+
+    private ReplaceServerSettings() {
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+
+        let serverSettings = new ServerSettingsManager();
+
+        this.AddToResponseMessage("Replacing Server Settings");
+
+        try {
+            console.log("Server Name");
+            console.log(serverSettings.GetSettingValue(ServerSettingsEnum.ServerName));
+
+            dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum.ServerName);
+
+            dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum.ServerDescription);
+
+            dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum.AdminPassword);
+
+            this.AddToResponseMessage("Server Settings Replaced Successfully");
+
+            dataManager.SaveData();
+        } catch (error) {
+            this.AddToResponseMessage("Error Replacing Server Settings");
         }
     }
 

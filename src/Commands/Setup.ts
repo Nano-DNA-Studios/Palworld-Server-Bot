@@ -39,8 +39,7 @@ class Setup extends Command {
         let serverSetting = new ServerSettingsManager();
 
         try {
-            serverSetting.LoadSettings();
-
+            
             if (serverName) {
                 DataManager.SERVER_NAME = serverName;
                 serverSetting.SetSettingValue(ServerSettingsEnum.ServerName, serverName);
