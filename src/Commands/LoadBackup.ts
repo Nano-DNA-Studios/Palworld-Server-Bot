@@ -12,44 +12,38 @@ class LoadBackup extends Command {
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        const dataManager = BotData.Instance(PalworldServerBotDataManager);
-
         const backupfile = interaction.options.getAttachment("backupfile");
 
         if (backupfile) {
 
             this.InitializeUserResponse(interaction, `Loading Backup of World`);
 
-            await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
-
-        } else {
-            this.InitializeUserResponse(interaction, `No Backup File Provided, Use the Following Command to Send a Backup File if it is too Large`);
-
-            let command = `scp -P ${dataManager.SCP_INFO.Port} "${dataManager.SCP_INFO.DownloadLocation}" ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz"`;
-
-            command = "```" + command + "```"
-
-            this.AddToResponseMessage(command)
-        }
-
-        if (fs.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
-            //Replace the Data with the Backup Data
-
-            this.AddToResponseMessage("Loading Backup Data into Server");
             try {
-                const dataManager = BotData.Instance(PalworldServerBotDataManager);
+                await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
 
-                let runner = new BashScriptRunner();
-        
-                runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
-        
-                runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-
-                this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
+                this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");                
             } catch (error) {
-                this.AddToResponseMessage("Error Loading Backup Data");
+                this.AddToResponseMessage("Error Downloading Backup File");
             }
 
+            this.LoadBackupData();
+        } else {
+
+            //Rename the Backup File if it it's not proper
+            if (fs.existsSync("/home/steam/Backups/WorldBackup.tar"))
+            {
+                let runner = new BashScriptRunner();
+                await runner.RunLocally(`mv /home/steam/Backups/WorldBackup.tar /home/steam/Backups/WorldBackup.tar.gz`)
+            }
+               
+            if (fs.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
+
+                this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
+
+                this.LoadBackupData();
+
+            } else
+                this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load.");
         }
 
     };
@@ -65,31 +59,20 @@ class LoadBackup extends Command {
         }
     ];
 
-    private MAX_FILE_SIZE_MB: Number = 80;
+    public LoadBackupData() {
+        try {
+            const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-    // public LoadFile() {
+            let runner = new BashScriptRunner();
 
-    //     const dataManager = BotData.Instance(PalworldServerBotDataManager);
+            runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
+            runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
 
-    //     let runner = new BashScriptRunner();
-
-    //     runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
-
-    //     runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-
-    //     try {
-    //         runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-    //     } catch (error) {
-
-    //         try {
-    //             runner.RunLocally(`tar -xf /home/steam/Backups/WorldBackup.tar -C ${dataManager.SERVER_PATH}/Pal`)
-    //         } catch (error) {
-    //         }
-
-    //     }
-
-
-    // }
+            this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
+        } catch (error) {
+            this.AddToResponseMessage("Error Loading Backup Data");
+        }
+    }
 
     public async DownloadFile(attachment: Attachment, downloadPath: string) {
         try {

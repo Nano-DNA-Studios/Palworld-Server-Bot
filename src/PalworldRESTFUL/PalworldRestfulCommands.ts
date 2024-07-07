@@ -36,6 +36,9 @@ class PalworldRestfulCommands {
             request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
             request.SendRequest().then((res) => {
+
+                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+
                 setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000)
 
             }).catch((error) => {

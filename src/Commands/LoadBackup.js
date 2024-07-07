@@ -12,31 +12,30 @@ class LoadBackup extends dna_discord_framework_1.Command {
         this.CommandName = "loadbackup";
         this.CommandDescription = "Replaces the World Data with the Backup Data";
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const backupfile = interaction.options.getAttachment("backupfile");
             if (backupfile) {
                 this.InitializeUserResponse(interaction, `Loading Backup of World`);
-                await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
-            }
-            else {
-                this.InitializeUserResponse(interaction, `No Backup File Provided, Use the Following Command to Send a Backup File if it is too Large`);
-                let command = `scp -P ${dataManager.SCP_INFO.Port} "${dataManager.SCP_INFO.DownloadLocation}" ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz"`;
-                command = "```" + command + "```";
-                this.AddToResponseMessage(command);
-            }
-            if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
-                //Replace the Data with the Backup Data
-                this.AddToResponseMessage("Loading Backup Data into Server");
                 try {
-                    const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-                    let runner = new dna_discord_framework_1.BashScriptRunner();
-                    runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`);
-                    runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`);
-                    this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
+                    await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
+                    this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");
                 }
                 catch (error) {
-                    this.AddToResponseMessage("Error Loading Backup Data");
+                    this.AddToResponseMessage("Error Downloading Backup File");
                 }
+                this.LoadBackupData();
+            }
+            else {
+                //Rename the Backup File if it it's not proper
+                if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar")) {
+                    let runner = new dna_discord_framework_1.BashScriptRunner();
+                    await runner.RunLocally(`mv /home/steam/Backups/WorldBackup.tar /home/steam/Backups/WorldBackup.tar.gz`);
+                }
+                if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
+                    this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
+                    this.LoadBackupData();
+                }
+                else
+                    this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load.");
             }
         };
         this.IsEphemeralResponse = true;
@@ -48,22 +47,19 @@ class LoadBackup extends dna_discord_framework_1.Command {
                 type: dna_discord_framework_1.OptionTypesEnum.Attachment
             }
         ];
-        this.MAX_FILE_SIZE_MB = 80;
     }
-    // public LoadFile() {
-    //     const dataManager = BotData.Instance(PalworldServerBotDataManager);
-    //     let runner = new BashScriptRunner();
-    //     runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
-    //     runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-    //     try {
-    //         runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-    //     } catch (error) {
-    //         try {
-    //             runner.RunLocally(`tar -xf /home/steam/Backups/WorldBackup.tar -C ${dataManager.SERVER_PATH}/Pal`)
-    //         } catch (error) {
-    //         }
-    //     }
-    // }
+    LoadBackupData() {
+        try {
+            const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+            let runner = new dna_discord_framework_1.BashScriptRunner();
+            runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`);
+            runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`);
+            this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
+        }
+        catch (error) {
+            this.AddToResponseMessage("Error Loading Backup Data");
+        }
+    }
     async DownloadFile(attachment, downloadPath) {
         try {
             const response = await (0, axios_1.default)({
