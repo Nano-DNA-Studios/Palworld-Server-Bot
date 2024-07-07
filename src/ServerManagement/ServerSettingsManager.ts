@@ -1,9 +1,11 @@
-import { BotData} from "dna-discord-framework";
+import { BotData } from "dna-discord-framework";
 import * as fs from 'fs';
 import * as ini from 'ini';
 import * as path from 'path';
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
+import { Server } from "ssh2";
+import PalworldBlacklistSettingsEnum from "../Options/PalworldBlacklistSettingsEnum";
 
 class ServerSettingsManager {
 
@@ -21,23 +23,23 @@ class ServerSettingsManager {
 
     private SettingsFilePath = '';
 
-    public NewServer : boolean = false;
+    public NewServer: boolean = false;
+
+    private BlackListSettings: ServerSettingsEnum[] = [ServerSettingsEnum.PublicIP, ServerSettingsEnum.PublicPort, ServerSettingsEnum.ServerName, ServerSettingsEnum.ServerDescription, ServerSettingsEnum.AdminPassword, ServerSettingsEnum.RESTAPIPort, ServerSettingsEnum.RESTAPIEnabled, ServerSettingsEnum.Region, ServerSettingsEnum.UseAuth, ServerSettingsEnum.BanListURL, ServerSettingsEnum.ShowPlayerList, ServerSettingsEnum.LogFormatType, ServerSettingsEnum.AllowConnectPlatform, ServerSettingsEnum.IsUseBackupSaveData, ServerSettingsEnum.RCONEnabled, ServerSettingsEnum.RCONPort, ServerSettingsEnum.None, ServerSettingsEnum.ServerPassword, ServerSettingsEnum.ServerPlayerMaxNum, ServerSettingsEnum.CoopPlayerMaxNum, ServerSettingsEnum.ActiveUNKO, ServerSettingsEnum.DropItemMaxNum_UNKO]
 
     constructor() {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-        if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
-        {
+        if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH)) {
             this.SettingsFilePath = dataManager.SERVER_SETTINGS_FILE_PATH;
             this.NewServer = false;
         }
-        else
-        {
+        else {
             this.SettingsFilePath = dataManager.START_SETTINGS_FILE_PATH
             this.NewServer = true;
         }
-        
+
         this.LoadSettings();
     }
 
@@ -90,6 +92,24 @@ class ServerSettingsManager {
             }
         }
         return ServerSettingsEnum.None;
+    }
+
+    public GetServerSettingsAsString(): string {
+        let settings = 'Server Settings: \n';
+
+        const keys = Object.keys(ServerSettingsEnum) as Array<keyof typeof ServerSettingsEnum>;
+
+        const blacklistKeys = Object.values(PalworldBlacklistSettingsEnum) as Array<keyof typeof PalworldBlacklistSettingsEnum>;
+
+        for (const key of keys) {
+
+            if (blacklistKeys.includes(ServerSettingsEnum[key] as unknown as PalworldBlacklistSettingsEnum))
+                continue;
+
+            settings += `${ServerSettingsEnum[key]}: ${this.GetSettingValue(ServerSettingsEnum[key])} \n`;
+        }
+
+        return settings;
     }
 
 }

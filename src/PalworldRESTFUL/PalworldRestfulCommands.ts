@@ -7,6 +7,7 @@ import Player from "../ServerObjects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
 import GameWorldManager from "../ServerManagement/GameWorldManager";
+import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
 
 class PalworldRestfulCommands {
 
@@ -83,26 +84,30 @@ class PalworldRestfulCommands {
 
     public static ServerSettings(command: Command, client: Client): void {
 
-        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
+        // let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SETTINGS);
 
-        request.SendRequest().then((res) => {
-            console.log(res);
-            if (res.status == 200) {
-                let content = JSON.parse(res.message);
+        // request.SendRequest().then((res) => {
+        //     console.log(res);
+        //     if (res.status == 200) {
+        //         let content = JSON.parse(res.message);
 
-                command.AddToResponseMessage("Server Settings: ");
+        //         command.AddToResponseMessage("Server Settings: ");
 
-                command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum.Difficulty]}`);
-                command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum.DayTimeSpeedRate]}`);
-                command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum.PalSpawnNumRate]}`);
-            }
-            else
-                command.AddToResponseMessage("Error Retrieving Server Settings");
+        //         command.AddToResponseMessage(`Difficulty: ${content[ServerSettingsEnum.Difficulty]}`);
+        //         command.AddToResponseMessage(`DayTimeSpeedRate: ${content[ServerSettingsEnum.DayTimeSpeedRate]}`);
+        //         command.AddToResponseMessage(`PalSpawnNumRate: ${content[ServerSettingsEnum.PalSpawnNumRate]}`);
+        //     }
+        //     else
+        //         command.AddToResponseMessage("Error Retrieving Server Settings");
 
-        }).catch((error) => {
-            console.log(error);
-            command.AddToResponseMessage("Error Retrieving Server Settings");
-        });
+        // }).catch((error) => {
+        //     console.log(error);
+        //     command.AddToResponseMessage("Error Retrieving Server Settings");
+        // });
+
+        let serverSettings = new ServerSettingsManager();
+
+        command.AddTextFileToResponseMessage(serverSettings.GetServerSettingsAsString(), "ServerSettings")
 
         this.UpdateServerMetrics(client);
     }
