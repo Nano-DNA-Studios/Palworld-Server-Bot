@@ -29,9 +29,31 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`;
         this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
         this.SCP_INFO = new SCPInfo_1.default(0, '', '', '', '');
+        this.LAST_BACKUP_DATE = new Date();
+        this.GetTimeSinceLastBackup = () => {
+            let uptime = (new Date().getTime() - this.LAST_BACKUP_DATE.getTime()) / 1000;
+            const days = Math.floor(uptime / 86400);
+            const hours = Math.floor((uptime % 86400) / 3600);
+            const minutes = Math.floor((uptime % 3600) / 60);
+            const seconds = Math.floor(uptime % 60);
+            let result = "";
+            if (days > 0) {
+                result += `${days} d : `;
+            }
+            if (hours > 0 || days > 0) { // Include hours if days are also present
+                result += `${hours} h : `;
+            }
+            if (minutes > 0 || hours > 0 || days > 0) { // Include minutes if hours or days are present
+                result += `${minutes} min :`;
+            }
+            if (minutes > 0 || hours > 0 || days > 0 || seconds > 0) { // Include minutes if hours or days are present
+                result += ` ${seconds} sec`;
+            }
+            return result;
+        };
     }
     UpdateMetricsStatus(metrics, client) {
-        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
+        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         if (client.user) {
             if (metrics.Uptime == 0 || metrics.Uptime == undefined)
                 client.user.setActivity("Server Offline", { type: discord_js_1.ActivityType.Playing });
@@ -42,6 +64,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
     async CreateBackup() {
         try {
             const now = new Date();
+            this.LAST_BACKUP_DATE = now;
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
             const day = String(now.getDate()).padStart(2, '0');

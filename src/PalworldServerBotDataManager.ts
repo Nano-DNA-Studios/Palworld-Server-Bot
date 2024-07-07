@@ -43,8 +43,10 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     SCP_INFO: SCPInfo = new SCPInfo(0, '', '', '', '');
 
+    LAST_BACKUP_DATE: Date = new Date();
+
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
-        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} `;
+        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 
         if (client.user) {
             if (metrics.Uptime == 0 || metrics.Uptime == undefined)
@@ -54,20 +56,46 @@ class PalworldServerBotDataManager extends BotDataManager {
         }
     }
 
+    public GetTimeSinceLastBackup = (): string => {
+        let uptime = (new Date().getTime() - this.LAST_BACKUP_DATE.getTime()) / 1000;
+
+        const days = Math.floor(uptime / 86400);
+        const hours = Math.floor((uptime % 86400) / 3600);
+        const minutes = Math.floor((uptime % 3600) / 60);
+        const seconds = Math.floor(uptime % 60);
+        let result = "";
+
+        if (days > 0) {
+            result += `${days} d : `;
+        }
+        if (hours > 0 || days > 0) {  // Include hours if days are also present
+            result += `${hours} h : `;
+        }
+        if (minutes > 0 || hours > 0 || days > 0) {  // Include minutes if hours or days are present
+            result += `${minutes} min :`;
+        }
+        if (minutes > 0 || hours > 0 || days > 0 || seconds > 0) { // Include minutes if hours or days are present
+            result += ` ${seconds} sec`;
+        }
+
+        return result;
+    }
+
     public async CreateBackup() {
 
         try {
             const now = new Date();
+            this.LAST_BACKUP_DATE = now;
             const year = now.getFullYear();
             const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
             const day = String(now.getDate()).padStart(2, '0');
             const hour = String(now.getHours()).padStart(2, '0');
             const min = String(now.getMinutes()).padStart(2, '0');
-            let timestamp= `${year}_${month}_${day}_${hour}_${min}`;
+            let timestamp = `${year}_${month}_${day}_${hour}_${min}`;
 
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
             let runner = new BashScriptRunner();
-            
+
             await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
 
             if (!fs.existsSync("/home/steam/Backups/Extras"))
