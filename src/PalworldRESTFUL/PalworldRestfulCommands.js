@@ -10,7 +10,7 @@ const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServe
 const Player_1 = __importDefault(require("../ServerObjects/Player"));
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
-const GameWorldManager_1 = __importDefault(require("../GameWorldManagement/GameWorldManager"));
+const GameWorldManager_1 = __importDefault(require("../ServerManagement/GameWorldManager"));
 class PalworldRestfulCommands {
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);

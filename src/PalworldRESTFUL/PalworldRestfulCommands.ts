@@ -6,7 +6,7 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import Player from "../ServerObjects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
-import GameWorldManager from "../GameWorldManagement/GameWorldManager";
+import GameWorldManager from "../ServerManagement/GameWorldManager";
 
 class PalworldRestfulCommands {
 

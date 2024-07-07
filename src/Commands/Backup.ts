@@ -1,6 +1,6 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command } from "dna-discord-framework";
-import GameWorldManager from "../GameWorldManagement/GameWorldManager";
+import GameWorldManager from "../ServerManagement/GameWorldManager";
 import fsp from "fs/promises";
 import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";

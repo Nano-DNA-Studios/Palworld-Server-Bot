@@ -31,6 +31,7 @@ const ini = __importStar(require("ini"));
 const path = __importStar(require("path"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const ServerSettingsEnum_1 = __importDefault(require("../Options/ServerSettingsEnum"));
+const ServerSettingsManager_1 = __importDefault(require("../ServerManagement/ServerSettingsManager"));
 class Setup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -47,24 +48,33 @@ class Setup extends dna_discord_framework_1.Command {
             const serverDesc = interaction.options.getString('serverdescription');
             const adminPassword = interaction.options.getString('adminpassword');
             this.InitializeUserResponse(interaction, `Changing Default Settings`);
+            let serverSetting = new ServerSettingsManager_1.default();
             try {
-                this.LoadSettings();
+                serverSetting.LoadSettings();
+                //this.LoadSettings();
                 if (serverName) {
                     DataManager.SERVER_NAME = serverName;
-                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
+                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
+                    // this.SetSettingValue(ServerSettingsEnum.ServerName, serverName);
                 }
                 if (serverDesc) {
                     DataManager.SERVER_DESCRIPTION = serverDesc;
-                    this.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                    // this.SetSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
                 }
                 if (adminPassword) {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                    this.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                    // this.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
                 }
-                this.SetSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
-                this.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
-                this.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
-                this.SaveSettings();
+                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
+                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
+                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+                // this.SetSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
+                // this.SetSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
+                // this.SetSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+                serverSetting.SaveSettings();
+                // this.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
             }
             catch (error) {
