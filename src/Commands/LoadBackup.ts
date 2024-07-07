@@ -4,7 +4,6 @@ import fs from "fs";
 import axios from "axios";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
-import ServerMetricsEnum from "../Options/ServerMetricsEnum";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 
 class LoadBackup extends Command {
@@ -83,13 +82,8 @@ class LoadBackup extends Command {
         this.AddToResponseMessage("Replacing Server Settings");
 
         try {
-            console.log("Server Name");
-            console.log(serverSettings.GetSettingValue(ServerSettingsEnum.ServerName));
-
             dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum.ServerName);
-
             dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum.ServerDescription);
-
             dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum.AdminPassword);
 
             this.AddToResponseMessage("Server Settings Replaced Successfully");

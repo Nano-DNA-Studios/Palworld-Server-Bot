@@ -68,8 +68,6 @@ class LoadBackup extends dna_discord_framework_1.Command {
         let serverSettings = new ServerSettingsManager_1.default();
         this.AddToResponseMessage("Replacing Server Settings");
         try {
-            console.log("Server Name");
-            console.log(serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerName));
             dataManager.SERVER_NAME = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerName);
             dataManager.SERVER_DESCRIPTION = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.ServerDescription);
             dataManager.SERVER_ADMIN_PASSWORD = serverSettings.GetSettingValue(ServerSettingsEnum_1.default.AdminPassword);

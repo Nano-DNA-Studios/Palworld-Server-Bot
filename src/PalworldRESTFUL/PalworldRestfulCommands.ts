@@ -1,4 +1,4 @@
-import { BotData, Command } from "dna-discord-framework";
+import { BashScriptRunner, BotData, Command } from "dna-discord-framework";
 import ServerSettingsEnum from "../Options/ServerSettingsEnum";
 import ServerMetrics from "../ServerObjects/ServerMetrics";
 import { Client } from "discord.js";
@@ -9,6 +9,21 @@ import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
 import GameWorldManager from "../ServerManagement/GameWorldManager";
 
 class PalworldRestfulCommands {
+
+    public static StartServer(command: Command, client: Client): void {
+        try {
+            let scriptRunner = new BashScriptRunner();
+
+            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+
+            command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+
+            setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, 10000)
+
+        } catch (error) {
+            command.AddToResponseMessage("Error Starting Server");
+        }
+    }
 
     public static PingServer(command: Command, client: Client): void {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.INFO);
@@ -47,10 +62,10 @@ class PalworldRestfulCommands {
         }, 3000);
     }
 
-    public static SaveWorld(command: Command, client: Client): void {
+    public static async SaveWorld(command: Command, client: Client) {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
 
-        request.SendRequest().then((res) => {
+        await request.SendRequest().then((res) => {
 
             if (res.status == 200)
                 command.AddToResponseMessage("Server has been Saved");
@@ -60,10 +75,10 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
-
-        GameWorldManager.CreateBackup();
-
+        
         this.UpdateServerMetrics(client);
+
+        setTimeout(() => { GameWorldManager.CreateBackup(); }, (3) * 1000)
     }
 
     public static ServerSettings(command: Command, client: Client): void {

@@ -12,6 +12,17 @@ const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTF
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
 const GameWorldManager_1 = __importDefault(require("../ServerManagement/GameWorldManager"));
 class PalworldRestfulCommands {
+    static StartServer(command, client) {
+        try {
+            let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
+            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+            command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+            setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, 10000);
+        }
+        catch (error) {
+            command.AddToResponseMessage("Error Starting Server");
+        }
+    }
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
         request.SendRequest().then((res) => {
@@ -37,9 +48,9 @@ class PalworldRestfulCommands {
             });
         }, 3000);
     }
-    static SaveWorld(command, client) {
+    static async SaveWorld(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
-        request.SendRequest().then((res) => {
+        await request.SendRequest().then((res) => {
             if (res.status == 200)
                 command.AddToResponseMessage("Server has been Saved");
             else
@@ -47,8 +58,8 @@ class PalworldRestfulCommands {
         }).catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
         });
-        GameWorldManager_1.default.CreateBackup();
         this.UpdateServerMetrics(client);
+        setTimeout(() => { GameWorldManager_1.default.CreateBackup(); }, (3) * 1000);
     }
     static ServerSettings(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SETTINGS);

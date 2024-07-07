@@ -50,10 +50,6 @@ class ServerSettingsManager {
             this.SettingsFilePath = dataManager.START_SETTINGS_FILE_PATH;
             this.NewServer = true;
         }
-        if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
-            console.log('Server Settings File Exists');
-        else
-            console.log('Server Settings File Does Not Exist');
         this.LoadSettings();
     }
     SaveSettings() {
