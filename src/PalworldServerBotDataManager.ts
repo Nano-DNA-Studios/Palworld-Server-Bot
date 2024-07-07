@@ -1,13 +1,13 @@
-import { BotDataManager } from "dna-discord-framework";
-import ServerMetrics from "./ServerObjects/ServerMetrics";
+import { BashScriptRunner, BotDataManager } from "dna-discord-framework";
+import ServerMetrics from "./PalworldServer/Objects/ServerMetrics";
 import { Client, ActivityType } from "discord.js";
-import SCPInfo from "./ServerObjects/SCPInfo";
+import SCPInfo from "./PalworldServer/Objects/SCPInfo";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
     SERVER_PATH: string = '/home/steam/PalworldServer';
 
-    START_SETTINGS_FILE_PATH = '../Files/StartSettings.ini'
+    START_SETTINGS_FILE_PATH = '../PalworldServer/Files/StartSettings.ini'
 
     DEFAULT_FILE_SETTINGS_PATH = `${this.SERVER_PATH}/DefaultPalWorldSettings.ini`
 
@@ -50,6 +50,13 @@ class PalworldServerBotDataManager extends BotDataManager {
             else
                 client.user.setActivity(message, { type: ActivityType.Playing });
         }
+    }
+
+    public  CreateBackup(): void {
+        let runner = new BashScriptRunner();
+        const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
+
+        runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
     }
 
 }

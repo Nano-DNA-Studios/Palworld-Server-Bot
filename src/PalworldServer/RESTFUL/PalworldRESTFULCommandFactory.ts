@@ -1,5 +1,5 @@
 import { BotData, RESTFULRequest } from "dna-discord-framework";
-import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PalworldServerBotDataManager from "../../PalworldServerBotDataManager";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
 
 class PalworldRESTFULCommandFactory {

@@ -1,13 +1,8 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
-import * as fs from 'fs';
-import * as ini from 'ini';
-import * as path from 'path';
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import ServerSettingsEnum from "../Options/ServerSettingsEnum";
-import ServerSettingsManager from "../ServerManagement/ServerSettingsManager";
-import { server } from "typescript";
-
+import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
+import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
 
 class Setup extends Command {
 
@@ -42,22 +37,22 @@ class Setup extends Command {
 
             if (serverName) {
                 DataManager.SERVER_NAME = serverName;
-                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerName, serverName);
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.ServerName, serverName);
             }
 
             if (serverDesc) {
                 DataManager.SERVER_DESCRIPTION = serverDesc;
-                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.ServerDescription, serverDesc);
             }
 
             if (adminPassword) {
                 DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                serverSetting.SetStringSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
+                serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-            serverSetting.SetStringSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
-            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
-            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+            serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
+            serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIEnabled, "True");
+            serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
 
             serverSetting.SaveSettings();
 

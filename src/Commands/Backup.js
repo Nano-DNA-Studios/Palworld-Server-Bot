@@ -3,10 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
-const GameWorldManager_1 = __importDefault(require("../ServerManagement/GameWorldManager"));
 const promises_1 = __importDefault(require("fs/promises"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
-const PalworldRestfulCommands_1 = __importDefault(require("../PalworldRESTFUL/PalworldRestfulCommands"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class Backup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -16,7 +15,7 @@ class Backup extends dna_discord_framework_1.Command {
             this.InitializeUserResponse(interaction, `Creating Backup of World`);
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
-            GameWorldManager_1.default.CreateBackup();
+            dataManager.CreateBackup();
             const fileStats = await promises_1.default.stat(backupFilePath);
             const sizeAndFormat = this.GetFileSize(fileStats);
             if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {

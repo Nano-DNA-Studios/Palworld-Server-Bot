@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
-const SCPInfo_1 = __importDefault(require("../ServerObjects/SCPInfo"));
+const SCPInfo_1 = __importDefault(require("../PalworldServer/Objects/SCPInfo"));
 class RegisterBackup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);

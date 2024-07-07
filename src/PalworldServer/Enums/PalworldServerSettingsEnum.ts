@@ -1,5 +1,5 @@
 
-enum ServerSettingsEnum
+enum PalworldPalworldServerSettingsEnum
 {
     Difficulty = "Difficulty",
     DayTimeSpeedRate = "DayTimeSpeedRate",
@@ -72,4 +72,4 @@ enum ServerSettingsEnum
     None = "None"
 }
 
-export default ServerSettingsEnum;
+export default PalworldPalworldServerSettingsEnum;

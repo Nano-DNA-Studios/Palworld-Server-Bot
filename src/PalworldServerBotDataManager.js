@@ -5,12 +5,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
 const discord_js_1 = require("discord.js");
-const SCPInfo_1 = __importDefault(require("./ServerObjects/SCPInfo"));
+const SCPInfo_1 = __importDefault(require("./PalworldServer/Objects/SCPInfo"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super(...arguments);
         this.SERVER_PATH = '/home/steam/PalworldServer';
-        this.START_SETTINGS_FILE_PATH = '../Files/StartSettings.ini';
+        this.START_SETTINGS_FILE_PATH = '../PalworldServer/Files/StartSettings.ini';
         this.DEFAULT_FILE_SETTINGS_PATH = `${this.SERVER_PATH}/DefaultPalWorldSettings.ini`;
         this.SERVER_SETTINGS_FILE_PATH = `${this.SERVER_PATH}/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini`;
         this.SERVER_SETTINGS_DIR = `${this.SERVER_PATH}/Pal/Saved/Config/LinuxServer`;
@@ -36,6 +36,11 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             else
                 client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
         }
+    }
+    CreateBackup() {
+        let runner = new dna_discord_framework_1.BashScriptRunner();
+        const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
+        runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`);
     }
 }
 exports.default = PalworldServerBotDataManager;

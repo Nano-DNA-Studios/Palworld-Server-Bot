@@ -1,4 +1,4 @@
-import PlayerPropertiesEnum from "../Options/PlayerPropertiesEnum";
+import PlayerPropertiesEnum from "../Enums/PlayerPropertiesEnum";
 
 class Player
 {

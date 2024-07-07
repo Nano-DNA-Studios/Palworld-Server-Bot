@@ -1,7 +1,7 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
-import SCPInfo from "../ServerObjects/SCPInfo";
+import SCPInfo from "../PalworldServer/Objects/SCPInfo";
 
 class RegisterBackup extends Command {
 

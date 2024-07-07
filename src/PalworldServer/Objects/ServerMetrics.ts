@@ -1,4 +1,4 @@
-import ServerMetricsEnum from "../Options/ServerMetricsEnum";
+import ServerMetricsEnum from "../Enums/ServerMetricsEnum";
 
 class ServerMetrics {
 
