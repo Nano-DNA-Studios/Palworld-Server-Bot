@@ -94,7 +94,7 @@ class LoadBackup extends Command {
         }
     }
 
-    public async DownloadFile(attachment: Attachment, downloadPath: string) {
+    private async DownloadFile(attachment: Attachment, downloadPath: string) {
         try {
             const response = await axios({
                 method: 'GET',
@@ -115,7 +115,7 @@ class LoadBackup extends Command {
         }
     }
 
-    GetFileSize(fileStats: fs.Stats): [Number, string] {
+    private GetFileSize(fileStats: fs.Stats): [Number, string] {
         let realsize;
         let sizeFormat;
 

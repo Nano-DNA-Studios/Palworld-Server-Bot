@@ -1,5 +1,3 @@
-
-
 class SCPInfo {
 
     public Port: number = 0;
@@ -19,7 +17,6 @@ class SCPInfo {
         this.HostDeviceBackupFolder = hostDeviceBackupFolder;
         this.DownloadLocation = downloadLocation;
     }
-
 }
 
 export default SCPInfo;

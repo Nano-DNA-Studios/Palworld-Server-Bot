@@ -10,18 +10,6 @@ class Setup extends Command {
 
     CommandDescription: string = 'Sets up the Server for the First Time';
 
-    public Section: string = '/Script/Pal';
-
-    public PalGameWorldSettings: string = 'PalGameWorldSettings';
-
-    public OptionSettings: string = 'OptionSettings';
-
-    public ConfigFile: any;
-
-    public Settings: string = '';
-
-    public ServerSettingsArray: string[] = [];
-
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const DataManager = BotData.Instance(PalworldServerBotDataManager)
