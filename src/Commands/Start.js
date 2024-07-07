@@ -15,8 +15,5 @@ class Start extends dna_discord_framework_1.Command {
         };
         this.IsEphemeralResponse = true;
     }
-    async Sleep(milliseconds) {
-        return await setTimeout(() => { }, milliseconds);
-    }
 }
 module.exports = Start;

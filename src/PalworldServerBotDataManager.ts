@@ -2,6 +2,8 @@ import { BashScriptRunner, BotDataManager } from "dna-discord-framework";
 import ServerMetrics from "./PalworldServer/Objects/ServerMetrics";
 import { Client, ActivityType } from "discord.js";
 import SCPInfo from "./PalworldServer/Objects/SCPInfo";
+import AnnouncementMessage from "./PalworldServer/Objects/AnnouncementMessage";
+import fs from 'fs';
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -52,13 +54,36 @@ class PalworldServerBotDataManager extends BotDataManager {
         }
     }
 
-    public  CreateBackup(): void {
-        let runner = new BashScriptRunner();
-        const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
+    public async CreateBackup() {
 
-        runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
+        try {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based, so add 1
+            const day = String(now.getDate()).padStart(2, '0');
+            const hour = String(now.getHours()).padStart(2, '0');
+            const min = String(now.getMinutes()).padStart(2, '0');
+            let timestamp= `${year}_${month}_${day}_${hour}_${min}`;
+
+            const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
+            let runner = new BashScriptRunner();
+            
+            await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
+
+            if (!fs.existsSync("/home/steam/Backups/Extras"))
+                fs.mkdirSync("/home/steam/Backups/Extras", { recursive: true });
+
+            await runner.RunLocally(`cp ${backupFilePath} /home/steam/Backups/Extras/WorldBackup_${timestamp}.tar.gz`)
+
+            new AnnouncementMessage("World has been Backed up Successfully").GetRequest().SendRequest();
+        } catch (error) {
+            try {
+                new AnnouncementMessage("Error Creating Backup").GetRequest().SendRequest();
+            } catch (error) {
+                console.log("Error Creating Backup")
+            }
+        }
     }
-
 }
 
 export default PalworldServerBotDataManager;

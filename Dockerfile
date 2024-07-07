@@ -18,6 +18,7 @@ RUN cd /tmp \
 RUN mkdir /PalworldBot
 RUN mkdir /home/steam/PalworldServer
 RUN mkdir /home/steam/Backups
+RUN mkdir /home/steam/Backups/Extras
 
 # Give Ownership to the Steam User for the Palworld Server Directory
 RUN chown -R steam:steam /home/steam/PalworldServer 

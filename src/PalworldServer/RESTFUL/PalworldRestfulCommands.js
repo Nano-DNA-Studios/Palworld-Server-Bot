@@ -10,56 +10,82 @@ const Player_1 = __importDefault(require("../Objects/Player"));
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
 const ServerSettingsManager_1 = __importDefault(require("../ServerSettingsManager"));
+const AnnouncementMessage_1 = __importDefault(require("../Objects/AnnouncementMessage"));
 class PalworldRestfulCommands {
     static StartServer(command, client) {
-        try {
-            let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
-            scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
-            command.AddToResponseMessage("Waiting a few seconds to Ping Server");
-            setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, 10000);
-        }
-        catch (error) {
+        this.IsServerOnline().then((online) => {
+            if (online)
+                command.AddToResponseMessage("Server is Already Online");
+            else {
+                try {
+                    let scriptRunner = new dna_discord_framework_1.BashScriptRunner();
+                    scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+                    command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+                    setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, 10000);
+                }
+                catch (error) {
+                    command.AddToResponseMessage("Error Starting Server");
+                }
+            }
+        }).catch((error) => {
             command.AddToResponseMessage("Error Starting Server");
-        }
+        });
     }
     static PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
         request.SendRequest().then((res) => {
             if (res.status == 200)
-                command.AddToResponseMessage("Server is Running");
+                command.AddToResponseMessage("Server is Online");
             else
-                command.AddToResponseMessage("Server is Not Running");
+                command.AddToResponseMessage("Server is Offline");
         }).catch((error) => {
-            command.AddToResponseMessage("Server is Not Running");
+            command.AddToResponseMessage("Server is Offline");
         });
         this.UpdateServerMetrics(client);
     }
     static ShutdownServer(command, client, waittime) {
-        this.SaveWorld(command, client);
-        setTimeout(() => {
-            let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
-            request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
-            request.SendRequest().then((res) => {
-                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
-                setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
-            }).catch((error) => {
-                command.AddToResponseMessage("Error Shutting Down Server");
-            });
-        }, 3000);
+        this.IsServerOnline().then((online) => {
+            if (online) {
+                this.SaveWorld(command, client);
+                setTimeout(() => {
+                    let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
+                    request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
+                    request.SendRequest().then((res) => {
+                        command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+                        setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
+                    }).catch((error) => {
+                        command.AddToResponseMessage("Error Shutting Down Server");
+                    });
+                }, 3000);
+            }
+            else
+                command.AddToResponseMessage("Server is Already Offline");
+        }).catch((error) => {
+            command.AddToResponseMessage("Error Shutting Down Server");
+        });
     }
     static async SaveWorld(command, client) {
-        let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
-        await request.SendRequest().then((res) => {
-            if (res.status == 200)
-                command.AddToResponseMessage("Server has been Saved");
-            else
-                command.AddToResponseMessage("Error Saving the Server");
+        this.IsServerOnline().then(async (online) => {
+            if (online) {
+                let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
+                await request.SendRequest().then((res) => {
+                    if (res.status == 200)
+                        command.AddToResponseMessage("Server has been Saved");
+                    else
+                        command.AddToResponseMessage("Error Saving the Server");
+                }).catch((error) => {
+                    command.AddToResponseMessage("Error Saving Server");
+                });
+                let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+                setTimeout(() => { dataManager.CreateBackup(); }, (3) * 1000);
+            }
+            else {
+                command.AddToResponseMessage("Could not Save World, Server is Offline");
+            }
         }).catch((error) => {
-            command.AddToResponseMessage("Error Saving Server");
+            command.AddToResponseMessage("Could not Save World, Server is Offline");
         });
         this.UpdateServerMetrics(client);
-        let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-        setTimeout(() => { dataManager.CreateBackup(); }, (3) * 1000);
     }
     static ServerSettings(command, client) {
         let serverSettings = new ServerSettingsManager_1.default();
@@ -83,15 +109,23 @@ class PalworldRestfulCommands {
         }, 3000);
     }
     static Announce(command, client, message) {
-        let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.ANNOUNCE);
-        request.WriteBody({ 'message': message });
-        request.SendRequest().then((res) => {
-            if (res.status == 200)
-                command.AddToResponseMessage("Announcement Sent");
+        this.IsServerOnline().then((online) => {
+            if (online) {
+                let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.ANNOUNCE);
+                request.WriteBody({ 'message': message });
+                request.SendRequest().then((res) => {
+                    if (res.status == 200)
+                        command.AddToResponseMessage("Announcement Sent");
+                    else
+                        command.AddToResponseMessage("Error Sending Announcement");
+                }).catch((error) => {
+                    command.AddToResponseMessage("Error Sending Announcement");
+                });
+            }
             else
-                command.AddToResponseMessage("Error Sending Announcement");
+                command.AddToResponseMessage("Server is Offline");
         }).catch((error) => {
-            command.AddToResponseMessage("Error Sending Announcement");
+            command.AddToResponseMessage("Error Sending Announcement, Server is Offline");
         });
         this.UpdateServerMetrics(client);
     }
@@ -107,24 +141,72 @@ class PalworldRestfulCommands {
         });
     }
     static GetPlayers(command, client) {
-        let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.PLAYERS);
-        request.SendRequest().then((res) => {
-            if (res.status == 200) {
-                let players = [];
-                let content = JSON.parse(res.message)['players'];
-                content.forEach((player) => {
-                    players.push(new Player_1.default(player));
-                });
-                players.forEach((player) => {
-                    command.AddToResponseMessage(`${player.Name} - Level : ${player.Level} - Location: (${player.LocationX}, ${player.LocationY})`);
+        this.IsServerOnline().then((online) => {
+            if (online) {
+                let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.PLAYERS);
+                request.SendRequest().then((res) => {
+                    if (res.status == 200) {
+                        let players = [];
+                        let content = JSON.parse(res.message)['players'];
+                        content.forEach((player) => {
+                            players.push(new Player_1.default(player));
+                        });
+                        players.forEach((player) => {
+                            command.AddToResponseMessage(`${player.Name} - Level : ${player.Level} - Location: (${player.LocationX}, ${player.LocationY})`);
+                        });
+                    }
+                    else
+                        command.AddToResponseMessage("Could not Retreive Players");
+                }).catch((error) => {
+                    command.AddToResponseMessage("Error Retrieving Players");
                 });
             }
             else
-                command.AddToResponseMessage("Could not Retreive Players");
+                command.AddToResponseMessage("Server is Offline");
         }).catch((error) => {
-            command.AddToResponseMessage("Error Retrieving Players");
+            command.AddToResponseMessage("Error Retrieving Players, Server is Offline");
         });
         this.UpdateServerMetrics(client);
+    }
+    static async IsServerOnline() {
+        try {
+            let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
+            let requestResult = await request.SendRequest();
+            if (requestResult.status == 200)
+                return true;
+            else
+                return false;
+        }
+        catch (error) {
+            return false;
+        }
+    }
+    static HalfHourlyBackup() {
+        try {
+            this.IsServerOnline().then((online) => {
+                if (online) {
+                    let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
+                    request.SendRequest().then((res) => {
+                        if (res.status == 200) {
+                            try {
+                                let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+                                dataManager.CreateBackup();
+                                new AnnouncementMessage_1.default("World has been Backed up Successfully").GetRequest().SendRequest();
+                            }
+                            catch (error) {
+                                new AnnouncementMessage_1.default("Error Backing up World, Must be Backed Up Manually").GetRequest().SendRequest();
+                            }
+                        }
+                    }).catch((error) => {
+                        console.log(error);
+                    });
+                }
+            }).catch((error) => {
+            });
+        }
+        catch (error) {
+        }
+        setTimeout(() => { this.HalfHourlyBackup(); }, 1800000);
     }
 }
 exports.default = PalworldRestfulCommands;
