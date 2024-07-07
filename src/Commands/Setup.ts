@@ -39,25 +39,25 @@ class Setup extends Command {
         let serverSetting = new ServerSettingsManager();
 
         try {
-            
+
             if (serverName) {
                 DataManager.SERVER_NAME = serverName;
-                serverSetting.SetSettingValue(ServerSettingsEnum.ServerName, serverName);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerName, serverName);
             }
 
             if (serverDesc) {
                 DataManager.SERVER_DESCRIPTION = serverDesc;
-                serverSetting.SetSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.ServerDescription, serverDesc);
             }
 
             if (adminPassword) {
                 DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                serverSetting.SetSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
+                serverSetting.SetStringSettingValue(ServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-            serverSetting.SetSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
-            serverSetting.SetSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
-            serverSetting.SetSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIEnabled, "True");
+            serverSetting.SetStringSettingValue(ServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
 
             serverSetting.SaveSettings();
 

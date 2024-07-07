@@ -18,19 +18,19 @@ class ChangeSettings extends Command {
 
         if (settingName && settingValue) {
             let serverSettingsManager = new ServerSettingsManager();
-
-
             let serverSetting = serverSettingsManager.getEnum(settingName);
 
-            if (serverSetting != ServerSettingsEnum.None)
-            {
-                serverSettingsManager.SetSettingValue(serverSetting, settingValue);
+            if (serverSetting != ServerSettingsEnum.None) {
+                if (serverSettingsManager.NewServer)
+                    this.AddToResponseMessage(`You're changing the setting on a new server, please setup the server using /setup first.`);
+                else {
+                    serverSettingsManager.SetNumberSettingValue(serverSetting, settingValue);
 
-                serverSettingsManager.SaveSettings();
+                    serverSettingsManager.SaveSettings();
 
-                this.AddToResponseMessage(`Setting ${settingName} Changed to ${settingValue} (Server Must be Restarted for Changes to Take Effect)`);
-            } else
-            {
+                    this.AddToResponseMessage(`Setting ${settingName} Changed to ${settingValue} (Server Must be Restarted for Changes to Take Effect)`);
+                }
+            } else {
                 this.AddToResponseMessage(`Setting ${settingName} Not Found`);
             }
         } else
@@ -174,7 +174,6 @@ class ChangeSettings extends Command {
             ]
         }
     ];
-
 }
 
 export = ChangeSettings;

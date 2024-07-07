@@ -40,11 +40,16 @@ class ServerSettingsManager {
         this.Settings = '';
         this.ServerSettingsArray = [];
         this.SettingsFilePath = '';
+        this.NewServer = false;
         const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
-        if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
+        if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH)) {
             this.SettingsFilePath = dataManager.SERVER_SETTINGS_FILE_PATH;
-        else
+            this.NewServer = false;
+        }
+        else {
             this.SettingsFilePath = dataManager.START_SETTINGS_FILE_PATH;
+            this.NewServer = true;
+        }
         if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
             console.log('Server Settings File Exists');
         else
@@ -68,10 +73,15 @@ class ServerSettingsManager {
         this.Settings = this.ConfigFile[this.Section][this.PalGameWorldSettings][this.OptionSettings];
         this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
     }
-    SetSettingValue(settingName, settingValue) {
+    SetStringSettingValue(settingName, settingValue) {
         let serverNameIndex = this.ServerSettingsArray.findIndex((setting) => setting.trim().startsWith(`${settingName}=`));
         if (serverNameIndex !== -1)
             this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
+    }
+    SetNumberSettingValue(settingName, settingValue) {
+        let serverNameIndex = this.ServerSettingsArray.findIndex((setting) => setting.trim().startsWith(`${settingName}=`));
+        if (serverNameIndex !== -1)
+            this.ServerSettingsArray[serverNameIndex] = `${settingName}=${settingValue}`;
     }
     GetSettingValue(settingName) {
         let setting = this.ServerSettingsArray.find((setting) => setting.trim().startsWith(`${settingName}=`));

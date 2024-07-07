@@ -18,9 +18,13 @@ class ChangeSettings extends dna_discord_framework_1.Command {
                 let serverSettingsManager = new ServerSettingsManager_1.default();
                 let serverSetting = serverSettingsManager.getEnum(settingName);
                 if (serverSetting != ServerSettingsEnum_1.default.None) {
-                    serverSettingsManager.SetSettingValue(serverSetting, settingValue);
-                    serverSettingsManager.SaveSettings();
-                    this.AddToResponseMessage(`Setting ${settingName} Changed to ${settingValue} (Server Must be Restarted for Changes to Take Effect)`);
+                    if (serverSettingsManager.NewServer)
+                        this.AddToResponseMessage(`You're changing the setting on a new server, please setup the server using /setup first.`);
+                    else {
+                        serverSettingsManager.SetNumberSettingValue(serverSetting, settingValue);
+                        serverSettingsManager.SaveSettings();
+                        this.AddToResponseMessage(`Setting ${settingName} Changed to ${settingValue} (Server Must be Restarted for Changes to Take Effect)`);
+                    }
                 }
                 else {
                     this.AddToResponseMessage(`Setting ${settingName} Not Found`);

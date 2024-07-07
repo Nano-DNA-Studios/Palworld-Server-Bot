@@ -26,19 +26,19 @@ class Setup extends dna_discord_framework_1.Command {
             try {
                 if (serverName) {
                     DataManager.SERVER_NAME = serverName;
-                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
+                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.ServerName, serverName);
                 }
                 if (serverDesc) {
                     DataManager.SERVER_DESCRIPTION = serverDesc;
-                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
+                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.ServerDescription, serverDesc);
                 }
                 if (adminPassword) {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
-                    serverSetting.SetSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
+                    serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 }
-                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
-                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
-                serverSetting.SetSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
+                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
+                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.RESTAPIEnabled, "True");
+                serverSetting.SetStringSettingValue(ServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
                 serverSetting.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
             }

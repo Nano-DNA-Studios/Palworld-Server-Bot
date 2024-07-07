@@ -21,14 +21,23 @@ class ServerSettingsManager {
 
     private SettingsFilePath = '';
 
+    public NewServer : boolean = false;
+
     constructor() {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
         if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
+        {
             this.SettingsFilePath = dataManager.SERVER_SETTINGS_FILE_PATH;
+            this.NewServer = false;
+        }
         else
+        {
             this.SettingsFilePath = dataManager.START_SETTINGS_FILE_PATH
+            this.NewServer = true;
+        }
+            
 
         if (fs.existsSync(dataManager.SERVER_SETTINGS_FILE_PATH))
             console.log('Server Settings File Exists');
@@ -59,10 +68,16 @@ class ServerSettingsManager {
         this.ServerSettingsArray = this.Settings.slice(1, -1).split(',');
     }
 
-    public SetSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
+    public SetStringSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
         let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
         if (serverNameIndex !== -1)
             this.ServerSettingsArray[serverNameIndex] = `${settingName}="${settingValue}"`;
+    }
+
+    public SetNumberSettingValue(settingName: ServerSettingsEnum, settingValue: string): void {
+        let serverNameIndex = this.ServerSettingsArray.findIndex((setting: string) => setting.trim().startsWith(`${settingName}=`));
+        if (serverNameIndex !== -1)
+            this.ServerSettingsArray[serverNameIndex] = `${settingName}=${settingValue}`;
     }
 
     public GetSettingValue(settingName: ServerSettingsEnum): string {
