@@ -13,8 +13,6 @@ class DeleteBackup extends Command {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-
-        
         if (fs.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
 
             this.InitializeUserResponse(interaction, `Removing Backup File from Server`);
@@ -47,7 +45,6 @@ class DeleteBackup extends Command {
 
     public IsEphemeralResponse: boolean = true;
 
-   
 }
 
 export = DeleteBackup;

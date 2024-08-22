@@ -16,6 +16,7 @@ class Setup extends dna_discord_framework_1.Command {
             const serverName = interaction.options.getString('servername');
             const serverDesc = interaction.options.getString('serverdescription');
             const adminPassword = interaction.options.getString('adminpassword');
+            const connection = interaction.options.getString('connection');
             this.InitializeUserResponse(interaction, `Changing Default Settings`);
             let serverSetting = new ServerSettingsManager_1.default();
             try {
@@ -31,6 +32,8 @@ class Setup extends dna_discord_framework_1.Command {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
                     serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 }
+                if (connection)
+                    DataManager.SERVER_CONNECTION_PORT = connection;
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIEnabled, "True");
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
@@ -59,6 +62,12 @@ class Setup extends dna_discord_framework_1.Command {
             {
                 name: 'adminpassword',
                 description: 'The Admin Password for the Server',
+                required: true,
+                type: dna_discord_framework_1.OptionTypesEnum.String
+            },
+            {
+                name: 'connection',
+                description: 'The Connection String to join the Server',
                 required: true,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             }

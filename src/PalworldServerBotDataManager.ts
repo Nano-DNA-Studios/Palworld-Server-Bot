@@ -45,6 +45,8 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     LAST_BACKUP_DATE: Date = new Date();
 
+    SERVER_CONNECTION_PORT: string = 'localhost:8211';
+
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 

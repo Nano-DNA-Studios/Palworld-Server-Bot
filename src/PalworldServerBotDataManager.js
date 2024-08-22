@@ -30,6 +30,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
         this.SCP_INFO = new SCPInfo_1.default(0, '', '', '', '');
         this.LAST_BACKUP_DATE = new Date();
+        this.SERVER_CONNECTION_PORT = 'localhost:8211';
         this.GetTimeSinceLastBackup = () => {
             let uptime = (new Date().getTime() - this.LAST_BACKUP_DATE.getTime()) / 1000;
             const days = Math.floor(uptime / 86400);

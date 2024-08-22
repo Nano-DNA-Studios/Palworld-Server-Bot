@@ -16,6 +16,7 @@ class Setup extends Command {
         const serverName = interaction.options.getString('servername');
         const serverDesc = interaction.options.getString('serverdescription');
         const adminPassword = interaction.options.getString('adminpassword');
+        const connection = interaction.options.getString('connection');
 
         this.InitializeUserResponse(interaction, `Changing Default Settings`)
 
@@ -38,6 +39,9 @@ class Setup extends Command {
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.AdminPassword, adminPassword);
             }
 
+            if (connection) 
+                DataManager.SERVER_CONNECTION_PORT = connection;
+            
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIEnabled, "True");
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
@@ -70,6 +74,12 @@ class Setup extends Command {
         {
             name: 'adminpassword',
             description: 'The Admin Password for the Server',
+            required: true,
+            type: OptionTypesEnum.String
+        },
+        {
+            name: 'connection',
+            description: 'The Connection String to join the Server',
             required: true,
             type: OptionTypesEnum.String
         }
