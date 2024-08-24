@@ -1,8 +1,7 @@
 # Use an official Ubuntu base image
 FROM mrdnalex/steamcmd:latest
 
-# Rebuild to install Palworld Server upon launching?
-
+# Switch to Root User
 USER root
 
 # Set the Node.js version
@@ -32,6 +31,7 @@ RUN chmod -R 755 /PalworldBot
 RUN chown -R steam:steam /home/steam/Backups
 RUN chmod -R 755 /home/steam/Backups
 
+# Switch to the Steam User
 USER steam
 
 # Install Palworld Server App
@@ -40,14 +40,15 @@ RUN steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +ap
 # Assign Environment Variables for steamservice.so
 ENV LD_LIBRARY_PATH=/home/steam/.steam/sdk64:$LD_LIBRARY_PATH:
 
+# Set Work Directory to be Within the Steam User's Home Directory
 WORKDIR /home/steam
 
+# Copy the Palworld Bot Files to the Container
 COPY ./ /PalworldBot
 
-# Start the Container and have it use host device IP Network
-# docker run -it --network="host" -v "/home/mrdna/Projects/PalworldServer/Backups":"/home/steam/Backups" -v "/home/mrdna/Projects/PalwordServer/Settings":"/home/steam/PalworldBot/Resources"  mrdnalex/palworldserverbot
-
+# Change Workdirectory to the Palworld Bot Directory
 WORKDIR /PalworldBot
 
+# Run the Palworld Bot
 CMD ["node", "/PalworldBot/index.js"]
 

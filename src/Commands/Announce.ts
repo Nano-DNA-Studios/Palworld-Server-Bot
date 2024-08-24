@@ -14,8 +14,8 @@ class Announce extends Command {
 
         this.InitializeUserResponse(interaction, `Announcing Message: ${message}`);
 
-        if (message) 
-            PalworldRestfulCommands.Announce(this,client, message);
+        if (message)
+            PalworldRestfulCommands.Announce(this, client, message);
     };
 
     public IsEphemeralResponse: boolean = true;
