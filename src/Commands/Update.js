@@ -19,9 +19,6 @@ class Update extends dna_discord_framework_1.Command {
                 this.AddToResponseMessage("Updating Server");
                 await new dna_discord_framework_1.BashScriptRunner().RunLocally(`steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit`);
                 this.AddToResponseMessage("Server Updated");
-                this.AddToResponseMessage("Starting Server");
-                await PalworldRestfulCommands_1.default.StartServer(this, client);
-                this.AddToResponseMessage("Server Started");
             }, 10000);
         };
         this.IsEphemeralResponse = true;

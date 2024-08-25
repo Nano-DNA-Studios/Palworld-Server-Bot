@@ -25,16 +25,8 @@ class Update extends Command {
             await new BashScriptRunner().RunLocally(`steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit`);
     
             this.AddToResponseMessage("Server Updated");
-    
-            this.AddToResponseMessage("Starting Server");
-    
-            await PalworldRestfulCommands.StartServer(this, client);
-    
-            this.AddToResponseMessage("Server Started");
 
         }, 10000);
-
-        
     };
 
     public IsEphemeralResponse: boolean = true;
