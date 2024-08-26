@@ -24,6 +24,8 @@ class Backup extends Command {
         const fileStats = await fsp.stat(backupFilePath);
         const sizeAndFormat = this.GetFileSize(fileStats);
 
+        this.AddToResponseMessage("Backup File Created Successfully");
+
         if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB")
         {
             this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal")
@@ -31,7 +33,11 @@ class Backup extends Command {
             command = "```" + command + "```"
             this.AddToResponseMessage(command)
         } else
+        {
+            this.AddToResponseMessage("Uploading Backup File to Discord.");
             this.AddFileToResponseMessage(backupFilePath);
+        }
+            
 
         PalworldRestfulCommands.UpdateServerMetrics(client);
     };
