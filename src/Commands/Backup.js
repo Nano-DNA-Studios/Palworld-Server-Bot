@@ -32,7 +32,7 @@ class Backup extends dna_discord_framework_1.Command {
             PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
         };
         this.IsEphemeralResponse = true;
-        this.MAX_FILE_SIZE_MB = 80;
+        this.MAX_FILE_SIZE_MB = 20;
     }
     GetFileSize(fileStats) {
         let realsize;

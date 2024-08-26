@@ -44,7 +44,7 @@ class Backup extends Command {
 
     public IsEphemeralResponse: boolean = true;
 
-    private MAX_FILE_SIZE_MB : Number = 80;
+    private MAX_FILE_SIZE_MB : Number = 20;
 
     GetFileSize(fileStats: fs.Stats): [Number, string] {
         let realsize;
