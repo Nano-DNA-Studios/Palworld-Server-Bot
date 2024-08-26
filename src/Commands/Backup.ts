@@ -19,7 +19,7 @@ class Backup extends Command {
 
         const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
 
-        dataManager.CreateBackup();
+        await dataManager.CreateBackup();
 
         const fileStats = await fsp.stat(backupFilePath);
         const sizeAndFormat = this.GetFileSize(fileStats);

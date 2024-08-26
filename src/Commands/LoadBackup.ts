@@ -44,7 +44,7 @@ class LoadBackup extends Command {
                 await this.ReplaceServerSettings();
 
             } else
-                this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load.");
+                this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");
         }
     };
 

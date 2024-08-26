@@ -13,7 +13,12 @@ class Update extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             this.InitializeUserResponse(interaction, `Updating Palworld Server`);
-            await PalworldRestfulCommands_1.default.ShutdownServer(this, client, 10);
+            try {
+                await PalworldRestfulCommands_1.default.ShutdownServer(this, client, 15);
+            }
+            catch (error) {
+                this.AddToResponseMessage("Server is already offline");
+            }
             setTimeout(async () => {
                 await dataManager.CreateBackup();
                 this.AddToResponseMessage("Updating Server");

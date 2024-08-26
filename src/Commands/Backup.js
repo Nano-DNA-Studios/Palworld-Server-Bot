@@ -15,7 +15,7 @@ class Backup extends dna_discord_framework_1.Command {
             this.InitializeUserResponse(interaction, `Creating Backup of World`);
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
-            dataManager.CreateBackup();
+            await dataManager.CreateBackup();
             const fileStats = await promises_1.default.stat(backupFilePath);
             const sizeAndFormat = this.GetFileSize(fileStats);
             if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {

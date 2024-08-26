@@ -14,8 +14,14 @@ class Update extends Command {
 
         this.InitializeUserResponse(interaction, `Updating Palworld Server`);
 
-        await PalworldRestfulCommands.ShutdownServer(this, client, 10);
-
+        try 
+        {
+            await PalworldRestfulCommands.ShutdownServer(this, client, 15);
+        } catch (error)
+        {
+            this.AddToResponseMessage("Server is already offline");
+        }
+    
         setTimeout(async ()  => {
 
             await dataManager.CreateBackup();
