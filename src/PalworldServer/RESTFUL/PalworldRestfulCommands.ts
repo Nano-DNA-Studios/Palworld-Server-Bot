@@ -12,40 +12,38 @@ class PalworldRestfulCommands {
 
     public static async StartServer(command: Command, client: Client): Promise<void> {
 
-        this.IsServerOnline().then((online) => {
+        let online = await this.IsServerOnline();
 
-            if (online)
-                command.AddToResponseMessage("Server is Already Online");
-            else {
-                try {
-                    let scriptRunner = new BashScriptRunner();
+        if (online)
+            command.AddToResponseMessage("Server is Already Online");
+        else {
+            try {
+                let scriptRunner = new BashScriptRunner();
 
-                    scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
+                scriptRunner.RunLocally("cd /home/steam/PalworldServer && ./PalServer.sh");
 
-                    command.AddToResponseMessage("Waiting a few seconds to Ping Server");
+                command.AddToResponseMessage("Waiting a few seconds to Ping Server");
 
-                    setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, 10000)
+                await setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, 15000)
 
-                } catch (error) {
-                    command.AddToResponseMessage("Error Starting Server");
-                }
+            } catch (error) {
+                command.AddToResponseMessage("Error Starting Server");
             }
-
-        }).catch((error) => {
-            command.AddToResponseMessage("Error Starting Server");
-        });
+        }
     }
 
     public static async PingServer(command: Command, client: Client): Promise<void> {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.INFO);
 
         request.SendRequest().then((res) => {
+
             if (res.status == 200)
                 command.AddToResponseMessage("Server is Online");
             else
                 command.AddToResponseMessage("Server is Offline");
 
         }).catch((error) => {
+            console.log(error);
             command.AddToResponseMessage("Server is Offline");
         });
 
@@ -54,78 +52,53 @@ class PalworldRestfulCommands {
 
     public static async ShutdownServer(command: Command, client: Client, waittime: number): Promise<void> {
 
-
         let online = await this.IsServerOnline();
 
-       // this.IsServerOnline().then(async (online) => {
-            if (online) {
-                await this.SaveWorld(command, client);
+        if (online) {
+            await this.SaveWorld(command, client);
 
-                let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
+            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
 
-                request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
+            request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
-                let response = await request.SendRequest()
+            let response = await request.SendRequest()
 
-                if (response.status == RESTFULResponseStatusEnum.SUCCESS)
-                {
-                    command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+            if (response.status == RESTFULResponseStatusEnum.SUCCESS) {
+                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
 
-                    await setTimeout(async () => { await PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000);
-                } else 
-                {
-                    command.AddToResponseMessage("Error Shutting Down Server");
-                }
-                
-                
-                //.then((res) => {
+                await setTimeout(async () => { await PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000);
+            } else {
+                command.AddToResponseMessage("Error Shutting Down Server");
+            }
 
-                   
-
-                    
-
-               // }).catch((error) => {
-                //    command.AddToResponseMessage("Error Shutting Down Server");
-               // });
-
-
-                //setTimeout(() => {
-                   
-               // }, 3000);
-            } else
-                command.AddToResponseMessage("Server is Already Offline");
-
-        //}).catch((error) => {
-         //   command.AddToResponseMessage("Error Shutting Down Server");
-        //});
+        } else
+            command.AddToResponseMessage("Server is Already Offline");
     }
 
     public static async SaveWorld(command: Command, client: Client) {
 
-        this.IsServerOnline().then(async (online) => {
-            if (online) {
-                let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
+        let online = await this.IsServerOnline();
 
-                await request.SendRequest().then((res) => {
+        if (online) {
+            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
 
-                    if (res.status == 200)
-                        command.AddToResponseMessage("Server has been Saved");
-                    else
-                        command.AddToResponseMessage("Error Saving the Server");
+            await request.SendRequest().then((res) => {
 
-                }).catch((error) => {
-                    command.AddToResponseMessage("Error Saving Server");
-                });
+                if (res.status == 200)
+                    command.AddToResponseMessage("Server has been Saved");
+                else
+                    command.AddToResponseMessage("Error Saving the Server");
 
-                let dataManager = BotData.Instance(PalworldServerBotDataManager);
+            }).catch((error) => {
+                command.AddToResponseMessage("Error Saving Server");
+            });
 
-                setTimeout(() => { dataManager.CreateBackup(); }, (3) * 1000)
-            } else {
-                command.AddToResponseMessage("Could not Save World, Server is Offline");
-            }
-        }).catch((error) => {
+            let dataManager = BotData.Instance(PalworldServerBotDataManager);
+
+            setTimeout(() => { dataManager.CreateBackup(); }, (3) * 1000)
+        } else {
             command.AddToResponseMessage("Could not Save World, Server is Offline");
-        });
+        }
 
         this.UpdateServerMetrics(client);
     }
@@ -163,28 +136,25 @@ class PalworldRestfulCommands {
 
     public static async Announce(command: Command, client: Client, message: string): Promise<void> {
 
-        this.IsServerOnline().then((online) => {
+        let online = await this.IsServerOnline();
 
-            if (online) {
-                let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.ANNOUNCE);
+        if (online) {
+            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.ANNOUNCE);
 
-                request.WriteBody({ 'message': message });
+            request.WriteBody({ 'message': message });
 
-                request.SendRequest().then((res) => {
+            request.SendRequest().then((res) => {
 
-                    if (res.status == 200)
-                        command.AddToResponseMessage("Announcement Sent");
-                    else
-                        command.AddToResponseMessage("Error Sending Announcement");
-
-                }).catch((error) => {
+                if (res.status == 200)
+                    command.AddToResponseMessage("Announcement Sent");
+                else
                     command.AddToResponseMessage("Error Sending Announcement");
-                });
-            } else
-                command.AddToResponseMessage("Server is Offline");
-        }).catch((error) => {
-            command.AddToResponseMessage("Error Sending Announcement, Server is Offline");
-        });
+
+            }).catch((error) => {
+                command.AddToResponseMessage("Error Sending Announcement");
+            });
+        } else
+            command.AddToResponseMessage("Server is Offline");
 
         this.UpdateServerMetrics(client);
     }

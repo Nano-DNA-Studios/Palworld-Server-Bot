@@ -14,10 +14,12 @@ class Restart extends Command {
 
         await PalworldRestfulCommands.ShutdownServer(this, client, 10);
 
-        setTimeout(() => {  
+        await this.AddToResponseMessage('Server is being Restarted in 2 Mins');
+
+        await setTimeout(async () => {  
             this.AddToResponseMessage('Starting Server');
             
-            PalworldRestfulCommands.StartServer(this, client); }, 30000);
+            await PalworldRestfulCommands.StartServer(this, client); }, 120000);
     };
 
     public IsEphemeralResponse: boolean = true;

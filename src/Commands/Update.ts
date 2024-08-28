@@ -21,11 +21,18 @@ class Update extends Command {
             return;
         }
 
-        this.AddToResponseMessage("Updating Server");
+        try{
+            this.AddToResponseMessage("Updating Server");
 
-        await new BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
-
-        this.AddToResponseMessage("Server Updated");
+            await new BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
+    
+            this.AddToResponseMessage("Server Updated");
+    
+            console.log("Server Updated");
+        } catch (error) {
+            this.AddToResponseMessage("Error Updating Server");
+            console.log("Error Updating Server");
+        }
     };
 
     public IsEphemeralResponse: boolean = true;

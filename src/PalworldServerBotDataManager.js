@@ -9,6 +9,7 @@ const SCPInfo_1 = __importDefault(require("./PalworldServer/Objects/SCPInfo"));
 const AnnouncementMessage_1 = __importDefault(require("./PalworldServer/Objects/AnnouncementMessage"));
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
+const PalworldRestfulCommands_1 = __importDefault(require("./PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super(...arguments);
@@ -71,6 +72,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.UpdateConnectionInfo();
     }
     async CreateBackup() {
+        let online = await PalworldRestfulCommands_1.default.IsServerOnline();
         try {
             const now = new Date();
             this.LAST_BACKUP_DATE = now;
@@ -86,15 +88,13 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             if (!fs_1.default.existsSync("/home/steam/Backups/Extras"))
                 fs_1.default.mkdirSync("/home/steam/Backups/Extras", { recursive: true });
             await runner.RunLocally(`cp ${backupFilePath} /home/steam/Backups/Extras/WorldBackup_${timestamp}.tar.gz`);
-            new AnnouncementMessage_1.default("World has been Backed up Successfully").GetRequest().SendRequest();
+            if (online)
+                new AnnouncementMessage_1.default("World has been Backed up Successfully").GetRequest().SendRequest();
         }
         catch (error) {
-            try {
+            if (online)
                 new AnnouncementMessage_1.default("Error Creating Backup").GetRequest().SendRequest();
-            }
-            catch (error) {
-                console.log("Error Creating Backup");
-            }
+            console.log("Error Creating Backup");
         }
     }
     async UpdateConnectionInfo() {

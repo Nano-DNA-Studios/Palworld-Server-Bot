@@ -50,7 +50,7 @@ class RegisterBackup extends Command {
         },
         {
             name: 'port',
-            description: 'The Port on the Server to SCP the File',
+            description: 'The Port to SSH into the Server',
             required: true,
             type: OptionTypesEnum.Number
         },

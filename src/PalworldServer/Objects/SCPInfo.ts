@@ -17,6 +17,10 @@ class SCPInfo {
         this.HostDeviceBackupFolder = hostDeviceBackupFolder;
         this.DownloadLocation = downloadLocation;
     }
+
+    public IsUndefined = (): boolean => {
+        return this.Port == 0 || this.User == '' || this.HostName == '' || this.HostDeviceBackupFolder == '' || this.DownloadLocation == '';
+    }
 }
 
 export default SCPInfo;

@@ -4,6 +4,7 @@ import fsp from "fs/promises";
 import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
+import SCPInfo from "../PalworldServer/Objects/SCPInfo";
 
 class Backup extends Command {
 
@@ -26,25 +27,56 @@ class Backup extends Command {
 
         this.AddToResponseMessage("Backup File Created Successfully");
 
-        if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB")
-        {
-            this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal")
-            let  command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
-            command = "```" + command + "```"
-            this.AddToResponseMessage(command)
-        } else
-        {
-            this.AddToResponseMessage("Uploading Backup File to Discord.");
-            this.AddFileToResponseMessage(backupFilePath);
-        }
-            
+        try {
+            console.log("Updating Server Metrics");
+            PalworldRestfulCommands.UpdateServerMetrics(client);
 
-        PalworldRestfulCommands.UpdateServerMetrics(client);
+            if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
+
+                console.log("File is too large, Download it using the following Command in your Terminal");
+
+                let scpInfo = this.IsSCPInfoUndefined(dataManager);
+
+                if (scpInfo) {
+                    console.log("SCP Information is not defined. Register the Information using /registerbackup");
+                    this.AddToResponseMessage("SCP Information is not defined. Register the Information using /registerbackup")
+                    return
+                }
+
+                this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal")
+                let command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
+                command = "```" + command + "```"
+                this.AddToResponseMessage(command)
+            } else {
+                console.log("Uploading Backup File to Discord");
+                this.AddToResponseMessage("Uploading Backup File to Discord.");
+                this.AddFileToResponseMessage(backupFilePath);
+            }
+        } catch (error) {
+            this.AddToResponseMessage("Error Doing Something");
+            console.log("Error Doing Something");
+            console.log(error);
+            return;
+        }
+
     };
+
+    IsSCPInfoUndefined(dataManager: PalworldServerBotDataManager) : boolean{
+        let scpInfo;
+
+        try {
+            scpInfo = dataManager.SCP_INFO.IsUndefined();
+        } catch (error) {
+            dataManager.SCP_INFO = new SCPInfo(0, "", "", "", "");
+            scpInfo = dataManager.SCP_INFO.IsUndefined();
+        }
+
+        return scpInfo;
+    }
 
     public IsEphemeralResponse: boolean = true;
 
-    private MAX_FILE_SIZE_MB : Number = 20;
+    private MAX_FILE_SIZE_MB: Number = 20;
 
     GetFileSize(fileStats: fs.Stats): [Number, string] {
         let realsize;

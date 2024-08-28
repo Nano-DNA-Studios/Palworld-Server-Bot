@@ -7,6 +7,9 @@ class SCPInfo {
         this.HostName = '';
         this.HostDeviceBackupFolder = '';
         this.DownloadLocation = '';
+        this.IsUndefined = () => {
+            return this.Port == 0 || this.User == '' || this.HostName == '' || this.HostDeviceBackupFolder == '' || this.DownloadLocation == '';
+        };
         this.Port = port;
         this.User = user;
         this.HostName = hostName;

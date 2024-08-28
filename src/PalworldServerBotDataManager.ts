@@ -5,6 +5,7 @@ import SCPInfo from "./PalworldServer/Objects/SCPInfo";
 import AnnouncementMessage from "./PalworldServer/Objects/AnnouncementMessage";
 import fs from 'fs';
 import axios from "axios";
+import PalworldRestfulCommands from "./PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -48,7 +49,7 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     SERVER_CONNECTION_PORT: string = 'localhost:8211';
 
-    UPDATE_SCRIPT:string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
+    UPDATE_SCRIPT: string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
@@ -59,7 +60,7 @@ class PalworldServerBotDataManager extends BotDataManager {
             else
                 client.user.setActivity(message, { type: ActivityType.Playing });
         }
-    
+
         this.UpdateConnectionInfo();
     }
 
@@ -95,7 +96,7 @@ class PalworldServerBotDataManager extends BotDataManager {
     }
 
     public async CreateBackup() {
-
+        let online = await PalworldRestfulCommands.IsServerOnline();
         try {
             const now = new Date();
             this.LAST_BACKUP_DATE = now;
@@ -109,24 +110,27 @@ class PalworldServerBotDataManager extends BotDataManager {
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
             let runner = new BashScriptRunner();
 
-            await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`)
+
+            await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`);
 
             if (!fs.existsSync("/home/steam/Backups/Extras"))
                 fs.mkdirSync("/home/steam/Backups/Extras", { recursive: true });
 
             await runner.RunLocally(`cp ${backupFilePath} /home/steam/Backups/Extras/WorldBackup_${timestamp}.tar.gz`)
 
-            new AnnouncementMessage("World has been Backed up Successfully").GetRequest().SendRequest();
+            if (online)
+                new AnnouncementMessage("World has been Backed up Successfully").GetRequest().SendRequest();
+
         } catch (error) {
-            try {
+
+            if (online)
                 new AnnouncementMessage("Error Creating Backup").GetRequest().SendRequest();
-            } catch (error) {
-                console.log("Error Creating Backup")
-            }
+
+            console.log("Error Creating Backup")
         }
     }
 
-    public async UpdateConnectionInfo () : Promise<void> {
+    public async UpdateConnectionInfo(): Promise<void> {
         return this.GetPublicIp().then((ip) => {
             this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PORT}`;
         }

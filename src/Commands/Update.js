@@ -18,18 +18,16 @@ class Update extends dna_discord_framework_1.Command {
                 await this.AddToResponseMessage("Server is Online, Shutdown the Server before Updating");
                 return;
             }
-            this.AddToResponseMessage("Updating Server");
-            await new dna_discord_framework_1.BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
-            this.AddToResponseMessage("Server Updated");
-            //try {
-            //      await PalworldRestfulCommands.ShutdownServer(this, client, 15);
-            //      await this.AddToResponseMessage("Server is offline");
-            // } catch (error) {
-            //     this.AddToResponseMessage("Server is already offline");
-            //}
-            //  await setTimeout(async () => {
-            //     await dataManager.CreateBackup();
-            //  }, 10000);
+            try {
+                this.AddToResponseMessage("Updating Server");
+                await new dna_discord_framework_1.BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
+                this.AddToResponseMessage("Server Updated");
+                console.log("Server Updated");
+            }
+            catch (error) {
+                this.AddToResponseMessage("Error Updating Server");
+                console.log("Error Updating Server");
+            }
         };
         this.IsEphemeralResponse = true;
     }

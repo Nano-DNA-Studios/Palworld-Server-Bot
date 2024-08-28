@@ -42,7 +42,7 @@ class RegisterBackup extends dna_discord_framework_1.Command {
             },
             {
                 name: 'port',
-                description: 'The Port on the Server to SCP the File',
+                description: 'The Port to SSH into the Server',
                 required: true,
                 type: dna_discord_framework_1.OptionTypesEnum.Number
             },

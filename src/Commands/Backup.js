@@ -6,6 +6,7 @@ const dna_discord_framework_1 = require("dna-discord-framework");
 const promises_1 = __importDefault(require("fs/promises"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
+const SCPInfo_1 = __importDefault(require("../PalworldServer/Objects/SCPInfo"));
 class Backup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -19,20 +20,48 @@ class Backup extends dna_discord_framework_1.Command {
             const fileStats = await promises_1.default.stat(backupFilePath);
             const sizeAndFormat = this.GetFileSize(fileStats);
             this.AddToResponseMessage("Backup File Created Successfully");
-            if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
-                this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal");
-                let command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
-                command = "```" + command + "```";
-                this.AddToResponseMessage(command);
+            try {
+                console.log("Updating Server Metrics");
+                PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
+                if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
+                    console.log("File is too large, Download it using the following Command in your Terminal");
+                    let scpInfo = this.IsSCPInfoUndefined(dataManager);
+                    if (scpInfo) {
+                        console.log("SCP Information is not defined. Register the Information using /registerbackup");
+                        this.AddToResponseMessage("SCP Information is not defined. Register the Information using /registerbackup");
+                        return;
+                    }
+                    this.AddToResponseMessage("File is too large, Download it using the following Command in your Terminal");
+                    let command = `scp -P ${dataManager.SCP_INFO.Port} ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz" "${dataManager.SCP_INFO.DownloadLocation}"`;
+                    command = "```" + command + "```";
+                    this.AddToResponseMessage(command);
+                }
+                else {
+                    console.log("Uploading Backup File to Discord");
+                    this.AddToResponseMessage("Uploading Backup File to Discord.");
+                    this.AddFileToResponseMessage(backupFilePath);
+                }
             }
-            else {
-                this.AddToResponseMessage("Uploading Backup File to Discord.");
-                this.AddFileToResponseMessage(backupFilePath);
+            catch (error) {
+                this.AddToResponseMessage("Error Doing Something");
+                console.log("Error Doing Something");
+                console.log(error);
+                return;
             }
-            PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
         };
         this.IsEphemeralResponse = true;
         this.MAX_FILE_SIZE_MB = 20;
+    }
+    IsSCPInfoUndefined(dataManager) {
+        let scpInfo;
+        try {
+            scpInfo = dataManager.SCP_INFO.IsUndefined();
+        }
+        catch (error) {
+            dataManager.SCP_INFO = new SCPInfo_1.default(0, "", "", "", "");
+            scpInfo = dataManager.SCP_INFO.IsUndefined();
+        }
+        return scpInfo;
     }
     GetFileSize(fileStats) {
         let realsize;

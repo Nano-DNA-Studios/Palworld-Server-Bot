@@ -49,6 +49,10 @@ COPY ./ /PalworldBot
 # Change Workdirectory to the Palworld Bot Directory
 WORKDIR /PalworldBot
 
+RUN sudo chmod +x RunBot.sh
+
 # Run the Palworld Bot
-CMD ["node", "/PalworldBot/index.js"]
+#CMD ["node", "/PalworldBot/index.js"]
+
+CMD ["./RunBot.sh", "/PalworldBot/index.js"]
 
