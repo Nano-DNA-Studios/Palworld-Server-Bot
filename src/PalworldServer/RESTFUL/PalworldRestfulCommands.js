@@ -44,25 +44,32 @@ class PalworldRestfulCommands {
         this.UpdateServerMetrics(client);
     }
     static async ShutdownServer(command, client, waittime) {
-        this.IsServerOnline().then(async (online) => {
-            if (online) {
-                await this.SaveWorld(command, client);
-                setTimeout(() => {
-                    let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
-                    request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
-                    request.SendRequest().then((res) => {
-                        command.AddToResponseMessage("Waiting for Shutdown Confirmation");
-                        setTimeout(() => { PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
-                    }).catch((error) => {
-                        command.AddToResponseMessage("Error Shutting Down Server");
-                    });
-                }, 3000);
+        let online = await this.IsServerOnline();
+        // this.IsServerOnline().then(async (online) => {
+        if (online) {
+            await this.SaveWorld(command, client);
+            let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
+            request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
+            let response = await request.SendRequest();
+            if (response.status == dna_discord_framework_1.RESTFULResponseStatusEnum.SUCCESS) {
+                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+                await setTimeout(async () => { await PalworldRestfulCommands.PingServer(command, client); }, (waittime + 5) * 1000);
             }
-            else
-                command.AddToResponseMessage("Server is Already Offline");
-        }).catch((error) => {
-            command.AddToResponseMessage("Error Shutting Down Server");
-        });
+            else {
+                command.AddToResponseMessage("Error Shutting Down Server");
+            }
+            //.then((res) => {
+            // }).catch((error) => {
+            //    command.AddToResponseMessage("Error Shutting Down Server");
+            // });
+            //setTimeout(() => {
+            // }, 3000);
+        }
+        else
+            command.AddToResponseMessage("Server is Already Offline");
+        //}).catch((error) => {
+        //   command.AddToResponseMessage("Error Shutting Down Server");
+        //});
     }
     static async SaveWorld(command, client) {
         this.IsServerOnline().then(async (online) => {

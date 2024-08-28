@@ -1,4 +1,4 @@
-import { BashScriptRunner, BotData, Command } from "dna-discord-framework";
+import { BashScriptRunner, BotData, Command, RESTFULResponseStatusEnum } from "dna-discord-framework";
 import ServerMetrics from "../Objects/ServerMetrics";
 import { Client } from "discord.js";
 import PalworldServerBotDataManager from "../../PalworldServerBotDataManager";
@@ -54,31 +54,50 @@ class PalworldRestfulCommands {
 
     public static async ShutdownServer(command: Command, client: Client, waittime: number): Promise<void> {
 
-        this.IsServerOnline().then(async (online) => {
+
+        let online = await this.IsServerOnline();
+
+       // this.IsServerOnline().then(async (online) => {
             if (online) {
                 await this.SaveWorld(command, client);
 
-                setTimeout(() => {
-                    let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
+                let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
 
-                    request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
+                request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
-                    request.SendRequest().then((res) => {
+                let response = await request.SendRequest()
 
-                        command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+                if (response.status == RESTFULResponseStatusEnum.SUCCESS)
+                {
+                    command.AddToResponseMessage("Waiting for Shutdown Confirmation");
 
-                        setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000)
+                    await setTimeout(async () => { await PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000);
+                } else 
+                {
+                    command.AddToResponseMessage("Error Shutting Down Server");
+                }
+                
+                
+                //.then((res) => {
 
-                    }).catch((error) => {
-                        command.AddToResponseMessage("Error Shutting Down Server");
-                    });
-                }, 3000);
+                   
+
+                    
+
+               // }).catch((error) => {
+                //    command.AddToResponseMessage("Error Shutting Down Server");
+               // });
+
+
+                //setTimeout(() => {
+                   
+               // }, 3000);
             } else
                 command.AddToResponseMessage("Server is Already Offline");
 
-        }).catch((error) => {
-            command.AddToResponseMessage("Error Shutting Down Server");
-        });
+        //}).catch((error) => {
+         //   command.AddToResponseMessage("Error Shutting Down Server");
+        //});
     }
 
     public static async SaveWorld(command: Command, client: Client) {

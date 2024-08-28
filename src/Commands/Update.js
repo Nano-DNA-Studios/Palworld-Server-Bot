@@ -13,18 +13,23 @@ class Update extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             this.InitializeUserResponse(interaction, `Updating Palworld Server`);
-            try {
-                await PalworldRestfulCommands_1.default.ShutdownServer(this, client, 15);
+            let online = await PalworldRestfulCommands_1.default.IsServerOnline();
+            if (online) {
+                await this.AddToResponseMessage("Server is Online, Shutdown the Server before Updating");
+                return;
             }
-            catch (error) {
-                this.AddToResponseMessage("Server is already offline");
-            }
-            setTimeout(async () => {
-                await dataManager.CreateBackup();
-                this.AddToResponseMessage("Updating Server");
-                await new dna_discord_framework_1.BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
-                this.AddToResponseMessage("Server Updated");
-            }, 10000);
+            this.AddToResponseMessage("Updating Server");
+            await new dna_discord_framework_1.BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
+            this.AddToResponseMessage("Server Updated");
+            //try {
+            //      await PalworldRestfulCommands.ShutdownServer(this, client, 15);
+            //      await this.AddToResponseMessage("Server is offline");
+            // } catch (error) {
+            //     this.AddToResponseMessage("Server is already offline");
+            //}
+            //  await setTimeout(async () => {
+            //     await dataManager.CreateBackup();
+            //  }, 10000);
         };
         this.IsEphemeralResponse = true;
     }

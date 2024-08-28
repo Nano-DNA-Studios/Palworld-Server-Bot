@@ -14,25 +14,18 @@ class Update extends Command {
 
         this.InitializeUserResponse(interaction, `Updating Palworld Server`);
 
-        try 
-        {
-            await PalworldRestfulCommands.ShutdownServer(this, client, 15);
-        } catch (error)
-        {
-            this.AddToResponseMessage("Server is already offline");
+        let online = await PalworldRestfulCommands.IsServerOnline();
+
+        if (online) {
+            await this.AddToResponseMessage("Server is Online, Shutdown the Server before Updating");
+            return;
         }
-    
-        setTimeout(async ()  => {
 
-            await dataManager.CreateBackup();
+        this.AddToResponseMessage("Updating Server");
 
-            this.AddToResponseMessage("Updating Server");
+        await new BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
 
-            await new BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
-    
-            this.AddToResponseMessage("Server Updated");
-
-        }, 10000);
+        this.AddToResponseMessage("Server Updated");
     };
 
     public IsEphemeralResponse: boolean = true;
