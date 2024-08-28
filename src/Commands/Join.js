@@ -12,7 +12,9 @@ class Join extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const connection = dataManager.SERVER_CONNECTION_PORT;
-            this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
+            dataManager.UpdateConnectionInfo().then(() => {
+                this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
+            });
         };
         this.IsEphemeralResponse = true;
     }

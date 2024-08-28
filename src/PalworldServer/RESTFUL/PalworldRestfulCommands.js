@@ -12,7 +12,7 @@ const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULC
 const ServerSettingsManager_1 = __importDefault(require("../ServerSettingsManager"));
 const AnnouncementMessage_1 = __importDefault(require("../Objects/AnnouncementMessage"));
 class PalworldRestfulCommands {
-    static StartServer(command, client) {
+    static async StartServer(command, client) {
         this.IsServerOnline().then((online) => {
             if (online)
                 command.AddToResponseMessage("Server is Already Online");
@@ -31,7 +31,7 @@ class PalworldRestfulCommands {
             command.AddToResponseMessage("Error Starting Server");
         });
     }
-    static PingServer(command, client) {
+    static async PingServer(command, client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.INFO);
         request.SendRequest().then((res) => {
             if (res.status == 200)
@@ -43,10 +43,10 @@ class PalworldRestfulCommands {
         });
         this.UpdateServerMetrics(client);
     }
-    static ShutdownServer(command, client, waittime) {
-        this.IsServerOnline().then((online) => {
+    static async ShutdownServer(command, client, waittime) {
+        this.IsServerOnline().then(async (online) => {
             if (online) {
-                this.SaveWorld(command, client);
+                await this.SaveWorld(command, client);
                 setTimeout(() => {
                     let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SHUTDOWN);
                     request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` });
@@ -87,13 +87,13 @@ class PalworldRestfulCommands {
         });
         this.UpdateServerMetrics(client);
     }
-    static ServerSettings(command, client) {
+    static async ServerSettings(command, client) {
         let serverSettings = new ServerSettingsManager_1.default();
         command.AddTextFileToResponseMessage(serverSettings.GetServerSettingsAsString(), "ServerSettings");
         this.UpdateServerMetrics(client);
     }
-    static ForceStop(command, client) {
-        this.SaveWorld(command, client);
+    static async ForceStop(command, client) {
+        await this.SaveWorld(command, client);
         setTimeout(() => {
             let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.FORCESTOP);
             request.SendRequest().then((res) => {
@@ -108,7 +108,7 @@ class PalworldRestfulCommands {
             this.UpdateServerMetrics(client);
         }, 3000);
     }
-    static Announce(command, client, message) {
+    static async Announce(command, client, message) {
         this.IsServerOnline().then((online) => {
             if (online) {
                 let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.ANNOUNCE);
@@ -129,7 +129,7 @@ class PalworldRestfulCommands {
         });
         this.UpdateServerMetrics(client);
     }
-    static UpdateServerMetrics(client) {
+    static async UpdateServerMetrics(client) {
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.METRICS);
         request.SendRequest().then((res) => {
             if (res.status == 200) {
@@ -140,7 +140,7 @@ class PalworldRestfulCommands {
             dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(ServerMetrics_1.default.DefaultMetrics(), client);
         });
     }
-    static GetPlayers(command, client) {
+    static async GetPlayers(command, client) {
         this.IsServerOnline().then((online) => {
             if (online) {
                 let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.PLAYERS);
@@ -148,6 +148,10 @@ class PalworldRestfulCommands {
                     if (res.status == 200) {
                         let players = [];
                         let content = JSON.parse(res.message)['players'];
+                        if (content.length == 0) {
+                            command.AddToResponseMessage("No Players Online");
+                            return;
+                        }
                         content.forEach((player) => {
                             players.push(new Player_1.default(player));
                         });
@@ -181,7 +185,7 @@ class PalworldRestfulCommands {
             return false;
         }
     }
-    static HalfHourlyBackup() {
+    static async HalfHourlyBackup() {
         try {
             this.IsServerOnline().then((online) => {
                 if (online) {

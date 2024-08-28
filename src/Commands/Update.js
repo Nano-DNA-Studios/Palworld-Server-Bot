@@ -22,7 +22,7 @@ class Update extends dna_discord_framework_1.Command {
             setTimeout(async () => {
                 await dataManager.CreateBackup();
                 this.AddToResponseMessage("Updating Server");
-                await new dna_discord_framework_1.BashScriptRunner().RunLocally(`steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit`);
+                await new dna_discord_framework_1.BashScriptRunner().RunLocally(dataManager.UPDATE_SCRIPT);
                 this.AddToResponseMessage("Server Updated");
             }, 10000);
         };

@@ -4,6 +4,7 @@ import { Client, ActivityType } from "discord.js";
 import SCPInfo from "./PalworldServer/Objects/SCPInfo";
 import AnnouncementMessage from "./PalworldServer/Objects/AnnouncementMessage";
 import fs from 'fs';
+import axios from "axios";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -47,6 +48,8 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     SERVER_CONNECTION_PORT: string = 'localhost:8211';
 
+    UPDATE_SCRIPT:string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
+
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 
@@ -56,10 +59,18 @@ class PalworldServerBotDataManager extends BotDataManager {
             else
                 client.user.setActivity(message, { type: ActivityType.Playing });
         }
+    
+        this.UpdateConnectionInfo();
     }
 
     public GetTimeSinceLastBackup = (): string => {
-        let uptime = (new Date().getTime() - this.LAST_BACKUP_DATE.getTime()) / 1000;
+        let lastTime = this.LAST_BACKUP_DATE;
+        if (!(lastTime instanceof Date)) {
+            this.LAST_BACKUP_DATE = new Date();
+            lastTime = this.LAST_BACKUP_DATE;
+        }
+
+        let uptime = (new Date().getTime() - lastTime.getTime()) / 1000;
 
         const days = Math.floor(uptime / 86400);
         const hours = Math.floor((uptime % 86400) / 3600);
@@ -112,6 +123,25 @@ class PalworldServerBotDataManager extends BotDataManager {
             } catch (error) {
                 console.log("Error Creating Backup")
             }
+        }
+    }
+
+    public async UpdateConnectionInfo () : Promise<void> {
+        return this.GetPublicIp().then((ip) => {
+            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PORT}`;
+        }
+        ).catch((error) => {
+            console.log("Error Getting Public IP")
+        });
+    }
+
+    async GetPublicIp(): Promise<string> {
+        try {
+            const response = await axios.get('https://api.ipify.org?format=json');
+            return response.data.ip;
+        } catch (error) {
+            console.error('Error fetching the public IP address:', error);
+            throw error;
         }
     }
 }

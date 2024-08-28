@@ -10,7 +10,7 @@ import AnnouncementMessage from "../Objects/AnnouncementMessage";
 
 class PalworldRestfulCommands {
 
-    public static StartServer(command: Command, client: Client): void {
+    public static async StartServer(command: Command, client: Client): Promise<void> {
 
         this.IsServerOnline().then((online) => {
 
@@ -36,7 +36,7 @@ class PalworldRestfulCommands {
         });
     }
 
-    public static PingServer(command: Command, client: Client): void {
+    public static async PingServer(command: Command, client: Client): Promise<void> {
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.INFO);
 
         request.SendRequest().then((res) => {
@@ -52,11 +52,11 @@ class PalworldRestfulCommands {
         this.UpdateServerMetrics(client);
     }
 
-    public static ShutdownServer(command: Command, client: Client, waittime: number): void {
+    public static async ShutdownServer(command: Command, client: Client, waittime: number): Promise<void> {
 
-        this.IsServerOnline().then((online) => {
+        this.IsServerOnline().then(async (online) => {
             if (online) {
-                this.SaveWorld(command, client);
+                await this.SaveWorld(command, client);
 
                 setTimeout(() => {
                     let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
@@ -111,7 +111,7 @@ class PalworldRestfulCommands {
         this.UpdateServerMetrics(client);
     }
 
-    public static ServerSettings(command: Command, client: Client): void {
+    public static async ServerSettings(command: Command, client: Client): Promise<void> {
 
         let serverSettings = new ServerSettingsManager();
 
@@ -120,8 +120,8 @@ class PalworldRestfulCommands {
         this.UpdateServerMetrics(client);
     }
 
-    public static ForceStop(command: Command, client: Client): void {
-        this.SaveWorld(command, client);
+    public static async ForceStop(command: Command, client: Client): Promise<void> {
+        await this.SaveWorld(command, client);
 
         setTimeout(() => {
             let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.FORCESTOP)
@@ -142,7 +142,7 @@ class PalworldRestfulCommands {
         }, 3000);
     }
 
-    public static Announce(command: Command, client: Client, message: string): void {
+    public static async Announce(command: Command, client: Client, message: string): Promise<void> {
 
         this.IsServerOnline().then((online) => {
 
@@ -170,7 +170,7 @@ class PalworldRestfulCommands {
         this.UpdateServerMetrics(client);
     }
 
-    public static UpdateServerMetrics(client: Client): void {
+    public static async UpdateServerMetrics(client: Client): Promise<void> {
 
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.METRICS);
 
@@ -185,7 +185,7 @@ class PalworldRestfulCommands {
         });
     }
 
-    public static GetPlayers(command: Command, client: Client): void {
+    public static async GetPlayers(command: Command, client: Client): Promise<void> {
 
         this.IsServerOnline().then((online) => {
 
@@ -197,6 +197,11 @@ class PalworldRestfulCommands {
                     if (res.status == 200) {
                         let players: Player[] = [];
                         let content = JSON.parse(res.message)['players'];
+
+                        if (content.length == 0) {
+                            command.AddToResponseMessage("No Players Online");
+                            return;
+                        }
 
                         content.forEach((player: any) => {
                             players.push(new Player(player));
@@ -235,7 +240,7 @@ class PalworldRestfulCommands {
         }
     }
 
-    public static HalfHourlyBackup(): void {
+    public static async HalfHourlyBackup(): Promise<void> {
 
         try {
             this.IsServerOnline().then((online) => {

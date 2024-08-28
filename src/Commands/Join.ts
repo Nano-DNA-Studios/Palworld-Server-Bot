@@ -14,8 +14,9 @@ class Join extends Command {
 
         const connection = dataManager.SERVER_CONNECTION_PORT;
 
-        this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
-
+        dataManager.UpdateConnectionInfo().then(() => {
+            this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
+        });
     };
 
     public IsEphemeralResponse: boolean = true;

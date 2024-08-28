@@ -8,6 +8,7 @@ const discord_js_1 = require("discord.js");
 const SCPInfo_1 = __importDefault(require("./PalworldServer/Objects/SCPInfo"));
 const AnnouncementMessage_1 = __importDefault(require("./PalworldServer/Objects/AnnouncementMessage"));
 const fs_1 = __importDefault(require("fs"));
+const axios_1 = __importDefault(require("axios"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super(...arguments);
@@ -31,8 +32,14 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SCP_INFO = new SCPInfo_1.default(0, '', '', '', '');
         this.LAST_BACKUP_DATE = new Date();
         this.SERVER_CONNECTION_PORT = 'localhost:8211';
+        this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";
         this.GetTimeSinceLastBackup = () => {
-            let uptime = (new Date().getTime() - this.LAST_BACKUP_DATE.getTime()) / 1000;
+            let lastTime = this.LAST_BACKUP_DATE;
+            if (!(lastTime instanceof Date)) {
+                this.LAST_BACKUP_DATE = new Date();
+                lastTime = this.LAST_BACKUP_DATE;
+            }
+            let uptime = (new Date().getTime() - lastTime.getTime()) / 1000;
             const days = Math.floor(uptime / 86400);
             const hours = Math.floor((uptime % 86400) / 3600);
             const minutes = Math.floor((uptime % 3600) / 60);
@@ -61,6 +68,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             else
                 client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
         }
+        this.UpdateConnectionInfo();
     }
     async CreateBackup() {
         try {
@@ -87,6 +95,23 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             catch (error) {
                 console.log("Error Creating Backup");
             }
+        }
+    }
+    async UpdateConnectionInfo() {
+        return this.GetPublicIp().then((ip) => {
+            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PORT}`;
+        }).catch((error) => {
+            console.log("Error Getting Public IP");
+        });
+    }
+    async GetPublicIp() {
+        try {
+            const response = await axios_1.default.get('https://api.ipify.org?format=json');
+            return response.data.ip;
+        }
+        catch (error) {
+            console.error('Error fetching the public IP address:', error);
+            throw error;
         }
     }
 }
