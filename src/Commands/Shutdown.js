@@ -4,21 +4,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
+const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 class Shutdown extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
         this.CommandName = 'shutdown';
         this.CommandDescription = 'Shuts down the Palworld Server';
         this.RunCommand = async (client, interaction, BotDataManager) => {
+            let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             let waittime = interaction.options.getNumber('waittime');
             if (waittime) {
                 this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
                 await PalworldRestfulCommands_1.default.ShutdownServer(this, client, waittime);
-                //Add a last shutdown date to the BotDataManager, then in the start command we check for the last time we shut down, if it's less than 2 minutes, we wait 2 minutes before starting the server
-                this.AddFileToResponseMessage('Please wait 2 Minutes before starting the Server again');
+                dataManager.UpdateShutdownDate();
+                this.AddToResponseMessage('Please wait 2 Minutes before starting the Server again');
             }
         };
-        this.IsEphemeralResponse = false;
+        this.IsEphemeralResponse = true;
         this.Options = [
             {
                 name: 'waittime',

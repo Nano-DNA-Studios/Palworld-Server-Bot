@@ -14,7 +14,7 @@ class Restart extends Command {
 
         await PalworldRestfulCommands.ShutdownServer(this, client, 10);
 
-        await this.AddToResponseMessage('Server is being Restarted in 2 Mins');
+        await this.AddToResponseMessage('Server will be back online in 2 Minutes');
 
         await setTimeout(async () => {  
             this.AddToResponseMessage('Starting Server');

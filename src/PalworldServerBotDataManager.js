@@ -32,6 +32,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
         this.SCP_INFO = new SCPInfo_1.default();
         this.LAST_BACKUP_DATE = new Date();
+        this.LAST_SHUTDOWN_DATE = new Date();
         this.SERVER_CONNECTION_PORT = 'localhost:8211';
         this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";
         this.GetTimeSinceLastBackup = () => {
@@ -61,6 +62,10 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             return result;
         };
     }
+    //Add some state object that checks if the Server has either been setup or the backup has been loaded yet
+    //Add a bool state that signifies a action is occuring and then add a timer wait for all commands to wait for the previous action to be finished
+    //For create a backup, copy all the Save files to a temporary folder and then tar and compress
+    //Add a Bash script runner result class to allow user to read if the the command failed
     UpdateMetricsStatus(metrics, client) {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         if (client.user) {
@@ -71,7 +76,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         }
         this.UpdateConnectionInfo();
     }
-    async CreateBackup() {
+    async CreateBackup(depth = 0) {
         let online = await PalworldRestfulCommands_1.default.IsServerOnline();
         try {
             const now = new Date();
@@ -94,7 +99,10 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         catch (error) {
             if (online)
                 new AnnouncementMessage_1.default("Error Creating Backup").GetRequest().SendRequest();
-            console.log("Error Creating Backup");
+            if (depth > 3)
+                return;
+            console.log("Error Creating Backup, trying again");
+            await this.CreateBackup(depth + 1);
         }
     }
     async UpdateConnectionInfo() {
@@ -113,6 +121,15 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             console.error('Error fetching the public IP address:', error);
             throw error;
         }
+    }
+    UpdateShutdownDate() {
+        this.LAST_SHUTDOWN_DATE = new Date();
+        this.SaveData();
+    }
+    IsSafeToStartServer() {
+        let now = new Date();
+        let diff = (now.getTime() - new Date(this.LAST_SHUTDOWN_DATE).getTime()) / 1000;
+        return diff > 120;
     }
 }
 exports.default = PalworldServerBotDataManager;

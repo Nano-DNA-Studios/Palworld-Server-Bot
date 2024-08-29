@@ -47,9 +47,19 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     LAST_BACKUP_DATE: Date = new Date();
 
+    LAST_SHUTDOWN_DATE: Date = new Date();
+
     SERVER_CONNECTION_PORT: string = 'localhost:8211';
 
     UPDATE_SCRIPT: string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
+
+    //Add some state object that checks if the Server has either been setup or the backup has been loaded yet
+
+    //Add a bool state that signifies a action is occuring and then add a timer wait for all commands to wait for the previous action to be finished
+
+    //For create a backup, copy all the Save files to a temporary folder and then tar and compress
+
+    //Add a Bash script runner result class to allow user to read if the the command failed
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
@@ -95,7 +105,7 @@ class PalworldServerBotDataManager extends BotDataManager {
         return result;
     }
 
-    public async CreateBackup() {
+    public async CreateBackup(depth: number = 0): Promise<void> {
         let online = await PalworldRestfulCommands.IsServerOnline();
         try {
             const now = new Date();
@@ -126,7 +136,12 @@ class PalworldServerBotDataManager extends BotDataManager {
             if (online)
                 new AnnouncementMessage("Error Creating Backup").GetRequest().SendRequest();
 
-            console.log("Error Creating Backup")
+            if (depth > 3)
+                return;
+
+            console.log("Error Creating Backup, trying again");
+
+            await this.CreateBackup(depth + 1);
         }
     }
 
@@ -147,6 +162,17 @@ class PalworldServerBotDataManager extends BotDataManager {
             console.error('Error fetching the public IP address:', error);
             throw error;
         }
+    }
+
+    public UpdateShutdownDate(): void {
+        this.LAST_SHUTDOWN_DATE = new Date();
+        this.SaveData();
+    }
+
+    public IsSafeToStartServer(): boolean {
+        let now = new Date();
+        let diff = (now.getTime() - new Date(this.LAST_SHUTDOWN_DATE).getTime()) / 1000;
+        return diff > 120;
     }
 }
 

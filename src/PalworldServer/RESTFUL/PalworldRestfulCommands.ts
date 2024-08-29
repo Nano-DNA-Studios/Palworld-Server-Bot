@@ -14,6 +14,12 @@ class PalworldRestfulCommands {
 
         let online = await this.IsServerOnline();
 
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+
+        while (!dataManager.IsSafeToStartServer()) {
+            await new Promise(resolve => setTimeout(resolve, 10000));
+        }
+
         if (online)
             command.AddToResponseMessage("Server is Already Online");
         else {
@@ -24,7 +30,11 @@ class PalworldRestfulCommands {
 
                 command.AddToResponseMessage("Waiting a few seconds to Ping Server");
 
-                await setTimeout(() => { PalworldRestfulCommands.PingServer(command, client) }, 15000)
+                await new Promise(resolve => setTimeout(resolve, 15000));
+
+                await PalworldRestfulCommands.PingServer(command, client);
+
+                await this.UpdateServerMetrics(client);
 
             } catch (error) {
                 command.AddToResponseMessage("Error Starting Server");
@@ -43,7 +53,7 @@ class PalworldRestfulCommands {
                 command.AddToResponseMessage("Server is Offline");
 
         }).catch((error) => {
-            console.log(error);
+            console.log("Server is Offline");
             command.AddToResponseMessage("Server is Offline");
         });
 
@@ -54,25 +64,42 @@ class PalworldRestfulCommands {
 
         let online = await this.IsServerOnline();
 
-        if (online) {
-            await this.SaveWorld(command, client);
+        if (!online) {
+            command.AddToResponseMessage("Server is Already Offline");
+            return;
+        }
 
-            let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
+        await this.SaveWorld(command, client);
 
-            request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
+        let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SHUTDOWN);
 
-            let response = await request.SendRequest()
+        request.WriteBody({ "waittime": waittime, "message": `Server will shutdown in ${waittime} seconds.` })
 
-            if (response.status == RESTFULResponseStatusEnum.SUCCESS) {
-                command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+        let response = await request.SendRequest()
 
-                await setTimeout(async () => { await PalworldRestfulCommands.PingServer(command, client) }, (waittime + 5) * 1000);
-            } else {
-                command.AddToResponseMessage("Error Shutting Down Server");
+        if (response.status == RESTFULResponseStatusEnum.SUCCESS) {
+            command.AddToResponseMessage("Waiting for Shutdown Confirmation");
+
+            await new Promise(resolve => setTimeout(resolve, (waittime + 5) * 1000));
+
+            await PalworldRestfulCommands.PingServer(command, client);
+
+            online = await this.IsServerOnline();
+
+            if (online) {
+                command.AddToResponseMessage("Error Shutting Down Server, Force Stopping Server");
+                this.ForceStop(command, client);
             }
 
-        } else
-            command.AddToResponseMessage("Server is Already Offline");
+            return;
+        } else {
+            command.AddToResponseMessage("Error Shutting Down Server");
+        }
+
+        this.UpdateServerMetrics(client);
+
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+        dataManager.UpdateShutdownDate();
     }
 
     public static async SaveWorld(command: Command, client: Client) {
@@ -95,7 +122,9 @@ class PalworldRestfulCommands {
 
             let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-            setTimeout(() => { dataManager.CreateBackup(); }, (3) * 1000)
+            await new Promise(resolve => setTimeout(resolve, 5 * 1000));
+
+            await dataManager.CreateBackup();
         } else {
             command.AddToResponseMessage("Could not Save World, Server is Offline");
         }
@@ -132,6 +161,9 @@ class PalworldRestfulCommands {
 
             this.UpdateServerMetrics(client);
         }, 3000);
+
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+        dataManager.UpdateShutdownDate();
     }
 
     public static async Announce(command: Command, client: Client, message: string): Promise<void> {

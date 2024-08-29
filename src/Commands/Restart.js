@@ -12,7 +12,7 @@ class Restart extends dna_discord_framework_1.Command {
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Restarting Server`);
             await PalworldRestfulCommands_1.default.ShutdownServer(this, client, 10);
-            await this.AddToResponseMessage('Server is being Restarted in 2 Mins');
+            await this.AddToResponseMessage('Server will be back online in 2 Minutes');
             await setTimeout(async () => {
                 this.AddToResponseMessage('Starting Server');
                 await PalworldRestfulCommands_1.default.StartServer(this, client);
