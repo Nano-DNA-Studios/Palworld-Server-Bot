@@ -13,7 +13,9 @@ class Shutdown extends dna_discord_framework_1.Command {
             let waittime = interaction.options.getNumber('waittime');
             if (waittime) {
                 this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
-                PalworldRestfulCommands_1.default.ShutdownServer(this, client, waittime);
+                await PalworldRestfulCommands_1.default.ShutdownServer(this, client, waittime);
+                //Add a last shutdown date to the BotDataManager, then in the start command we check for the last time we shut down, if it's less than 2 minutes, we wait 2 minutes before starting the server
+                this.AddFileToResponseMessage('Please wait 2 Minutes before starting the Server again');
             }
         };
         this.IsEphemeralResponse = false;

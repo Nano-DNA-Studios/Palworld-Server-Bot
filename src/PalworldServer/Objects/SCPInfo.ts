@@ -10,12 +10,12 @@ class SCPInfo {
 
     public DownloadLocation: string = '';
 
-    constructor(port: number, user: string, hostName: string, hostDeviceBackupFolder: string, downloadLocation: string) {
-        this.Port = port;
-        this.User = user;
-        this.HostName = hostName;
-        this.HostDeviceBackupFolder = hostDeviceBackupFolder;
-        this.DownloadLocation = downloadLocation;
+    constructor(data?: any) {
+        this.Port = data?.Port ?? 0;
+        this.User = data?.User ?? '';
+        this.HostName = data?.HostName ?? '';
+        this.HostDeviceBackupFolder = data?.HostDeviceBackupFolder ?? '';
+        this.DownloadLocation = data?.DownloadLocation ?? '';
     }
 
     public IsUndefined = (): boolean => {

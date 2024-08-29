@@ -1,4 +1,4 @@
-import { BashScriptRunner, DiscordBot } from "dna-discord-framework";
+import { BashScriptRunner, BotData, DiscordBot } from "dna-discord-framework";
 import PalworldServerBotDataManager from "./src/PalworldServerBotDataManager";
 import PalworldRestfulCommands from "./src/PalworldServer/RESTFUL/PalworldRestfulCommands";
 

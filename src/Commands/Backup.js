@@ -21,12 +21,11 @@ class Backup extends dna_discord_framework_1.Command {
             const sizeAndFormat = this.GetFileSize(fileStats);
             this.AddToResponseMessage("Backup File Created Successfully");
             try {
-                console.log("Updating Server Metrics");
-                PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
+                await PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
                 if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
                     console.log("File is too large, Download it using the following Command in your Terminal");
-                    let scpInfo = this.IsSCPInfoUndefined(dataManager);
-                    if (scpInfo) {
+                    let scpInfoState = this.IsSCPInfoUndefined(dataManager);
+                    if (scpInfoState) {
                         console.log("SCP Information is not defined. Register the Information using /registerbackup");
                         this.AddToResponseMessage("SCP Information is not defined. Register the Information using /registerbackup");
                         return;
@@ -53,15 +52,8 @@ class Backup extends dna_discord_framework_1.Command {
         this.MAX_FILE_SIZE_MB = 20;
     }
     IsSCPInfoUndefined(dataManager) {
-        let scpInfo;
-        try {
-            scpInfo = dataManager.SCP_INFO.IsUndefined();
-        }
-        catch (error) {
-            dataManager.SCP_INFO = new SCPInfo_1.default(0, "", "", "", "");
-            scpInfo = dataManager.SCP_INFO.IsUndefined();
-        }
-        return scpInfo;
+        let SCP = new SCPInfo_1.default(dataManager.SCP_INFO);
+        return SCP.IsUndefined();
     }
     GetFileSize(fileStats) {
         let realsize;

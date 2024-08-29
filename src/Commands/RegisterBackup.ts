@@ -23,9 +23,17 @@ class RegisterBackup extends Command {
 
         if (user && hostname && port && hostdevicebackupfolder && downloadlocation) {
 
-            let scpInfo = new SCPInfo(port, user, hostname, hostdevicebackupfolder, downloadlocation);
+            let scpInfo = new SCPInfo({
+                Port: port,
+                User: user,
+                HostName: hostname,
+                HostDeviceBackupFolder: hostdevicebackupfolder,
+                DownloadLocation: downloadlocation
+            });
 
             dataManager.SCP_INFO = scpInfo;
+
+            dataManager.SaveData();
 
             this.AddToResponseMessage("SCP Info Registered");
         } else

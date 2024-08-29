@@ -30,7 +30,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_DESCRIPTION = '';
         this.PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`;
         this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
-        this.SCP_INFO = new SCPInfo_1.default(0, '', '', '', '');
+        this.SCP_INFO = new SCPInfo_1.default();
         this.LAST_BACKUP_DATE = new Date();
         this.SERVER_CONNECTION_PORT = 'localhost:8211';
         this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";

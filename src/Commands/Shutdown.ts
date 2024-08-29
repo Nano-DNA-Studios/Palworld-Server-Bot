@@ -12,7 +12,10 @@ class Shutdown extends Command {
         if (waittime)
         {
             this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
-            PalworldRestfulCommands.ShutdownServer(this, client, waittime);
+            await PalworldRestfulCommands.ShutdownServer(this, client, waittime);
+
+            //Add a last shutdown date to the BotDataManager, then in the start command we check for the last time we shut down, if it's less than 2 minutes, we wait 2 minutes before starting the server
+            this.AddFileToResponseMessage('Please wait 2 Minutes before starting the Server again');
         }
     };
     public IsEphemeralResponse: boolean = false;

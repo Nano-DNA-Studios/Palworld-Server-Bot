@@ -19,8 +19,15 @@ class RegisterBackup extends dna_discord_framework_1.Command {
             const hostdevicebackupfolder = interaction.options.getString('hostdevicebackupfolder');
             const downloadlocation = interaction.options.getString('downloadlocation');
             if (user && hostname && port && hostdevicebackupfolder && downloadlocation) {
-                let scpInfo = new SCPInfo_1.default(port, user, hostname, hostdevicebackupfolder, downloadlocation);
+                let scpInfo = new SCPInfo_1.default({
+                    Port: port,
+                    User: user,
+                    HostName: hostname,
+                    HostDeviceBackupFolder: hostdevicebackupfolder,
+                    DownloadLocation: downloadlocation
+                });
                 dataManager.SCP_INFO = scpInfo;
+                dataManager.SaveData();
                 this.AddToResponseMessage("SCP Info Registered");
             }
             else

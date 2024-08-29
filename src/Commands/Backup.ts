@@ -28,16 +28,13 @@ class Backup extends Command {
         this.AddToResponseMessage("Backup File Created Successfully");
 
         try {
-            console.log("Updating Server Metrics");
-            PalworldRestfulCommands.UpdateServerMetrics(client);
+            await PalworldRestfulCommands.UpdateServerMetrics(client);
 
             if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
-
                 console.log("File is too large, Download it using the following Command in your Terminal");
+                let scpInfoState = this.IsSCPInfoUndefined(dataManager);
 
-                let scpInfo = this.IsSCPInfoUndefined(dataManager);
-
-                if (scpInfo) {
+                if (scpInfoState) {
                     console.log("SCP Information is not defined. Register the Information using /registerbackup");
                     this.AddToResponseMessage("SCP Information is not defined. Register the Information using /registerbackup")
                     return
@@ -58,20 +55,12 @@ class Backup extends Command {
             console.log(error);
             return;
         }
-
     };
 
     IsSCPInfoUndefined(dataManager: PalworldServerBotDataManager) : boolean{
-        let scpInfo;
+        let SCP = new SCPInfo(dataManager.SCP_INFO);
 
-        try {
-            scpInfo = dataManager.SCP_INFO.IsUndefined();
-        } catch (error) {
-            dataManager.SCP_INFO = new SCPInfo(0, "", "", "", "");
-            scpInfo = dataManager.SCP_INFO.IsUndefined();
-        }
-
-        return scpInfo;
+        return SCP.IsUndefined();
     }
 
     public IsEphemeralResponse: boolean = true;

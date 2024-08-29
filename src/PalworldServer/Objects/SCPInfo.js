@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class SCPInfo {
-    constructor(port, user, hostName, hostDeviceBackupFolder, downloadLocation) {
+    constructor(data) {
         this.Port = 0;
         this.User = '';
         this.HostName = '';
@@ -10,11 +10,11 @@ class SCPInfo {
         this.IsUndefined = () => {
             return this.Port == 0 || this.User == '' || this.HostName == '' || this.HostDeviceBackupFolder == '' || this.DownloadLocation == '';
         };
-        this.Port = port;
-        this.User = user;
-        this.HostName = hostName;
-        this.HostDeviceBackupFolder = hostDeviceBackupFolder;
-        this.DownloadLocation = downloadLocation;
+        this.Port = data?.Port ?? 0;
+        this.User = data?.User ?? '';
+        this.HostName = data?.HostName ?? '';
+        this.HostDeviceBackupFolder = data?.HostDeviceBackupFolder ?? '';
+        this.DownloadLocation = data?.DownloadLocation ?? '';
     }
 }
 exports.default = SCPInfo;

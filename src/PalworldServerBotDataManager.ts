@@ -43,7 +43,7 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`
 
-    SCP_INFO: SCPInfo = new SCPInfo(0, '', '', '', '');
+    SCP_INFO: SCPInfo = new SCPInfo();
 
     LAST_BACKUP_DATE: Date = new Date();
 

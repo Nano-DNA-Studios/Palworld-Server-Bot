@@ -16,6 +16,8 @@ class LoadBackup extends Command {
 
         const backupfile = interaction.options.getAttachment("backupfile");
 
+        //Split this apart into a UploadBackup, and then do the load backup here
+
         if (backupfile) {
 
             this.InitializeUserResponse(interaction, `Loading Backup of World`);
