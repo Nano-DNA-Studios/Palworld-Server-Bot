@@ -53,6 +53,9 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     UPDATE_SCRIPT: string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
 
+    private SERVER_READY_TO_START: boolean = false;
+
+
     //Add some state object that checks if the Server has either been setup or the backup has been loaded yet
 
     //Add a bool state that signifies a action is occuring and then add a timer wait for all commands to wait for the previous action to be finished
@@ -60,6 +63,16 @@ class PalworldServerBotDataManager extends BotDataManager {
     //For create a backup, copy all the Save files to a temporary folder and then tar and compress
 
     //Add a Bash script runner result class to allow user to read if the the command failed
+
+    constructor ()
+    {
+        super();
+
+        this.SERVER_READY_TO_START = false;
+
+
+
+    }
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
@@ -167,6 +180,15 @@ class PalworldServerBotDataManager extends BotDataManager {
     public UpdateShutdownDate(): void {
         this.LAST_SHUTDOWN_DATE = new Date();
         this.SaveData();
+    }
+
+    public ServerLoadedOrSetup (): void
+    {
+        this.SERVER_READY_TO_START = true;
+    }
+
+    public IsServerSetup(): boolean {
+        return this.SERVER_READY_TO_START;
     }
 
     public IsSafeToStartServer(): boolean {

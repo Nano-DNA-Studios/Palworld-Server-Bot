@@ -50,6 +50,10 @@ class Setup extends Command {
 
             this.AddToResponseMessage("Settings Updated!")
 
+            DataManager.ServerLoadedOrSetup();
+
+            this.AddToResponseMessage("Server Setup Complete, You can now Start the Server using /start")
+
         } catch (error) {
             this.AddToResponseMessage("Error Changing Settings")
             return;

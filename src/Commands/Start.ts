@@ -12,6 +12,12 @@ class Start extends Command {
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
         let dataManager = BotData.Instance(PalworldServerBotDataManager);
         
+        if (!dataManager.IsServerSetup())
+        {
+            this.InitializeUserResponse(interaction, `You must Setup the Server First using /setup, or Load a Backup using /loadbackup`);
+            return;
+        }
+
         if (dataManager.IsSafeToStartServer())
         {
             this.InitializeUserResponse(interaction, `Starting Server`);
