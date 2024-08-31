@@ -64,6 +64,10 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     //Add a Bash script runner result class to allow user to read if the the command failed
 
+    //Keep a list/database of players that have logged in and their last recorded level.
+
+    //Chnage /players to display all players that have logged in and their last recorded level, and Offline or Online tag next to their name
+
     constructor ()
     {
         super();
