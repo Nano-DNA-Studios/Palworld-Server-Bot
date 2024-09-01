@@ -55,19 +55,6 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     private SERVER_READY_TO_START: boolean = false;
 
-
-    //Add some state object that checks if the Server has either been setup or the backup has been loaded yet
-
-    //Add a bool state that signifies a action is occuring and then add a timer wait for all commands to wait for the previous action to be finished
-
-    //For create a backup, copy all the Save files to a temporary folder and then tar and compress
-
-    //Add a Bash script runner result class to allow user to read if the the command failed
-
-    //Keep a list/database of players that have logged in and their last recorded level.
-
-    //Chnage /players to display all players that have logged in and their last recorded level, and Offline or Online tag next to their name
-
     constructor ()
     {
         super();
