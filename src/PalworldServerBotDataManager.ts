@@ -53,16 +53,13 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     UPDATE_SCRIPT: string = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit"
 
-    private SERVER_READY_TO_START: boolean = false;
+    SERVER_READY_TO_START: boolean = false;
 
     constructor ()
     {
         super();
 
         this.SERVER_READY_TO_START = false;
-
-
-
     }
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
@@ -176,6 +173,11 @@ class PalworldServerBotDataManager extends BotDataManager {
     public ServerLoadedOrSetup (): void
     {
         this.SERVER_READY_TO_START = true;
+    }
+
+    public ServerStartReset (): void
+    {
+        this.SERVER_READY_TO_START = false;
     }
 
     public IsServerSetup(): boolean {

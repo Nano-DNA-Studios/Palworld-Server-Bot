@@ -9,4 +9,5 @@ const PalworldRestfulCommands_1 = __importDefault(require("./src/PalworldServer/
 const Bot = new dna_discord_framework_1.DiscordBot(PalworldServerBotDataManager_1.default);
 Bot.StartBot();
 console.log("Bot Started");
+dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).ServerStartReset();
 setTimeout(() => { PalworldRestfulCommands_1.default.HalfHourlyBackup(); }, 5000);

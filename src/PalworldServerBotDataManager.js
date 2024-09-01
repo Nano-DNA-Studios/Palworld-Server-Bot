@@ -12,7 +12,7 @@ const axios_1 = __importDefault(require("axios"));
 const PalworldRestfulCommands_1 = __importDefault(require("./PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
-        super(...arguments);
+        super();
         this.SERVER_PATH = '/home/steam/PalworldServer';
         this.START_SETTINGS_FILE_PATH = '../PalworldServer/Files/StartSettings.ini';
         this.DEFAULT_FILE_SETTINGS_PATH = `${this.SERVER_PATH}/DefaultPalWorldSettings.ini`;
@@ -35,6 +35,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.LAST_SHUTDOWN_DATE = new Date();
         this.SERVER_CONNECTION_PORT = 'localhost:8211';
         this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";
+        this.SERVER_READY_TO_START = false;
         this.GetTimeSinceLastBackup = () => {
             let lastTime = this.LAST_BACKUP_DATE;
             if (!(lastTime instanceof Date)) {
@@ -61,11 +62,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             }
             return result;
         };
+        this.SERVER_READY_TO_START = false;
     }
-    //Add some state object that checks if the Server has either been setup or the backup has been loaded yet
-    //Add a bool state that signifies a action is occuring and then add a timer wait for all commands to wait for the previous action to be finished
-    //For create a backup, copy all the Save files to a temporary folder and then tar and compress
-    //Add a Bash script runner result class to allow user to read if the the command failed
     UpdateMetricsStatus(metrics, client) {
         let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         if (client.user) {
@@ -125,6 +123,15 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
     UpdateShutdownDate() {
         this.LAST_SHUTDOWN_DATE = new Date();
         this.SaveData();
+    }
+    ServerLoadedOrSetup() {
+        this.SERVER_READY_TO_START = true;
+    }
+    ServerStartReset() {
+        this.SERVER_READY_TO_START = false;
+    }
+    IsServerSetup() {
+        return this.SERVER_READY_TO_START;
     }
     IsSafeToStartServer() {
         let now = new Date();

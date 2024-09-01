@@ -37,6 +37,9 @@ class LoadBackup extends dna_discord_framework_1.Command {
                     this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
                     await this.LoadBackupData();
                     await this.ReplaceServerSettings();
+                    let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+                    dataManager.ServerLoadedOrSetup();
+                    this.AddToResponseMessage("Backup has been Loaded Successfully, You can now Start the Server using /start");
                 }
                 else
                     this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");

@@ -39,6 +39,8 @@ class Setup extends dna_discord_framework_1.Command {
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
                 serverSetting.SaveSettings();
                 this.AddToResponseMessage("Settings Updated!");
+                DataManager.ServerLoadedOrSetup();
+                this.AddToResponseMessage("Server Setup Complete, You can now Start the Server using /start");
             }
             catch (error) {
                 this.AddToResponseMessage("Error Changing Settings");
