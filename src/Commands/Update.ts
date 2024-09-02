@@ -8,6 +8,8 @@ class Update extends Command {
 
     public CommandDescription: string = "Updates the Palworld Server";
 
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);

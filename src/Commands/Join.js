@@ -9,6 +9,7 @@ class Join extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "join";
         this.CommandDescription = "Replies with the Info to Join the Palworld Server";
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const connection = dataManager.SERVER_CONNECTION_PORT;

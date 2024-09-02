@@ -12,11 +12,13 @@ class Backup extends Command {
 
     public CommandDescription: string = "Makes a Backup of the Palworld World";
 
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        this.InitializeUserResponse(interaction, `Creating Backup of World`);
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-        const dataManager = BotData.Instance(PalworldServerBotDataManager);
+        this.InitializeUserResponse(interaction, `Creating Backup of World`);
 
         const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
 

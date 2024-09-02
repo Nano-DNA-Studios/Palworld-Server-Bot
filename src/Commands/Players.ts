@@ -8,6 +8,8 @@ class Players extends Command {
 
     public CommandDescription: string = 'Returns the Players in the Palworld Server';
 
+    public IsCommandBlocking: boolean = false;
+
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, dataManager: BotDataManager) => {
 
         this.InitializeUserResponse(interaction, `Getting Players Online`);

@@ -121,7 +121,6 @@ class PalworldServerBotDataManager extends BotDataManager {
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
             let runner = new BashScriptRunner();
 
-
             await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`);
 
             if (!fs.existsSync("/home/steam/Backups/Extras"))

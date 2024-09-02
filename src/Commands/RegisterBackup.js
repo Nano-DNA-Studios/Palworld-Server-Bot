@@ -10,6 +10,7 @@ class RegisterBackup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "registerbackup";
         this.CommandDescription = "Registers the SCP Info to get the Backup file if it's too large";
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Registering SCP Info`);
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);

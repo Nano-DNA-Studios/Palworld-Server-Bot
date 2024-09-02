@@ -4,14 +4,23 @@ import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCo
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class Shutdown extends Command {
+
     public CommandName: string = 'shutdown';
+
     public CommandDescription: string = 'Shuts down the Palworld Server';
+
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
         let dataManager = BotData.Instance(PalworldServerBotDataManager);
         let waittime = interaction.options.getNumber('waittime');
 
-        if (waittime)
-        {
+        if (!dataManager.IsServerSetup()) {
+            this.InitializeUserResponse(interaction, `You must Setup the Server First using /setup, or Load a Backup using /loadbackup`);
+            return;
+        }
+
+        if (waittime) {
             this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
             await PalworldRestfulCommands.ShutdownServer(this, client, waittime);
 
@@ -19,6 +28,7 @@ class Shutdown extends Command {
             this.AddToResponseMessage('Please wait 2 Minutes before starting the Server again');
         }
     };
+
     public IsEphemeralResponse: boolean = true;
 
     public Options?: ICommandOption[] = [

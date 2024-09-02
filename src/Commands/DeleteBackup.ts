@@ -9,6 +9,8 @@ class DeleteBackup extends Command {
 
     public CommandDescription: string = "Deletes the Current Backup File on the Server to be Replaced with a New One.";
 
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);
@@ -26,10 +28,10 @@ class DeleteBackup extends Command {
             } catch (error) {
                 this.AddToResponseMessage("Could not Remove Backup File from Server.");
             }
-           
-        } else 
+
+        } else
             this.InitializeUserResponse(interaction, `No Backup File Found on Server.`);
-        
+
 
         this.AddToResponseMessage("Please Provide a Backup File to Load in the /loadbackup Command.");
 
@@ -40,7 +42,6 @@ class DeleteBackup extends Command {
         command = "```" + command + "```"
 
         this.AddToResponseMessage(command)
-
     };
 
     public IsEphemeralResponse: boolean = true;

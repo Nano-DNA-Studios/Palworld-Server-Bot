@@ -10,6 +10,7 @@ class DeleteBackup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "deletebackup";
         this.CommandDescription = "Deletes the Current Backup File on the Server to be Replaced with a New One.";
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             if (fs_1.default.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {

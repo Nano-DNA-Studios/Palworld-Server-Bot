@@ -1,6 +1,7 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { BotDataManager, Command } from "dna-discord-framework";
+import { BotData, BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
+import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class Restart extends Command {
 
@@ -8,7 +9,11 @@ class Restart extends Command {
 
     public CommandDescription: string = 'Restarts the Palworld Server';
 
+    public IsCommandBlocking: boolean = true;
+
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
+
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
         this.InitializeUserResponse(interaction, `Restarting Server`);
 
@@ -16,10 +21,11 @@ class Restart extends Command {
 
         await this.AddToResponseMessage('Server will be back online in 2 Minutes');
 
-        await setTimeout(async () => {  
+        await setTimeout(async () => {
             this.AddToResponseMessage('Starting Server');
-            
-            await PalworldRestfulCommands.StartServer(this, client); }, 120000);
+
+            await PalworldRestfulCommands.StartServer(this, client);
+        }, 120000);
     };
 
     public IsEphemeralResponse: boolean = true;

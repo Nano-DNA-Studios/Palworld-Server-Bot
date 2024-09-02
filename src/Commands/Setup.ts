@@ -10,6 +10,8 @@ class Setup extends Command {
 
     CommandDescription: string = 'Sets up the Server for the First Time';
 
+    public IsCommandBlocking: boolean = false;
+
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const DataManager = BotData.Instance(PalworldServerBotDataManager)

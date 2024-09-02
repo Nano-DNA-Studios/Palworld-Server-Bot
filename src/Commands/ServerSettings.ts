@@ -1,6 +1,7 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { BotDataManager, Command } from "dna-discord-framework";
+import { BotData, BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
+import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class ServerSettings extends Command {
 
@@ -8,13 +9,14 @@ class ServerSettings extends Command {
 
     public CommandDescription: string = 'Returns the Server Settings for the Palworld Server';
 
-    public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
+    public IsCommandBlocking: boolean = false;
 
+    public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
         this.InitializeUserResponse(interaction, `Server Settings: `);
 
         PalworldRestfulCommands.ServerSettings(this, client);
     };
-    
+
     public IsEphemeralResponse: boolean = false;
 }
 

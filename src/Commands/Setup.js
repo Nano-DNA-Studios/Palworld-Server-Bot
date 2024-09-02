@@ -11,6 +11,7 @@ class Setup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = 'setup';
         this.CommandDescription = 'Sets up the Server for the First Time';
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const serverName = interaction.options.getString('servername');

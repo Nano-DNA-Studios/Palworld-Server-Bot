@@ -9,6 +9,7 @@ class Players extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = 'players';
         this.CommandDescription = 'Returns the Players in the Palworld Server';
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, dataManager) => {
             this.InitializeUserResponse(interaction, `Getting Players Online`);
             PalworldRestfulCommands_1.default.GetPlayers(this, client);

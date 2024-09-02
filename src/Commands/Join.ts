@@ -8,6 +8,8 @@ class Join extends Command {
 
     public CommandDescription: string = "Replies with the Info to Join the Palworld Server";
 
+    public IsCommandBlocking: boolean = false;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);

@@ -1,13 +1,16 @@
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
-import { BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
+import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } from "dna-discord-framework";
 import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
 import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
+import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class ChangeSettings extends Command {
 
     public CommandName: string = "changesettings";
 
     public CommandDescription: string = "Changes one of the Server Settings";
+
+    public IsCommandBlocking: boolean = false;
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
@@ -35,7 +38,6 @@ class ChangeSettings extends Command {
             }
         } else
             this.AddToResponseMessage("Error Changing Server Setting, Please Provide a Setting and Value");
-
     };
 
     public IsEphemeralResponse: boolean = true;

@@ -10,6 +10,7 @@ class ChangeSettings extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "changesettings";
         this.CommandDescription = "Changes one of the Server Settings";
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             let settingName = interaction.options.getString('setting');
             let settingValue = interaction.options.getString('value');

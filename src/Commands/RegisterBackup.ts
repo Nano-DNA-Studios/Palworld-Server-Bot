@@ -9,6 +9,8 @@ class RegisterBackup extends Command {
 
     public CommandDescription: string = "Registers the SCP Info to get the Backup file if it's too large";
 
+    public IsCommandBlocking: boolean = false;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         this.InitializeUserResponse(interaction, `Registering SCP Info`);

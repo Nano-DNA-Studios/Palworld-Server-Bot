@@ -10,6 +10,7 @@ class Start extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = 'start';
         this.CommandDescription = 'Starts the Palworld Server';
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             if (!dataManager.IsServerSetup()) {
@@ -18,10 +19,10 @@ class Start extends dna_discord_framework_1.Command {
             }
             if (dataManager.IsSafeToStartServer()) {
                 this.InitializeUserResponse(interaction, `Starting Server`);
-                PalworldRestfulCommands_1.default.StartServer(this, client);
+                await PalworldRestfulCommands_1.default.StartServer(this, client);
             }
             else
-                this.InitializeUserResponse(interaction, `You must wait 2 Minutes before starting the Server again`);
+                this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
         };
         this.IsEphemeralResponse = true;
     }

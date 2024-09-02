@@ -9,6 +9,7 @@ class Announce extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = 'announce';
         this.CommandDescription = 'Announces a Message to the Server';
+        this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const message = interaction.options.getString('message');
             this.InitializeUserResponse(interaction, `Announcing Message: ${message}`);

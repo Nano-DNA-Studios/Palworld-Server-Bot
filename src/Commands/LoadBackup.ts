@@ -12,11 +12,16 @@ class LoadBackup extends Command {
 
     public CommandDescription: string = "Replaces the World Data with the Backup Data";
 
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        const backupfile = interaction.options.getAttachment("backupfile");
+        console.log(BotDataManager);
 
-        //Split this apart into a UploadBackup, and then do the load backup here
+        console.log(BotDataManager.BOT_COMMAND_BLOCKED);
+
+
+        const backupfile = interaction.options.getAttachment("backupfile");
 
         if (backupfile) {
 

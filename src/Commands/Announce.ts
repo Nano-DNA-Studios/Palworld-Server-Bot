@@ -8,6 +8,8 @@ class Announce extends Command {
 
     public CommandDescription: string = 'Announces a Message to the Server';
 
+    public IsCommandBlocking: boolean = false;
+
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const message = interaction.options.getString('message');

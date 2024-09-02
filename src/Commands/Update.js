@@ -10,6 +10,7 @@ class Update extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "update";
         this.CommandDescription = "Updates the Palworld Server";
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             this.InitializeUserResponse(interaction, `Updating Palworld Server`);

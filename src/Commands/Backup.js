@@ -12,9 +12,10 @@ class Backup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "backup";
         this.CommandDescription = "Makes a Backup of the Palworld World";
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
+            let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             this.InitializeUserResponse(interaction, `Creating Backup of World`);
-            const dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
             await dataManager.CreateBackup();
             const fileStats = await promises_1.default.stat(backupFilePath);

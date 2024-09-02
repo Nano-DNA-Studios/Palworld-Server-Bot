@@ -9,21 +9,21 @@ class Start extends Command {
 
     public CommandDescription: string = 'Starts the Palworld Server';
 
+    public IsCommandBlocking: boolean = true;
+
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
         let dataManager = BotData.Instance(PalworldServerBotDataManager);
-        
-        if (!dataManager.IsServerSetup())
-        {
+
+        if (!dataManager.IsServerSetup()) {
             this.InitializeUserResponse(interaction, `You must Setup the Server First using /setup, or Load a Backup using /loadbackup`);
             return;
         }
 
-        if (dataManager.IsSafeToStartServer())
-        {
+        if (dataManager.IsSafeToStartServer()) {
             this.InitializeUserResponse(interaction, `Starting Server`);
-            PalworldRestfulCommands.StartServer(this, client);
+            await PalworldRestfulCommands.StartServer(this, client);
         } else
-            this.InitializeUserResponse(interaction, `You must wait 2 Minutes before starting the Server again`);
+            this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
     };
 
     public IsEphemeralResponse: boolean = true;

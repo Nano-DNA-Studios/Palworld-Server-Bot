@@ -13,9 +13,11 @@ class LoadBackup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = "loadbackup";
         this.CommandDescription = "Replaces the World Data with the Backup Data";
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
+            console.log(BotDataManager);
+            console.log(BotDataManager.BOT_COMMAND_BLOCKED);
             const backupfile = interaction.options.getAttachment("backupfile");
-            //Split this apart into a UploadBackup, and then do the load backup here
             if (backupfile) {
                 this.InitializeUserResponse(interaction, `Loading Backup of World`);
                 try {
