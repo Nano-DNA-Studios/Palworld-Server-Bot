@@ -17,15 +17,17 @@ class Restart extends Command {
 
         this.InitializeUserResponse(interaction, `Restarting Server`);
 
-        await PalworldRestfulCommands.ShutdownServer(this, client, 10);
+        await PalworldRestfulCommands.ShutdownServer(this, 10);
 
         await this.AddToResponseMessage('Server will be back online in 2 Minutes');
 
         await setTimeout(async () => {
             this.AddToResponseMessage('Starting Server');
 
-            await PalworldRestfulCommands.StartServer(this, client);
+            await PalworldRestfulCommands.StartServer(this);
         }, 120000);
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

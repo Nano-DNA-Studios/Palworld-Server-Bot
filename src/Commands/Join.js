@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class Join extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -16,6 +17,7 @@ class Join extends dna_discord_framework_1.Command {
             dataManager.UpdateConnectionInfo().then(() => {
                 this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
             });
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
     }

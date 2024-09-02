@@ -2,6 +2,7 @@ import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { BashScriptRunner, BotData, BotDataManager, Command } from "dna-discord-framework";
 import fs from "fs";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class DeleteBackup extends Command {
 
@@ -42,6 +43,8 @@ class DeleteBackup extends Command {
         command = "```" + command + "```"
 
         this.AddToResponseMessage(command)
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

@@ -8,6 +8,7 @@ const axios_1 = __importDefault(require("axios"));
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
 const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class LoadBackup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -15,8 +16,6 @@ class LoadBackup extends dna_discord_framework_1.Command {
         this.CommandDescription = "Replaces the World Data with the Backup Data";
         this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            console.log(BotDataManager);
-            console.log(BotDataManager.BOT_COMMAND_BLOCKED);
             const backupfile = interaction.options.getAttachment("backupfile");
             if (backupfile) {
                 this.InitializeUserResponse(interaction, `Loading Backup of World`);
@@ -46,6 +45,7 @@ class LoadBackup extends dna_discord_framework_1.Command {
                 else
                     this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");
             }
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
         this.Options = [

@@ -5,6 +5,7 @@ import axios from "axios";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
 import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class LoadBackup extends Command {
 
@@ -15,12 +16,6 @@ class LoadBackup extends Command {
     public IsCommandBlocking: boolean = true;
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
-
-        console.log(BotDataManager);
-
-        console.log(BotDataManager.BOT_COMMAND_BLOCKED);
-
-
         const backupfile = interaction.options.getAttachment("backupfile");
 
         if (backupfile) {
@@ -58,6 +53,8 @@ class LoadBackup extends Command {
             } else
                 this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");
         }
+        
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

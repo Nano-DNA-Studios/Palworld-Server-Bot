@@ -1,6 +1,7 @@
-import { BotDataManager, Command } from "dna-discord-framework";
+import { BotData, BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
+import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class Players extends Command {
 
@@ -10,11 +11,13 @@ class Players extends Command {
 
     public IsCommandBlocking: boolean = false;
 
-    public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, dataManager: BotDataManager) => {
+    public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        this.InitializeUserResponse(interaction, `Getting Players Online`);
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
-        PalworldRestfulCommands.GetPlayers(this, client);
+        await PalworldRestfulCommands.UpdateServerInfo(client);
+
+        this.InitializeUserResponse(interaction, dataManager.PLAYER_DATABASE.GetPlayersDisplay());
     };
 
     public IsEphemeralResponse: boolean = true;

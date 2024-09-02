@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
-const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 class Ping extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -12,9 +11,9 @@ class Ping extends dna_discord_framework_1.Command {
         this.CommandDescription = 'Pings the Server to See if it Still Running';
         this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
-            let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             this.InitializeUserResponse(interaction, `Pinging Server`);
-            PalworldRestfulCommands_1.default.PingServer(this, client);
+            await PalworldRestfulCommands_1.default.PingServer(this);
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
     }

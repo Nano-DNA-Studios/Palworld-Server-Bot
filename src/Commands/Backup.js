@@ -22,7 +22,7 @@ class Backup extends dna_discord_framework_1.Command {
             const sizeAndFormat = this.GetFileSize(fileStats);
             this.AddToResponseMessage("Backup File Created Successfully");
             try {
-                await PalworldRestfulCommands_1.default.UpdateServerMetrics(client);
+                await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
                 if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
                     console.log("File is too large, Download it using the following Command in your Terminal");
                     let scpInfoState = this.IsSCPInfoUndefined(dataManager);

@@ -17,6 +17,7 @@ class Update extends dna_discord_framework_1.Command {
             let online = await PalworldRestfulCommands_1.default.IsServerOnline();
             if (online) {
                 await this.AddToResponseMessage("Server is Online, Shutdown the Server before Updating");
+                await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
                 return;
             }
             try {
@@ -29,6 +30,7 @@ class Update extends dna_discord_framework_1.Command {
                 this.AddToResponseMessage("Error Updating Server");
                 console.log("Error Updating Server");
             }
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
     }

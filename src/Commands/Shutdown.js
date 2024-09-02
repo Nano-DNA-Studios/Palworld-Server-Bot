@@ -16,14 +16,16 @@ class Shutdown extends dna_discord_framework_1.Command {
             let waittime = interaction.options.getNumber('waittime');
             if (!dataManager.IsServerSetup()) {
                 this.InitializeUserResponse(interaction, `You must Setup the Server First using /setup, or Load a Backup using /loadbackup`);
+                await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
                 return;
             }
             if (waittime) {
                 this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
-                await PalworldRestfulCommands_1.default.ShutdownServer(this, client, waittime);
+                await PalworldRestfulCommands_1.default.ShutdownServer(this, waittime);
                 dataManager.UpdateShutdownDate();
                 this.AddToResponseMessage('Please wait 2 Minutes before starting the Server again');
             }
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
         this.Options = [

@@ -12,12 +12,11 @@ class Ping extends Command {
     public IsCommandBlocking: boolean = true;
 
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
-
-        let dataManager = BotData.Instance(PalworldServerBotDataManager);
-
         this.InitializeUserResponse(interaction, `Pinging Server`);
 
-        PalworldRestfulCommands.PingServer(this, client);
+        await PalworldRestfulCommands.PingServer(this);
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

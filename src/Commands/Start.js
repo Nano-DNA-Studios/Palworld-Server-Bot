@@ -15,14 +15,16 @@ class Start extends dna_discord_framework_1.Command {
             let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             if (!dataManager.IsServerSetup()) {
                 this.InitializeUserResponse(interaction, `You must Setup the Server First using /setup, or Load a Backup using /loadbackup`);
+                await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
                 return;
             }
             if (dataManager.IsSafeToStartServer()) {
                 this.InitializeUserResponse(interaction, `Starting Server`);
-                await PalworldRestfulCommands_1.default.StartServer(this, client);
+                await PalworldRestfulCommands_1.default.StartServer(this);
             }
             else
                 this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
     }

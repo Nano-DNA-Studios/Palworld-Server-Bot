@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
 const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class ChangeSettings extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -33,6 +34,7 @@ class ChangeSettings extends dna_discord_framework_1.Command {
             }
             else
                 this.AddToResponseMessage("Error Changing Server Setting, Please Provide a Setting and Value");
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
         this.Options = [

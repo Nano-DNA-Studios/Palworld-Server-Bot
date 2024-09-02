@@ -12,7 +12,8 @@ class ServerSettings extends dna_discord_framework_1.Command {
         this.IsCommandBlocking = false;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Server Settings: `);
-            PalworldRestfulCommands_1.default.ServerSettings(this, client);
+            await PalworldRestfulCommands_1.default.ServerSettings(this);
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = false;
     }

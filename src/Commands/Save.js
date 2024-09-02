@@ -18,7 +18,8 @@ class Save extends dna_discord_framework_1.Command {
                 return;
             }
             this.InitializeUserResponse(interaction, `Saving the Game World`);
-            PalworldRestfulCommands_1.default.SaveWorld(this, client);
+            await PalworldRestfulCommands_1.default.SaveWorld(this);
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
     }

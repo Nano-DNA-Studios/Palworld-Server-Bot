@@ -6,6 +6,7 @@ import AnnouncementMessage from "./PalworldServer/Objects/AnnouncementMessage";
 import fs from 'fs';
 import axios from "axios";
 import PalworldRestfulCommands from "./PalworldServer/RESTFUL/PalworldRestfulCommands";
+import PlayerDatabase from "./BotData/PlayerDatabase";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -22,6 +23,10 @@ class PalworldServerBotDataManager extends BotDataManager {
     SERVER_START_SCRIPT = "PalServer.sh";
 
     SERVER_PROCESS_NAME = "PalServer-Linux-Test";
+
+    SERVER_PUBLIC_PORT = 8211;
+
+    RESTFUL_PUBLIC_PORT = 8212;
 
     SERVER_PORT = 8211;
 
@@ -55,21 +60,25 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     SERVER_READY_TO_START: boolean = false;
 
-    constructor ()
-    {
-        super();
+    PLAYER_DATABASE: PlayerDatabase = new PlayerDatabase();
 
+    constructor() {
+        super();
         this.SERVER_READY_TO_START = false;
     }
 
     public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
-        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
+        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 
         if (client.user) {
-            if (metrics.Uptime == 0 || metrics.Uptime == undefined)
-                client.user.setActivity("Server Offline", { type: ActivityType.Playing });
+            if (metrics.Uptime == 0 || metrics.Uptime == undefined) {
+                if (this.IsServerSetup())
+                    client.user.setActivity("Waiting for Server to Start", { type: ActivityType.Custom });
+                else
+                    client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: ActivityType.Custom });
+            }
             else
-                client.user.setActivity(message, { type: ActivityType.Playing });
+                client.user.setActivity("Palworld Server", { type: ActivityType.Playing });
         }
 
         this.UpdateConnectionInfo();
@@ -147,7 +156,7 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     public async UpdateConnectionInfo(): Promise<void> {
         return this.GetPublicIp().then((ip) => {
-            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PORT}`;
+            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PUBLIC_PORT}`;
         }
         ).catch((error) => {
             console.log("Error Getting Public IP")
@@ -169,13 +178,11 @@ class PalworldServerBotDataManager extends BotDataManager {
         this.SaveData();
     }
 
-    public ServerLoadedOrSetup (): void
-    {
+    public ServerLoadedOrSetup(): void {
         this.SERVER_READY_TO_START = true;
     }
 
-    public ServerStartReset (): void
-    {
+    public ServerStartReset(): void {
         this.SERVER_READY_TO_START = false;
     }
 

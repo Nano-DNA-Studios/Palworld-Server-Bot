@@ -20,6 +20,7 @@ class Update extends Command {
 
         if (online) {
             await this.AddToResponseMessage("Server is Online, Shutdown the Server before Updating");
+            await PalworldRestfulCommands.UpdateServerInfo(client);
             return;
         }
 
@@ -35,6 +36,8 @@ class Update extends Command {
             this.AddToResponseMessage("Error Updating Server");
             console.log("Error Updating Server");
         }
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

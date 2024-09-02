@@ -14,7 +14,9 @@ class ServerSettings extends Command {
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
         this.InitializeUserResponse(interaction, `Server Settings: `);
 
-        PalworldRestfulCommands.ServerSettings(this, client);
+        await PalworldRestfulCommands.ServerSettings(this);
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = false;

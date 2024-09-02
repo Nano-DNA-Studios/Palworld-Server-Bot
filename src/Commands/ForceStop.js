@@ -12,7 +12,8 @@ class ForceStop extends dna_discord_framework_1.Command {
         this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             this.InitializeUserResponse(interaction, `Force Stopping the Palworld Server`);
-            PalworldRestfulCommands_1.default.ForceStop(this, client);
+            await PalworldRestfulCommands_1.default.ForceStop(this);
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = false;
     }

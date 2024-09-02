@@ -3,6 +3,7 @@ import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } fro
 import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
 import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class ChangeSettings extends Command {
 
@@ -38,6 +39,8 @@ class ChangeSettings extends Command {
             }
         } else
             this.AddToResponseMessage("Error Changing Server Setting, Please Provide a Setting and Value");
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

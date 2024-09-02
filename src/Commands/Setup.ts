@@ -3,6 +3,7 @@ import { BotData, BotDataManager, Command, ICommandOption, OptionTypesEnum } fro
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
 import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
+import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 
 class Setup extends Command {
 
@@ -18,7 +19,8 @@ class Setup extends Command {
         const serverName = interaction.options.getString('servername');
         const serverDesc = interaction.options.getString('serverdescription');
         const adminPassword = interaction.options.getString('adminpassword');
-        const connection = interaction.options.getString('connection');
+        const serverPort = interaction.options.getString('serverport');
+        const restfulPort = interaction.options.getString('restfulport');
 
         this.InitializeUserResponse(interaction, `Changing Default Settings`)
 
@@ -41,9 +43,14 @@ class Setup extends Command {
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-            if (connection) 
-                DataManager.SERVER_CONNECTION_PORT = connection;
-            
+            if (serverPort) {
+                DataManager.SERVER_PUBLIC_PORT = parseInt(serverPort);
+            }
+
+            if (restfulPort) {
+                DataManager.RESTFUL_PUBLIC_PORT = parseInt(restfulPort);
+            }
+
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIEnabled, "True");
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
@@ -60,6 +67,8 @@ class Setup extends Command {
             this.AddToResponseMessage("Error Changing Settings")
             return;
         }
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;
@@ -84,9 +93,15 @@ class Setup extends Command {
             type: OptionTypesEnum.String
         },
         {
-            name: 'connection',
-            description: 'The Connection String to join the Server',
-            required: true,
+            name: 'serverport',
+            description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+            required: false,
+            type: OptionTypesEnum.String
+        },
+        {
+            name: 'restfulport',
+            description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+            required: false,
             type: OptionTypesEnum.String
         }
     ];

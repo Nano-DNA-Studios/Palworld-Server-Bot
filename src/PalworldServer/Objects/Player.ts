@@ -21,7 +21,6 @@ class Player
     public Level : number;
 
     constructor(json: any) {
-
         this.Name = json[PlayerPropertiesEnum.Name];
         this.AccountName = json[PlayerPropertiesEnum.AccountName];
         this.PlayerID = json[PlayerPropertiesEnum.PlayerID];

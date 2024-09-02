@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const SCPInfo_1 = __importDefault(require("../PalworldServer/Objects/SCPInfo"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class RegisterBackup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -33,6 +34,7 @@ class RegisterBackup extends dna_discord_framework_1.Command {
             }
             else
                 this.AddToResponseMessage("Error Registering SCP Info");
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
         this.Options = [

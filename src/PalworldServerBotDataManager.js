@@ -10,6 +10,7 @@ const AnnouncementMessage_1 = __importDefault(require("./PalworldServer/Objects/
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
 const PalworldRestfulCommands_1 = __importDefault(require("./PalworldServer/RESTFUL/PalworldRestfulCommands"));
+const PlayerDatabase_1 = __importDefault(require("./BotData/PlayerDatabase"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super();
@@ -20,6 +21,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_SETTINGS_DIR = `${this.SERVER_PATH}/Pal/Saved/Config/LinuxServer`;
         this.SERVER_START_SCRIPT = "PalServer.sh";
         this.SERVER_PROCESS_NAME = "PalServer-Linux-Test";
+        this.SERVER_PUBLIC_PORT = 8211;
+        this.RESTFUL_PUBLIC_PORT = 8212;
         this.SERVER_PORT = 8211;
         this.RESTFUL_PORT = 8212;
         this.RESTFUL_HOSTNAME = 'localhost';
@@ -36,6 +39,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_CONNECTION_PORT = 'localhost:8211';
         this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";
         this.SERVER_READY_TO_START = false;
+        this.PLAYER_DATABASE = new PlayerDatabase_1.default();
         this.GetTimeSinceLastBackup = () => {
             let lastTime = this.LAST_BACKUP_DATE;
             if (!(lastTime instanceof Date)) {
@@ -65,12 +69,16 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_READY_TO_START = false;
     }
     UpdateMetricsStatus(metrics, client) {
-        let message = `Palworld Server : Players Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
+        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         if (client.user) {
-            if (metrics.Uptime == 0 || metrics.Uptime == undefined)
-                client.user.setActivity("Server Offline", { type: discord_js_1.ActivityType.Playing });
+            if (metrics.Uptime == 0 || metrics.Uptime == undefined) {
+                if (this.IsServerSetup())
+                    client.user.setActivity("Waiting for Server to Start", { type: discord_js_1.ActivityType.Custom });
+                else
+                    client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: discord_js_1.ActivityType.Custom });
+            }
             else
-                client.user.setActivity(message, { type: discord_js_1.ActivityType.Playing });
+                client.user.setActivity("Palworld Server", { type: discord_js_1.ActivityType.Playing });
         }
         this.UpdateConnectionInfo();
     }
@@ -105,7 +113,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
     }
     async UpdateConnectionInfo() {
         return this.GetPublicIp().then((ip) => {
-            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PORT}`;
+            this.SERVER_CONNECTION_PORT = `${ip}:${this.SERVER_PUBLIC_PORT}`;
         }).catch((error) => {
             console.log("Error Getting Public IP");
         });

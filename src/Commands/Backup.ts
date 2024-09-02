@@ -30,7 +30,7 @@ class Backup extends Command {
         this.AddToResponseMessage("Backup File Created Successfully");
 
         try {
-            await PalworldRestfulCommands.UpdateServerMetrics(client);
+            await PalworldRestfulCommands.UpdateServerInfo(client);
 
             if (sizeAndFormat[0] > this.MAX_FILE_SIZE_MB && sizeAndFormat[1] == "MB") {
                 console.log("File is too large, Download it using the following Command in your Terminal");

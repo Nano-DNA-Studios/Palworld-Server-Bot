@@ -6,6 +6,7 @@ const dna_discord_framework_1 = require("dna-discord-framework");
 const PalworldServerBotDataManager_1 = __importDefault(require("../PalworldServerBotDataManager"));
 const PalworldServerSettingsEnum_1 = __importDefault(require("../PalworldServer/Enums/PalworldServerSettingsEnum"));
 const ServerSettingsManager_1 = __importDefault(require("../PalworldServer/ServerSettingsManager"));
+const PalworldRestfulCommands_1 = __importDefault(require("../PalworldServer/RESTFUL/PalworldRestfulCommands"));
 class Setup extends dna_discord_framework_1.Command {
     constructor() {
         super(...arguments);
@@ -17,7 +18,8 @@ class Setup extends dna_discord_framework_1.Command {
             const serverName = interaction.options.getString('servername');
             const serverDesc = interaction.options.getString('serverdescription');
             const adminPassword = interaction.options.getString('adminpassword');
-            const connection = interaction.options.getString('connection');
+            const serverPort = interaction.options.getString('serverport');
+            const restfulPort = interaction.options.getString('restfulport');
             this.InitializeUserResponse(interaction, `Changing Default Settings`);
             let serverSetting = new ServerSettingsManager_1.default();
             try {
@@ -33,8 +35,12 @@ class Setup extends dna_discord_framework_1.Command {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
                     serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 }
-                if (connection)
-                    DataManager.SERVER_CONNECTION_PORT = connection;
+                if (serverPort) {
+                    DataManager.SERVER_PUBLIC_PORT = parseInt(serverPort);
+                }
+                if (restfulPort) {
+                    DataManager.RESTFUL_PUBLIC_PORT = parseInt(restfulPort);
+                }
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIEnabled, "True");
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
@@ -47,6 +53,7 @@ class Setup extends dna_discord_framework_1.Command {
                 this.AddToResponseMessage("Error Changing Settings");
                 return;
             }
+            await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;
         this.Options = [
@@ -69,9 +76,15 @@ class Setup extends dna_discord_framework_1.Command {
                 type: dna_discord_framework_1.OptionTypesEnum.String
             },
             {
-                name: 'connection',
-                description: 'The Connection String to join the Server',
-                required: true,
+                name: 'serverport',
+                description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+                required: false,
+                type: dna_discord_framework_1.OptionTypesEnum.String
+            },
+            {
+                name: 'restfulport',
+                description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+                required: false,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             }
         ];

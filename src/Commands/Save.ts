@@ -22,7 +22,9 @@ class Save extends Command {
 
         this.InitializeUserResponse(interaction, `Saving the Game World`);
 
-        PalworldRestfulCommands.SaveWorld(this, client);
+        await PalworldRestfulCommands.SaveWorld(this);
+
+        await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
     public IsEphemeralResponse: boolean = true;

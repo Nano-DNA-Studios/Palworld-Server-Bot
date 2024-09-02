@@ -10,4 +10,4 @@ console.log("Bot Started");
 
 BotData.Instance(PalworldServerBotDataManager).ServerStartReset();
 
-setTimeout(() => {PalworldRestfulCommands.HalfHourlyBackup();}, 5000);
+setTimeout(() => {PalworldRestfulCommands.HalfHourlyBackup(Bot.BotInstance);}, 5000);
