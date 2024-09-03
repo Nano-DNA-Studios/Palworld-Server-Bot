@@ -34,6 +34,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_DESCRIPTION = '';
         this.PALWORLD_GAME_FILES = `${this.SERVER_PATH}/Pal/Saved`;
         this.PALWORLD_SERVER_FILES = `${this.SERVER_PATH}/Pal/`;
+        this.BACKUPS_DIR = '/home/steam/Backups';
+        this.EXTRA_BACKUPS_DIR = '/home/steam/Backups/Extras';
         this.SCP_INFO = new SCPInfo_1.default();
         this.LAST_BACKUP_DATE = new Date();
         this.LAST_SHUTDOWN_DATE = new Date();
@@ -42,6 +44,7 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.SERVER_READY_TO_START = false;
         this.PLAYER_DATABASE = new PlayerDatabase_1.default();
         this.SERVER_METRICS = ServerMetrics_1.default.DefaultMetrics();
+        this.MAX_BACKUP_FILES = 5;
         //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         this.GetTimeSinceLastBackup = () => {
             let lastTime = this.LAST_BACKUP_DATE;
@@ -71,6 +74,29 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         };
         this.SERVER_READY_TO_START = false;
     }
+    GetOldestBackupFile() {
+        let files = fs_1.default.readdirSync(this.EXTRA_BACKUPS_DIR);
+        if (files.length == 0)
+            return "";
+        files = files.map(filename => {
+            const filePath = `${this.EXTRA_BACKUPS_DIR}/${filename}`;
+            return {
+                name: filename,
+                time: fs_1.default.statSync(filePath).mtime.getTime()
+            };
+        }).sort((a, b) => a.time - b.time) // Sort files from oldest to newest
+            .map(file => file.name);
+        return files[0];
+    }
+    ManageBackupFiles() {
+        let maxLoop = 0;
+        while (fs_1.default.readdirSync(this.EXTRA_BACKUPS_DIR).length > this.MAX_BACKUP_FILES && maxLoop < 50) {
+            maxLoop++;
+            let oldestFile = this.GetOldestBackupFile();
+            if (oldestFile != "")
+                fs_1.default.rmSync(`${this.EXTRA_BACKUPS_DIR}/${oldestFile}`);
+        }
+    }
     async CreateBackup(depth = 0) {
         let online = await PalworldRestfulCommands_1.default.IsServerOnline();
         try {
@@ -85,9 +111,10 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             const backupFilePath = "/home/steam/Backups/WorldBackup.tar.gz";
             let runner = new dna_discord_framework_1.BashScriptRunner();
             await runner.RunLocally(`cd ${this.PALWORLD_GAME_FILES} && cd .. && tar -czvf ${backupFilePath} Saved/*`);
-            if (!fs_1.default.existsSync("/home/steam/Backups/Extras"))
-                fs_1.default.mkdirSync("/home/steam/Backups/Extras", { recursive: true });
-            await runner.RunLocally(`cp ${backupFilePath} /home/steam/Backups/Extras/WorldBackup_${timestamp}.tar.gz`);
+            if (!fs_1.default.existsSync(this.EXTRA_BACKUPS_DIR))
+                fs_1.default.mkdirSync(this.EXTRA_BACKUPS_DIR, { recursive: true });
+            await runner.RunLocally(`cp ${backupFilePath} ${this.EXTRA_BACKUPS_DIR}/WorldBackup_${timestamp}.tar.gz`);
+            this.ManageBackupFiles();
             if (online)
                 new AnnouncementMessage_1.default("World has been Backed up Successfully").GetRequest().SendRequest();
         }
