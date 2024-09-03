@@ -6,7 +6,7 @@ import AnnouncementMessage from "./PalworldServer/Objects/AnnouncementMessage";
 import fs from 'fs';
 import axios from "axios";
 import PalworldRestfulCommands from "./PalworldServer/RESTFUL/PalworldRestfulCommands";
-import PlayerDatabase from "./BotData/PlayerDatabase";
+import PlayerDatabase from "./PalworldServer/PlayerDatabase";
 
 class PalworldServerBotDataManager extends BotDataManager {
 
@@ -74,8 +74,6 @@ class PalworldServerBotDataManager extends BotDataManager {
         super();
         this.SERVER_READY_TO_START = false;
     }
-
-//let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 
     public GetTimeSinceLastBackup = (): string => {
         let lastTime = this.LAST_BACKUP_DATE;

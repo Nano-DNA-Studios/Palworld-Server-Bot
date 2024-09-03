@@ -11,7 +11,7 @@ const AnnouncementMessage_1 = __importDefault(require("./PalworldServer/Objects/
 const fs_1 = __importDefault(require("fs"));
 const axios_1 = __importDefault(require("axios"));
 const PalworldRestfulCommands_1 = __importDefault(require("./PalworldServer/RESTFUL/PalworldRestfulCommands"));
-const PlayerDatabase_1 = __importDefault(require("./BotData/PlayerDatabase"));
+const PlayerDatabase_1 = __importDefault(require("./PalworldServer/PlayerDatabase"));
 class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManager {
     constructor() {
         super();
@@ -45,7 +45,6 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.PLAYER_DATABASE = new PlayerDatabase_1.default();
         this.SERVER_METRICS = ServerMetrics_1.default.DefaultMetrics();
         this.MAX_BACKUP_FILES = 5;
-        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         this.GetTimeSinceLastBackup = () => {
             let lastTime = this.LAST_BACKUP_DATE;
             if (!(lastTime instanceof Date)) {

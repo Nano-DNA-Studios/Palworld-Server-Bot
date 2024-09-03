@@ -2,12 +2,10 @@ import { BashScriptRunner, BotData, Command, RESTFULResponseStatusEnum } from "d
 import ServerMetrics from "../Objects/ServerMetrics";
 import { Client } from "discord.js";
 import PalworldServerBotDataManager from "../../PalworldServerBotDataManager";
-import Player from "../Objects/Player";
 import PalworldRESTFULCommandFactory from "./PalworldRESTFULCommandFactory";
 import PalworldRESTFULCommandEnum from "./PalworldRESTFULCommandEnum";
 import ServerSettingsManager from "../ServerSettingsManager";
-import AnnouncementMessage from "../Objects/AnnouncementMessage";
-import PlayerDatabase from "../../BotData/PlayerDatabase";
+import PlayerDatabase from "../PlayerDatabase";
 
 class PalworldRestfulCommands {
 

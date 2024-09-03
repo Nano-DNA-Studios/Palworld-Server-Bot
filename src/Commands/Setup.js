@@ -75,13 +75,13 @@ class Setup extends dna_discord_framework_1.Command {
             },
             {
                 name: 'serverport',
-                description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+                description: 'The Public Port on which the Server is Exposed. Connect to this Port to Join the Server',
                 required: false,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             },
             {
                 name: 'restfulport',
-                description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+                description: 'The Public Port on which the RESTFUL Server is Exposed. Connect to this Port to connect to RCON',
                 required: false,
                 type: dna_discord_framework_1.OptionTypesEnum.String
             }

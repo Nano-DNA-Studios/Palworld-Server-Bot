@@ -50,7 +50,6 @@ class Setup extends Command {
             if (restfulPort) 
                 DataManager.RESTFUL_PUBLIC_PORT = parseInt(restfulPort);
             
-
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIEnabled, "True");
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIPort, DataManager.RESTFUL_PORT.toString());
@@ -94,13 +93,13 @@ class Setup extends Command {
         },
         {
             name: 'serverport',
-            description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+            description: 'The Public Port on which the Server is Exposed. Connect to this Port to Join the Server',
             required: false,
             type: OptionTypesEnum.String
         },
         {
             name: 'restfulport',
-            description: 'The Port on which the Server is Exposed. Connect to this Port to Join the Server',
+            description: 'The Public Port on which the RESTFUL Server is Exposed. Connect to this Port to connect to RCON',
             required: false,
             type: OptionTypesEnum.String
         }

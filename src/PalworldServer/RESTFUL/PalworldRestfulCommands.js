@@ -9,7 +9,7 @@ const PalworldServerBotDataManager_1 = __importDefault(require("../../PalworldSe
 const PalworldRESTFULCommandFactory_1 = __importDefault(require("./PalworldRESTFULCommandFactory"));
 const PalworldRESTFULCommandEnum_1 = __importDefault(require("./PalworldRESTFULCommandEnum"));
 const ServerSettingsManager_1 = __importDefault(require("../ServerSettingsManager"));
-const PlayerDatabase_1 = __importDefault(require("../../BotData/PlayerDatabase"));
+const PlayerDatabase_1 = __importDefault(require("../PlayerDatabase"));
 class PalworldRestfulCommands {
     static async StartServer(command) {
         let online = await this.IsServerOnline();
