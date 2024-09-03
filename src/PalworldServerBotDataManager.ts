@@ -62,27 +62,14 @@ class PalworldServerBotDataManager extends BotDataManager {
 
     PLAYER_DATABASE: PlayerDatabase = new PlayerDatabase();
 
+    SERVER_METRICS: ServerMetrics = ServerMetrics.DefaultMetrics();
+
     constructor() {
         super();
         this.SERVER_READY_TO_START = false;
     }
 
-    public UpdateMetricsStatus(metrics: ServerMetrics, client: Client): void {
-        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
-
-        if (client.user) {
-            if (metrics.Uptime == 0 || metrics.Uptime == undefined) {
-                if (this.IsServerSetup())
-                    client.user.setActivity("Waiting for Server to Start", { type: ActivityType.Custom });
-                else
-                    client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: ActivityType.Custom });
-            }
-            else
-                client.user.setActivity("Palworld Server", { type: ActivityType.Playing });
-        }
-
-        this.UpdateConnectionInfo();
-    }
+//let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
 
     public GetTimeSinceLastBackup = (): string => {
         let lastTime = this.LAST_BACKUP_DATE;
@@ -195,6 +182,22 @@ class PalworldServerBotDataManager extends BotDataManager {
         let diff = (now.getTime() - new Date(this.LAST_SHUTDOWN_DATE).getTime()) / 1000;
         return diff > 120;
     }
+
+    public OfflineActivity(client: Client): void {
+        if (client.user) {
+            if (this.IsServerSetup())
+                client.user.setActivity("Waiting for Server to Start", { type: ActivityType.Custom });
+            else
+                client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: ActivityType.Custom });
+        }
+    }
+
+    public OnlineActivity(client: Client): void {
+        if (client.user) {
+            client.user.setActivity("Palworld Server", { type: ActivityType.Playing });
+        }
+    }
+
 }
 
 export default PalworldServerBotDataManager;

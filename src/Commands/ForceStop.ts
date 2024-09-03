@@ -13,9 +13,13 @@ class ForceStop extends Command {
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+
         this.InitializeUserResponse(interaction, `Force Stopping the Palworld Server`);
 
         await PalworldRestfulCommands.ForceStop(this);
+
+        dataManager.OfflineActivity(client);
 
         await PalworldRestfulCommands.UpdateServerInfo(client);
     };

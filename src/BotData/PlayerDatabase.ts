@@ -4,13 +4,13 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 
 class PlayerDatabase {
 
-    //User ID --> Player
+    //Name --> Player
     public AllPlayers: Record<string, Player> = {};
 
     public OnlinePlayers: Record<string, Player> = {};
 
     constructor(playerDatabase?: any) {
-        this.AllPlayers = playerDatabase?.Players ?? {};
+        this.AllPlayers = playerDatabase?.AllPlayers ?? {};
         this.OnlinePlayers = {};
     }
 
@@ -18,14 +18,15 @@ class PlayerDatabase {
 
         let players: Player[] = [];
         let content = JSON.parse(playerData.message)['players'];
+        this.OnlinePlayers = {};
 
         content.forEach((player: any) => {
             players.push(new Player(player));
         });
 
         players.forEach((player: Player) => {
-            this.AllPlayers[player.UserID] = player;
-            this.OnlinePlayers[player.UserID] = player;
+            this.AllPlayers[player.Name] = player;
+            this.OnlinePlayers[player.Name] = player;
         });
     }
 
@@ -34,21 +35,21 @@ class PlayerDatabase {
         let dataManager = BotData.Instance(PalworldServerBotDataManager);
         let message = `${dataManager.SERVER_NAME} Players:`;
         let onlinePlayers: string = "\nOnline Players:\n";
-        let offlinePlayers: string = "\n\nOffline Players:\n";
+        let offlinePlayers: string = "\nOffline Players:\n";
 
         if (Object.keys(this.OnlinePlayers).length == 0)
-            onlinePlayers += "No Players Online";
-        else{
+            onlinePlayers += "No Players Online\n";
+        else {
             Object.keys(this.OnlinePlayers).forEach((key: string) => {
                 let player = this.OnlinePlayers[key];
-                onlinePlayers += `${player.Name} - Lvl ${player.Level}`;
+                onlinePlayers += `${player.Name} - Lvl ${player.Level}\n`;
             });
         }
 
         Object.keys(this.AllPlayers).forEach((key: string) => {
             let player = this.AllPlayers[key];
-            if (!(player.UserID in this.OnlinePlayers))
-                offlinePlayers += `${player.Name} - Lvl ${player.Level}`;
+            if (!(player.Name in this.OnlinePlayers))
+                offlinePlayers += `${player.Name} - Lvl ${player.Level}\n`;
         });
 
         if (message.length + onlinePlayers.length < 2000)

@@ -11,7 +11,7 @@ class Setup extends Command {
 
     CommandDescription: string = 'Sets up the Server for the First Time';
 
-    public IsCommandBlocking: boolean = false;
+    public IsCommandBlocking: boolean = true;
 
     RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
@@ -43,13 +43,13 @@ class Setup extends Command {
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.AdminPassword, adminPassword);
             }
 
-            if (serverPort) {
+            if (serverPort) 
                 DataManager.SERVER_PUBLIC_PORT = parseInt(serverPort);
-            }
+            
 
-            if (restfulPort) {
+            if (restfulPort) 
                 DataManager.RESTFUL_PUBLIC_PORT = parseInt(restfulPort);
-            }
+            
 
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.PublicPort, DataManager.SERVER_PORT.toString());
             serverSetting.SetStringSettingValue(PalworldServerSettingsEnum.RESTAPIEnabled, "True");

@@ -49,7 +49,7 @@ class LoadBackup extends Command {
 
                 dataManager.ServerLoadedOrSetup();
 
-                this.AddToResponseMessage("Backup has been Loaded Successfully, You can now Start the Server using /start");
+                this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
             } else
                 this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");
         }
@@ -76,8 +76,6 @@ class LoadBackup extends Command {
 
             await runner.RunLocally(`rm -rf ${dataManager.SERVER_PATH}/Pal/Saved`)
             await runner.RunLocally(`tar -xzf /home/steam/Backups/WorldBackup.tar.gz -C ${dataManager.SERVER_PATH}/Pal`)
-
-            this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
         } catch (error) {
             this.AddToResponseMessage("Error Loading Backup Data");
         }

@@ -181,28 +181,29 @@ class PalworldRestfulCommands {
     }
 
     public static async GetPlayers(): Promise<void> {
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+        dataManager.PLAYER_DATABASE = new PlayerDatabase(dataManager.PLAYER_DATABASE);
 
         let online = await this.IsServerOnline();
 
         if (!online)
             return;
 
-        let dataManager = BotData.Instance(PalworldServerBotDataManager);
-
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.PLAYERS);
 
-        request.SendRequest().then((res) => {
-
-            if (res.status == 200) {
-                dataManager.PLAYER_DATABASE = new PlayerDatabase(dataManager.PLAYER_DATABASE);
-                dataManager.PLAYER_DATABASE.UpdatePlayers(res);
-            } else
-                console.log("Could not Retreive Players");
-
-        }).catch((error) => {
+        let response = await request.SendRequest().catch((error) => {
             dataManager.AddErrorLog(error)
             console.log(`Error Retreiving Players (${error})`);
+            return;
         });
+
+        if (!response)
+            return;
+
+        if (response.status == 200)
+            dataManager.PLAYER_DATABASE.UpdatePlayers(response);
+        else
+            console.log("Could not Retreive Players");
     }
 
     public static async GetServerMetrics(client: Client): Promise<void> {
@@ -210,7 +211,7 @@ class PalworldRestfulCommands {
         let online = await this.IsServerOnline();
 
         if (!online) {
-            BotData.Instance(PalworldServerBotDataManager).UpdateMetricsStatus(ServerMetrics.DefaultMetrics(), client);
+            BotData.Instance(PalworldServerBotDataManager).OfflineActivity(client);
             return;
         }
 
@@ -220,16 +221,16 @@ class PalworldRestfulCommands {
             if (res.status == 200) {
                 let metrics = new ServerMetrics(res.message);
 
-                BotData.Instance(PalworldServerBotDataManager).UpdateMetricsStatus(metrics, client);
+                BotData.Instance(PalworldServerBotDataManager).SERVER_METRICS = metrics;
             }
         }).catch((error) => {
-            BotData.Instance(PalworldServerBotDataManager).UpdateMetricsStatus(ServerMetrics.DefaultMetrics(), client);
+            BotData.Instance(PalworldServerBotDataManager).OfflineActivity(client);
         });
     }
 
     public static async UpdateServerInfo(client: Client): Promise<void> {
-        this.GetPlayers();
-        this.GetServerMetrics(client);
+        await this.GetPlayers();
+        await this.GetServerMetrics(client);
     }
 
     public static async IsServerOnline(): Promise<boolean> {

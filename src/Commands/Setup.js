@@ -12,7 +12,7 @@ class Setup extends dna_discord_framework_1.Command {
         super(...arguments);
         this.CommandName = 'setup';
         this.CommandDescription = 'Sets up the Server for the First Time';
-        this.IsCommandBlocking = false;
+        this.IsCommandBlocking = true;
         this.RunCommand = async (client, interaction, BotDataManager) => {
             const DataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
             const serverName = interaction.options.getString('servername');
@@ -35,12 +35,10 @@ class Setup extends dna_discord_framework_1.Command {
                     DataManager.SERVER_ADMIN_PASSWORD = adminPassword;
                     serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.AdminPassword, adminPassword);
                 }
-                if (serverPort) {
+                if (serverPort)
                     DataManager.SERVER_PUBLIC_PORT = parseInt(serverPort);
-                }
-                if (restfulPort) {
+                if (restfulPort)
                     DataManager.RESTFUL_PUBLIC_PORT = parseInt(restfulPort);
-                }
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.PublicPort, DataManager.SERVER_PORT.toString());
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIEnabled, "True");
                 serverSetting.SetStringSettingValue(PalworldServerSettingsEnum_1.default.RESTAPIPort, DataManager.RESTFUL_PORT.toString());

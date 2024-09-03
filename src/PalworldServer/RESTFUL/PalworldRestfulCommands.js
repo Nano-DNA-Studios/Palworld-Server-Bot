@@ -129,42 +129,43 @@ class PalworldRestfulCommands {
         });
     }
     static async GetPlayers() {
+        let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
+        dataManager.PLAYER_DATABASE = new PlayerDatabase_1.default(dataManager.PLAYER_DATABASE);
         let online = await this.IsServerOnline();
         if (!online)
             return;
-        let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.PLAYERS);
-        request.SendRequest().then((res) => {
-            if (res.status == 200) {
-                dataManager.PLAYER_DATABASE = new PlayerDatabase_1.default(dataManager.PLAYER_DATABASE);
-                dataManager.PLAYER_DATABASE.UpdatePlayers(res);
-            }
-            else
-                console.log("Could not Retreive Players");
-        }).catch((error) => {
+        let response = await request.SendRequest().catch((error) => {
             dataManager.AddErrorLog(error);
             console.log(`Error Retreiving Players (${error})`);
+            return;
         });
+        if (!response)
+            return;
+        if (response.status == 200)
+            dataManager.PLAYER_DATABASE.UpdatePlayers(response);
+        else
+            console.log("Could not Retreive Players");
     }
     static async GetServerMetrics(client) {
         let online = await this.IsServerOnline();
         if (!online) {
-            dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(ServerMetrics_1.default.DefaultMetrics(), client);
+            dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).OfflineActivity(client);
             return;
         }
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.METRICS);
         request.SendRequest().then((res) => {
             if (res.status == 200) {
                 let metrics = new ServerMetrics_1.default(res.message);
-                dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(metrics, client);
+                dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).SERVER_METRICS = metrics;
             }
         }).catch((error) => {
-            dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).UpdateMetricsStatus(ServerMetrics_1.default.DefaultMetrics(), client);
+            dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default).OfflineActivity(client);
         });
     }
     static async UpdateServerInfo(client) {
-        this.GetPlayers();
-        this.GetServerMetrics(client);
+        await this.GetPlayers();
+        await this.GetServerMetrics(client);
     }
     static async IsServerOnline() {
         try {

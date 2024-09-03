@@ -2,6 +2,7 @@ import { BotData, BotDataManager, Command } from "dna-discord-framework";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
 import { Client, ChatInputCommandInteraction, CacheType } from "discord.js";
 import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
+import PlayerDatabase from "../BotData/PlayerDatabase";
 
 class Players extends Command {
 
@@ -13,9 +14,9 @@ class Players extends Command {
 
     public RunCommand = async (client: Client<boolean>, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
-        let dataManager = BotData.Instance(PalworldServerBotDataManager);
-
         await PalworldRestfulCommands.UpdateServerInfo(client);
+
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
         this.InitializeUserResponse(interaction, dataManager.PLAYER_DATABASE.GetPlayersDisplay());
     };

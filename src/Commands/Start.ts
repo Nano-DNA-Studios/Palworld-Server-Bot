@@ -23,6 +23,7 @@ class Start extends Command {
         if (dataManager.IsSafeToStartServer()) {
             this.InitializeUserResponse(interaction, `Starting Server`);
             await PalworldRestfulCommands.StartServer(this);
+            dataManager.OnlineActivity(client);
         } else
             this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
 

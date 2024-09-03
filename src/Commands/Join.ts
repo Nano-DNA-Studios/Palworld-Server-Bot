@@ -14,11 +14,12 @@ class Join extends Command {
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
 
         const dataManager = BotData.Instance(PalworldServerBotDataManager);
-
         const connection = dataManager.SERVER_CONNECTION_PORT;
+        const connectionInfo = "```" + connection + "```";
 
         dataManager.UpdateConnectionInfo().then(() => {
-            this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info: ${connection}`);
+            this.InitializeUserResponse(interaction, `You can Join ${dataManager.SERVER_NAME} by using the following Connection Info:`);
+            this.AddToResponseMessage(connectionInfo);
         });
 
         await PalworldRestfulCommands.UpdateServerInfo(client);

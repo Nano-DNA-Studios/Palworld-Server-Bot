@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const dna_discord_framework_1 = require("dna-discord-framework");
+const ServerMetrics_1 = __importDefault(require("./PalworldServer/Objects/ServerMetrics"));
 const discord_js_1 = require("discord.js");
 const SCPInfo_1 = __importDefault(require("./PalworldServer/Objects/SCPInfo"));
 const AnnouncementMessage_1 = __importDefault(require("./PalworldServer/Objects/AnnouncementMessage"));
@@ -40,6 +41,8 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         this.UPDATE_SCRIPT = "steamcmd +force_install_dir /home/steam/PalworldServer/ +login anonymous +app_update 2394010 validate +quit";
         this.SERVER_READY_TO_START = false;
         this.PLAYER_DATABASE = new PlayerDatabase_1.default();
+        this.SERVER_METRICS = ServerMetrics_1.default.DefaultMetrics();
+        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
         this.GetTimeSinceLastBackup = () => {
             let lastTime = this.LAST_BACKUP_DATE;
             if (!(lastTime instanceof Date)) {
@@ -67,20 +70,6 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
             return result;
         };
         this.SERVER_READY_TO_START = false;
-    }
-    UpdateMetricsStatus(metrics, client) {
-        //let message = `Palworld Server \nPlayers Online: ${metrics.PlayerNum} \nServer Uptime: ${metrics.GetUptime()} \nTime Since Last Backup: ${this.GetTimeSinceLastBackup()}`;
-        if (client.user) {
-            if (metrics.Uptime == 0 || metrics.Uptime == undefined) {
-                if (this.IsServerSetup())
-                    client.user.setActivity("Waiting for Server to Start", { type: discord_js_1.ActivityType.Custom });
-                else
-                    client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: discord_js_1.ActivityType.Custom });
-            }
-            else
-                client.user.setActivity("Palworld Server", { type: discord_js_1.ActivityType.Playing });
-        }
-        this.UpdateConnectionInfo();
     }
     async CreateBackup(depth = 0) {
         let online = await PalworldRestfulCommands_1.default.IsServerOnline();
@@ -145,6 +134,19 @@ class PalworldServerBotDataManager extends dna_discord_framework_1.BotDataManage
         let now = new Date();
         let diff = (now.getTime() - new Date(this.LAST_SHUTDOWN_DATE).getTime()) / 1000;
         return diff > 120;
+    }
+    OfflineActivity(client) {
+        if (client.user) {
+            if (this.IsServerSetup())
+                client.user.setActivity("Waiting for Server to Start", { type: discord_js_1.ActivityType.Custom });
+            else
+                client.user.setActivity("Waiting for Server Setup or Loaded Backup", { type: discord_js_1.ActivityType.Custom });
+        }
+    }
+    OnlineActivity(client) {
+        if (client.user) {
+            client.user.setActivity("Palworld Server", { type: discord_js_1.ActivityType.Playing });
+        }
     }
 }
 exports.default = PalworldServerBotDataManager;

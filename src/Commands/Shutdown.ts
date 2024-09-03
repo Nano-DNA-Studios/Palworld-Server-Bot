@@ -25,6 +25,7 @@ class Shutdown extends Command {
             this.InitializeUserResponse(interaction, `Palworld Server is being Shutdown in ${waittime} seconds.`);
             await PalworldRestfulCommands.ShutdownServer(this, waittime);
 
+            dataManager.OfflineActivity(client);
             dataManager.UpdateShutdownDate();
             this.AddToResponseMessage('Please wait 2 Minutes before starting the Server again');
         }

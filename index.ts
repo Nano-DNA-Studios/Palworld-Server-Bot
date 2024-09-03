@@ -8,6 +8,9 @@ Bot.StartBot();
 
 console.log("Bot Started");
 
-BotData.Instance(PalworldServerBotDataManager).ServerStartReset();
+let dataManager = BotData.Instance(PalworldServerBotDataManager);
+
+dataManager.ServerStartReset();
+dataManager.OfflineActivity(Bot.BotInstance);
 
 setTimeout(() => {PalworldRestfulCommands.HalfHourlyBackup(Bot.BotInstance);}, 5000);
