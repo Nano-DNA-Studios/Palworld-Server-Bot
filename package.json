@@ -15,7 +15,9 @@
         "build": "tsc",
         "start": "npm run build && node index.js",
         "docker": "npm run build && docker build -t mrdnalex/palworldserverbot .",
-        "dockerpublish": "npm run docker && docker login -u mrdnalex && docker push mrdnalex/palworldserverbot"
+        "dockernocache": "npm run build && docker build --no-cache -t mrdnalex/palworldserverbot .",
+        "dockerpublish": "npm run docker && docker login -u mrdnalex  && docker push mrdnalex/palworldserverbot",
+        "dockerpublishnocache": "npm run dockernocache && docker login -u mrdnalex  && docker push mrdnalex/palworldserverbot"
     },
     "keywords": [],
     "author": "",

@@ -1,4 +1,4 @@
-import { BashScriptRunner, BotData, Command, RESTFULResponseStatusEnum } from "dna-discord-framework";
+import { BashScriptRunner, BotData, Command, RESTFULResponseStatusEnum , RESTFULResponse} from "dna-discord-framework";
 import ServerMetrics from "../Objects/ServerMetrics";
 import { Client } from "discord.js";
 import PalworldServerBotDataManager from "../../PalworldServerBotDataManager";
@@ -104,23 +104,24 @@ class PalworldRestfulCommands {
 
         let request = PalworldRESTFULCommandFactory.GetCommand(PalworldRESTFULCommandEnum.SAVE)
 
-        await request.SendRequest().then((res) => {
-
-            if (res.status == 200)
-                command.AddToResponseMessage("Server has been Saved");
-            else
-                command.AddToResponseMessage("Error Saving the Server");
-
-        }).catch((error) => {
+        let response = await request.SendRequest().catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
+            return;
         });
+
+        if (!response)
+        return;
+
+        if (response.status == 200)
+            command.AddToResponseMessage("Server has been Saved");
+        else
+            command.AddToResponseMessage("Error Saving the Server");
 
         let dataManager = BotData.Instance(PalworldServerBotDataManager);
 
         await new Promise(resolve => setTimeout(resolve, 5 * 1000));
 
         await dataManager.CreateBackup();
-
     }
 
     public static async ServerSettings(command: Command): Promise<void> {

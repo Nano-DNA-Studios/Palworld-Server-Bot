@@ -25,7 +25,7 @@ class Start extends Command {
             await PalworldRestfulCommands.StartServer(this);
             dataManager.OnlineActivity(client);
         } else
-            this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
+            this.InitializeUserResponse(interaction,`You must wait 2 Minutes before starting the Server again`);
 
         await PalworldRestfulCommands.UpdateServerInfo(client);
     };

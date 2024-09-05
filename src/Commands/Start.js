@@ -24,7 +24,7 @@ class Start extends dna_discord_framework_1.Command {
                 dataManager.OnlineActivity(client);
             }
             else
-                this.AddToResponseMessage(`You must wait 2 Minutes before starting the Server again`);
+                this.InitializeUserResponse(interaction, `You must wait 2 Minutes before starting the Server again`);
             await PalworldRestfulCommands_1.default.UpdateServerInfo(client);
         };
         this.IsEphemeralResponse = true;

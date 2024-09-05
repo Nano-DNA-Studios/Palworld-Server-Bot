@@ -78,14 +78,16 @@ class PalworldRestfulCommands {
             return;
         }
         let request = PalworldRESTFULCommandFactory_1.default.GetCommand(PalworldRESTFULCommandEnum_1.default.SAVE);
-        await request.SendRequest().then((res) => {
-            if (res.status == 200)
-                command.AddToResponseMessage("Server has been Saved");
-            else
-                command.AddToResponseMessage("Error Saving the Server");
-        }).catch((error) => {
+        let response = await request.SendRequest().catch((error) => {
             command.AddToResponseMessage("Error Saving Server");
+            return;
         });
+        if (!response)
+            return;
+        if (response.status == 200)
+            command.AddToResponseMessage("Server has been Saved");
+        else
+            command.AddToResponseMessage("Error Saving the Server");
         let dataManager = dna_discord_framework_1.BotData.Instance(PalworldServerBotDataManager_1.default);
         await new Promise(resolve => setTimeout(resolve, 5 * 1000));
         await dataManager.CreateBackup();

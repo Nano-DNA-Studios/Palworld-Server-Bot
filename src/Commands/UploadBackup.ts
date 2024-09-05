@@ -6,54 +6,53 @@ import PalworldServerBotDataManager from "../PalworldServerBotDataManager";
 import ServerSettingsManager from "../PalworldServer/ServerSettingsManager";
 import PalworldServerSettingsEnum from "../PalworldServer/Enums/PalworldServerSettingsEnum";
 import PalworldRestfulCommands from "../PalworldServer/RESTFUL/PalworldRestfulCommands";
+import SCPInfo from "../PalworldServer/Objects/SCPInfo";
 
-class LoadBackup extends Command {
+class UploadBackup extends Command {
 
-    public CommandName: string = "loadbackup";
+    public CommandName: string = "uploadbackup";
 
-    public CommandDescription: string = "Replaces the World Data with the Backup Data";
+    public CommandDescription: string = "Uploads a Backup World to the Server and replaces the Current one.";
 
     public IsCommandBlocking: boolean = true;
 
     public RunCommand = async (client: Client, interaction: ChatInputCommandInteraction<CacheType>, BotDataManager: BotDataManager) => {
-        // const backupfile = interaction.options.getAttachment("backupfile");
-        //
-        //       if (backupfile) {
+        
+        let dataManager = BotData.Instance(PalworldServerBotDataManager);
+        const backupfile = interaction.options.getAttachment("backupfile");
 
-        //            this.InitializeUserResponse(interaction, `Loading Backup of World`);
+        if (backupfile) {
 
-        //          try {
-        //            await this.DownloadFile(backupfile, "/home/steam/Backups/WorldBackup.tar.gz");
+            this.InitializeUserResponse(interaction, `Loading Backup of World`);
 
-        //          this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");
-        //    } catch (error) {
-        //       this.AddToResponseMessage("Error Downloading Backup File");
-        //  }
+            try {
+                await this.DownloadFile(backupfile, `${dataManager.BACKUPS_DIR}/WorldBackup.tar.gz`);
 
-        /// await this.LoadBackupData();
-        //  await this.ReplaceServerSettings();
-        // } else {
+                this.AddToResponseMessage("Backup File Downloaded Successfully, Loading Backup Data");
+            } catch (error) {
+                this.AddToResponseMessage("Error Downloading Backup File");
+            }
 
-        if (fs.existsSync("/home/steam/Backups/WorldBackup.tar")) {
-            let runner = new BashScriptRunner();
-            await runner.RunLocally(`mv /home/steam/Backups/WorldBackup.tar /home/steam/Backups/WorldBackup.tar.gz`)
-        }
-
-        if (fs.existsSync("/home/steam/Backups/WorldBackup.tar.gz")) {
-
-            this.InitializeUserResponse(interaction, `Backup File Already Exists on Server, Loading Backup Data`);
             await this.LoadBackupData();
             await this.ReplaceServerSettings();
 
-            let dataManager = BotData.Instance(PalworldServerBotDataManager);
-
             dataManager.ServerLoadedOrSetup();
 
-            this.AddToResponseMessage("Backup Data Loaded Successfully, use /start to Start the Server at the backup point");
-        } else
-            this.InitializeUserResponse(interaction, "No Backup File Found on Server, Please Provide a Backup File to Load. \n Alternatively manually move the World Backup File to the Binded Backup Folder on the Server,  use ``` scp -P Port backup/file/location backup/location/on/server ``` to upload it if the Server is a seperate device.");
-        // }
+            this.AddToResponseMessage("Backup Loaded Successfully, use /start to Start the Server at the backup point");
+        } else {
+            dataManager.SCP_INFO = new SCPInfo(dataManager.SCP_INFO);
 
+            if (dataManager.SCP_INFO.IsUndefined()) {
+                this.InitializeUserResponse(interaction, `No SCP Info Registered, Please Register it using /registerbackup`);
+                return
+            }
+
+            this.InitializeUserResponse(interaction, `No Backup File Provided, if you have a Backup file rerun the command and provide the file.`);
+            this.AddToResponseMessage("If the File is too large, Upload it using the following Command in your Terminal");
+            let command = "```" + `scp -P ${dataManager.SCP_INFO.Port} "${dataManager.SCP_INFO.DownloadLocation}\\WorldBackup.tar.gz" ${dataManager.SCP_INFO.User}@${dataManager.SCP_INFO.HostName}:"${dataManager.SCP_INFO.HostDeviceBackupFolder}/WorldBackup.tar.gz"` + "```";
+            this.AddToResponseMessage(command);
+        }
+        
         await PalworldRestfulCommands.UpdateServerInfo(client);
     };
 
@@ -121,24 +120,6 @@ class LoadBackup extends Command {
             console.error(`Failed to download the file: ${error}`);
         }
     }
-
-    private GetFileSize(fileStats: fs.Stats): [Number, string] {
-        let realsize;
-        let sizeFormat;
-
-        if (fileStats.size / (1024 * 1024) >= 1) {
-            realsize = Math.floor(100 * fileStats.size / (1024 * 1024)) / 100;
-            sizeFormat = "MB";
-        } else if (fileStats.size / (1024) >= 1) {
-            realsize = Math.floor(100 * fileStats.size / (1024)) / 100;
-            sizeFormat = "KB";
-        } else {
-            realsize = fileStats.size;
-            sizeFormat = "B";
-        }
-
-        return [realsize, sizeFormat];
-    }
 }
 
-export = LoadBackup;
+export = UploadBackup;
