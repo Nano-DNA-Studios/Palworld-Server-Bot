@@ -232,7 +232,6 @@ class PalworldServerBotDataManager extends BotDataManager {
             client.user.setActivity("Palworld Server", { type: ActivityType.Playing});
         }
     }
-
 }
 
 export default PalworldServerBotDataManager;
